@@ -38,6 +38,9 @@ const RegisterVisitPage: React.FC = () => {
   };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> e5ff4c3 (Updated the comments for Upload props)
   /**
    * Upload component props
    * @see https://ant.design/components/upload/#API
@@ -46,9 +49,12 @@ const RegisterVisitPage: React.FC = () => {
    * @prop beforeUpload: A function that will be called before uploading the file. You can use this function to validate the file type and size.
    * @prop onChange: A function that will be called when the status of the file changes. You can use this function to show a message when the file is uploaded successfully or failed.
    */
+<<<<<<< HEAD
 =======
   // Upload component props
 >>>>>>> 8778db0 (Added RegisterVisit page and ButtonGroupInput component)
+=======
+>>>>>>> e5ff4c3 (Updated the comments for Upload props)
   const uploadProps: UploadProps = {
     action: 'https://jsonplaceholder.typicode.com/posts/', // Dummy endpoint
     listType: 'picture-card',
