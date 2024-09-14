@@ -32,6 +32,17 @@ export default defineConfig({
       component: './Cases',
       access: 'isVolunteer',
     },
+    // {
+    //   name: 'Elderly Residents',
+    //   path: '/residents',
+    //   access: 'isVolunteer',
+    //   component: 'Residents',
+    // },
+    {
+      path: '/residents/:id',
+      component: './ResidentProfile',
+      access: 'isVolunteer',
+    },
   ],
   npmClient: 'pnpm',
 });

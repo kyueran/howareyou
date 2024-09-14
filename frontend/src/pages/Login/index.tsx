@@ -17,7 +17,7 @@ const Login: React.FC = () => {
       const response = await login(values); // Make API call for login
       if (response.status === 'ok') {
         // Set user info into global state
-        flushSync(() => setInitialState({ ...initialState, ...response.data }))
+        flushSync(() => setInitialState({ ...initialState, ...response.data }));
         // Redirect to homepage after successful login
         const redirectUrl =
           new URLSearchParams(location.search).get('redirect') || '/';

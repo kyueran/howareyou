@@ -14,7 +14,10 @@
     "@ant-design/icons": "^5.0.1",
     "@ant-design/pro-components": "^2.4.4",
     "@umijs/max": "^4.3.19",
-    "antd": "^5.4.0"
+    "antd": "^5.4.0",
+    "antd-style": "^3.6.3",
+    "dayjs": "^1.11.13",
+    "html2canvas": "^1.4.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.33",
