@@ -3,6 +3,8 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { Button, Divider, message, Space } from 'antd';
 import React, { useState } from 'react';
+import { flushSync } from 'react-dom';
+//@ts-ignore
 import { history, useModel } from 'umi';
 
 const Login: React.FC = () => {
@@ -15,7 +17,7 @@ const Login: React.FC = () => {
       const response = await login(values); // Make API call for login
       if (response.status === 'ok') {
         // Set user info into global state
-        setInitialState({ ...initialState, role: response.data?.role });
+        flushSync(() => setInitialState({ ...initialState, ...response.data }))
         // Redirect to homepage after successful login
         const redirectUrl =
           new URLSearchParams(location.search).get('redirect') || '/';
