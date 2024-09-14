@@ -37,7 +37,14 @@ const RegisterVisitPage: React.FC = () => {
     message.success('Form submitted successfully!');
   };
 
-  // Upload component props
+  /**
+   * Upload component props
+   * @see https://ant.design/components/upload/#API
+   * @prop action: The URL where the uploaded files will be sent. For a dummy endpoint, you can use a placeholder or mock server.
+   * @prop listType: The type of the upload list. You can use 'text', 'picture', or 'picture-card'. 'picture-card' will display the uploaded image as thumbnails.
+   * @prop beforeUpload: A function that will be called before uploading the file. You can use this function to validate the file type and size.
+   * @prop onChange: A function that will be called when the status of the file changes. You can use this function to show a message when the file is uploaded successfully or failed.
+   */
   const uploadProps: UploadProps = {
     action: 'https://jsonplaceholder.typicode.com/posts/', // Dummy endpoint
     listType: 'picture-card',
