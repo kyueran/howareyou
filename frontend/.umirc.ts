@@ -1,19 +1,21 @@
 import { defineConfig } from '@umijs/max';
 
 export default defineConfig({
+  base: '/howareyou/',
+  publicPath: '/howareyou/',
   antd: {},
   access: {},
   model: {},
   initialState: {},
   request: {},
   locale: {
-    default: 'en-US'
+    default: 'en-US',
   },
   layout: {},
   routes: [
     {
       path: '/',
-      redirect: '/cases',
+      redirect: '/residents',
     },
     {
       name: 'Login',
@@ -28,21 +30,17 @@ export default defineConfig({
       access: 'isVolunteer',
     },
     {
-      name: 'Cases',
-      path: '/cases',
-      component: './Cases',
+      name: 'Elderly Residents',
+      path: '/residents',
       access: 'isVolunteer',
+      component: './Residents',
     },
-    // {
-    //   name: 'Elderly Residents',
-    //   path: '/residents',
-    //   access: 'isVolunteer',
-    //   component: 'Residents',
-    // },
     {
+      name: 'Resident Profile',
       path: '/residents/:id',
       component: './ResidentProfile',
       access: 'isVolunteer',
+      hideInMenu: true,
     },
   ],
   npmClient: 'pnpm',

@@ -1,4 +1,3 @@
-import { login } from '@/services/user/api';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { Button, Divider, message, Space } from 'antd';
@@ -6,6 +5,39 @@ import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 //@ts-ignore
 import { history, useModel } from 'umi';
+
+const login = async (body: API.LoginParams) => {
+  const { username, password } = body;
+  await new Promise((res) => {
+    setTimeout(res, 1000);
+  });
+  if (username === 'volunteer' && password === 'pword') {
+    return {
+      status: 'ok',
+      data: {
+        id: 1,
+        role: 'volunteer',
+        name: 'volname',
+        token: 'mock-token-volunteer',
+      },
+    };
+  }
+  if (username === 'resident' && password === 'pword') {
+    return {
+      status: 'ok',
+      data: {
+        id: 2,
+        role: 'resident',
+        name: 'resname',
+        token: 'mock-token-resident',
+      },
+    };
+  }
+  return {
+    status: 'error',
+    message: 'Invalid username or password',
+  };
+};
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
