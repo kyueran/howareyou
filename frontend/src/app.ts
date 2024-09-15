@@ -10,7 +10,10 @@ export async function getInitialState(): Promise<API.UserInfo> {
 export const layout: RunTimeLayoutConfig = (initialState) => {
   // redirect user to login page if not logged in yet
   if (!initialState.initialState?.role) {
-    const currentPath = history.location.pathname;
+    let currentPath = history.location.pathname;
+    const basePath = '/howareyou'
+    if (currentPath.startsWith(basePath))
+      currentPath = currentPath.slice(basePath.length);
     if (currentPath !== '/login')
       history.push(`/login?redirect=${currentPath}`);
   }

@@ -54,17 +54,20 @@ type NokInfo = {
   contact: number;
 };
 
+type Language = 'Chinese' | 'Mandarin' | 'Malay' | 'Tamil' | 'Hokkien' | 'Teochew' | 'Cantonese'
+
 type ResidentProfileInfo = {
   id: number;
   name: string;
   address: string;
   nok: NokInfo[];
   notes: string;
-  contact: string;
+  contact: number;
   elderlyCode: string;
   aacCode: string;
   attachments: string[];
   visits: VisitInfo[];
+  languages: Language[];
 };
 
 const ResidentProfilePage: React.FC = () => {
@@ -79,17 +82,40 @@ const ResidentProfilePage: React.FC = () => {
     const fetchResidentData = async () => {
       setLoading(true);
       try {
-        const response = await request<API.APIResponse<ResidentProfileInfo>>(
-          `/api/resident/${params.id}`,
-          {
-            method: 'GET',
-          },
-        );
-        if (response.status === 'ok') {
-          setData(response.data);
-        } else {
-          message.error(response.message || 'Failed to get data');
-        }
+        setData(await new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({
+            id: 1,
+            elderlyCode: 'WL-8829',
+            aacCode: 'AAC-123162',
+            name: 'Goh Seok Meng',
+            address: 'Woodlands Drive 62, #02-144, S623182',
+            contact: 81234567,
+            nok: [{ name: 'David Goh', relationship: 'Son', contact: 91234567 }],
+            notes:
+              'Goh Seok Meng lives alone on weekdays, can only speak Hokkien, and has difficulty walking. She does not mind having pictures taken.',
+            languages: ['Hokkien'],
+            attachments: [],
+            visits: [
+              {
+                datetime: '09-10-2024 20:00',
+                visitor: { id: 99, name: 'David', role: 'public' },
+                location: 'Home',
+                attachments: [],
+                notes: 'All good.'
+              },
+              {
+                datetime: '09-08-2024 17:00',
+                visitor: { id: 2, name: 'David Hiong', role: 'volunteer' },
+                location: 'Woodlands Hawker Centre',
+                attachments: [],
+                notes: 'Saw auntie at Woodlands Hawker Centre, she\'s doing well'
+              },
+            ],
+            })
+          }, 1000)
+        })
+      )
       } catch (error) {
         message.error('An error occurred when fetching resident data.');
       } finally {

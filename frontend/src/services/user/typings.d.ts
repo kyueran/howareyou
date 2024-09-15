@@ -23,7 +23,7 @@ declare namespace API {
   type UserRole = 'volunteer' | 'public';
 
   type UserInfo = {
-    id?: string;
+    id?: number;
     name?: string;
     role?: UserRole;
   };

@@ -1,6 +1,8 @@
 import { defineConfig } from '@umijs/max';
 
 export default defineConfig({
+  base: '/howareyou/',
+  publicPath: '/howareyou/',
   antd: {},
   access: {},
   model: {},
