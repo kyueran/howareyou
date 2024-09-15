@@ -27,4 +27,13 @@ declare namespace API {
     name?: string;
     role?: UserRole;
   };
+
+  type ResidentInfo = {
+    id: number; // Unique identifier for the resident
+    name: string; // Resident's name
+    address: string; // Resident's address
+    gender: number; // 0 for male, 1 for female
+    phoneNumber: string; // Resident's phone number
+    [key: string]: any; // Optional: Allows for additional properties
+  };
 }

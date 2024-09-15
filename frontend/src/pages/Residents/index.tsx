@@ -1,4 +1,3 @@
-import services from '@/services/user';
 import {
   ActionType,
   FooterToolbar,
@@ -9,117 +8,116 @@ import {
 } from '@ant-design/pro-components';
 import { Button, Divider, Drawer, message } from 'antd';
 import React, { useRef, useState } from 'react';
+import { history } from 'umi'; // Import history for navigation
 import CreateForm from './components/CreateForm';
-import UpdateForm, { FormValueType } from './components/UpdateForm';
+import UpdateForm from './components/UpdateForm';
 
-const { addUser, queryUserList, deleteUser, modifyUser } =
-  services.UserController;
-
-/**
- * 添加节点
- * @param fields
- */
-const handleAdd = async (fields: API.UserInfo) => {
-  const hide = message.loading('正在添加');
-  try {
-    await addUser({ ...fields });
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
+// Define the mock API functions (Replace these with actual API calls in a real application)
+const queryResidentsList = async (params: any) => {
+  // Mock API call
+  return new Promise<{ data: { list: API.ResidentInfo[] }; success: boolean }>(
+    (resolve) => {
+      setTimeout(() => {
+        resolve({
+          data: {
+            list: [
+              {
+                id: 1,
+                name: 'John Doe',
+                address: '123 Main St',
+                gender: 0,
+                phoneNumber: '123-456-7890',
+              },
+              {
+                id: 2,
+                name: 'Jane Smith',
+                address: '456 Elm St',
+                gender: 1,
+                phoneNumber: '987-654-3210',
+              },
+            ],
+          },
+          success: true,
+        });
+      }, 500);
+    },
+  );
 };
 
-/**
- * 更新节点
- * @param fields
- */
-const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('正在配置');
-  try {
-    await modifyUser(
-      {
-        userId: fields.id || '',
-      },
-      {
-        name: fields.name || '',
-        nickName: fields.nickName || '',
-        email: fields.email || '',
-      },
-    );
-    hide();
-
-    message.success('配置成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
+const handleAdd = async (value: API.ResidentInfo) => {
+  // Mock API call
+  return new Promise<boolean>((resolve) => {
+    setTimeout(() => {
+      message.success('Resident added successfully!');
+      resolve(true);
+    }, 500);
+  });
 };
 
-/**
- *  删除节点
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: API.UserInfo[]) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await deleteUser({
-      userId: selectedRows.find((row) => row.id)?.id || '',
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
+const handleUpdate = async (value: API.ResidentInfo) => {
+  // Mock API call
+  return new Promise<boolean>((resolve) => {
+    setTimeout(() => {
+      message.success('Resident updated successfully!');
+      resolve(true);
+    }, 500);
+  });
 };
 
-const TableList: React.FC<unknown> = () => {
+const handleRemove = async (selectedRows: API.ResidentInfo[]) => {
+  // Mock API call
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      message.success('Residents deleted successfully!');
+      resolve();
+    }, 500);
+  });
+};
+
+const ResidentsTable: React.FC<unknown> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] =
     useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef<ActionType>();
-  const [row, setRow] = useState<API.UserInfo>();
-  const [selectedRowsState, setSelectedRows] = useState<API.UserInfo[]>([]);
-  const columns: ProDescriptionsItemProps<API.UserInfo>[] = [
+  const [row, setRow] = useState<API.ResidentInfo>();
+  const [selectedRowsState, setSelectedRows] = useState<API.ResidentInfo[]>([]);
+
+  const columns: ProDescriptionsItemProps<API.ResidentInfo>[] = [
     {
-      title: '名称',
+      title: 'Name',
       dataIndex: 'name',
-      tip: '名称是唯一的 key',
+      tip: 'Name is a unique key',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: '名称为必填项',
+            message: 'Name is required',
           },
         ],
       },
     },
     {
-      title: '昵称',
-      dataIndex: 'nickName',
+      title: 'Address',
+      dataIndex: 'address',
       valueType: 'text',
     },
     {
-      title: '性别',
+      title: 'Gender',
       dataIndex: 'gender',
       hideInForm: true,
       valueEnum: {
-        0: { text: '男', status: 'MALE' },
-        1: { text: '女', status: 'FEMALE' },
+        0: { text: 'Male', status: 'MALE' },
+        1: { text: 'Female', status: 'FEMALE' },
       },
     },
     {
-      title: '操作',
+      title: 'Phone Number',
+      dataIndex: 'phoneNumber',
+      valueType: 'text',
+    },
+    {
+      title: 'Actions',
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => (
@@ -130,10 +128,16 @@ const TableList: React.FC<unknown> = () => {
               setStepFormValues(record);
             }}
           >
-            配置
+            Edit
           </a>
           <Divider type="vertical" />
-          <a href="">订阅警报</a>
+          <a
+            onClick={() => {
+              history.push(`/residents/${record.id}`);
+            }}
+          >
+            View Details
+          </a>
         </>
       ),
     },
@@ -141,12 +145,13 @@ const TableList: React.FC<unknown> = () => {
 
   return (
     <PageContainer
+      style={{ padding: '8px' }}
       header={{
-        title: 'CRUD 示例',
+        title: 'Elderly residents staying near you',
       }}
     >
-      <ProTable<API.UserInfo>
-        headerTitle="查询表格"
+      <ProTable<API.ResidentInfo>
+        headerTitle="Residents List"
         actionRef={actionRef}
         rowKey="id"
         search={{
@@ -158,14 +163,12 @@ const TableList: React.FC<unknown> = () => {
             type="primary"
             onClick={() => handleModalVisible(true)}
           >
-            新建
+            Add Resident
           </Button>,
         ]}
         request={async (params, sorter, filter) => {
-          const { data, success } = await queryUserList({
+          const { data, success } = await queryResidentsList({
             ...params,
-            // FIXME: remove @ts-ignore
-            // @ts-ignore
             sorter,
             filter,
           });
@@ -183,9 +186,9 @@ const TableList: React.FC<unknown> = () => {
         <FooterToolbar
           extra={
             <div>
-              已选择{' '}
+              Selected{' '}
               <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
-              项&nbsp;&nbsp;
+              items&nbsp;&nbsp;
             </div>
           }
         >
@@ -196,16 +199,16 @@ const TableList: React.FC<unknown> = () => {
               actionRef.current?.reloadAndRest?.();
             }}
           >
-            批量删除
+            Batch Delete
           </Button>
-          <Button type="primary">批量审批</Button>
+          <Button type="primary">Batch Approve</Button>
         </FooterToolbar>
       )}
       <CreateForm
         onCancel={() => handleModalVisible(false)}
         modalVisible={createModalVisible}
       >
-        <ProTable<API.UserInfo, API.UserInfo>
+        <ProTable<API.ResidentInfo, API.ResidentInfo>
           onSubmit={async (value) => {
             const success = await handleAdd(value);
             if (success) {
@@ -250,7 +253,7 @@ const TableList: React.FC<unknown> = () => {
         closable={false}
       >
         {row?.name && (
-          <ProDescriptions<API.UserInfo>
+          <ProDescriptions<API.ResidentInfo>
             column={2}
             title={row?.name}
             request={async () => ({
@@ -267,4 +270,4 @@ const TableList: React.FC<unknown> = () => {
   );
 };
 
-export default TableList;
+export default ResidentsTable;

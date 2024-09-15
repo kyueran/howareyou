@@ -15,7 +15,7 @@ export default defineConfig({
   routes: [
     {
       path: '/',
-      redirect: '/cases',
+      redirect: '/residents',
     },
     {
       name: 'Login',
@@ -30,18 +30,13 @@ export default defineConfig({
       access: 'isVolunteer',
     },
     {
-      name: 'Cases',
-      path: '/cases',
-      component: './Cases',
+      name: 'Elderly Residents',
+      path: '/residents',
       access: 'isVolunteer',
+      component: './Residents',
     },
-    // {
-    //   name: 'Elderly Residents',
-    //   path: '/residents',
-    //   access: 'isVolunteer',
-    //   component: 'Residents',
-    // },
     {
+      name: 'Resident Profile',
       path: '/residents/:id',
       component: './ResidentProfile',
       access: 'isVolunteer',
