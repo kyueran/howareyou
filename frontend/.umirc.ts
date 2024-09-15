@@ -40,6 +40,7 @@ export default defineConfig({
       path: '/residents/:id',
       component: './ResidentProfile',
       access: 'isVolunteer',
+      hideInMenu: true,
     },
   ],
   npmClient: 'pnpm',
