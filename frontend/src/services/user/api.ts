@@ -13,10 +13,3 @@ export async function login(
     ...(options || {}),
   });
 }
-
-export async function logout(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/logout', {
-    method: 'POST',
-    ...(options || {}),
-  });
-}

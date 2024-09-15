@@ -1,5 +1,3 @@
-// 运行时配置
-
 import { RunTimeLayoutConfig } from '@umijs/max';
 import { history } from 'umi';
 
@@ -18,9 +16,17 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
   }
 
   return {
+    title: '',
     logo: 'https://img.alicdn.com/tfs/TB1YHEpwUT1gK0jSZFhXXaAtVXa-28-27.svg',
     menu: {
       locale: false,
     },
+    locale: 'en-US',
+    token: {
+      pageContainer: {
+        paddingBlockPageContainerContent: 0,
+        paddingInlinePageContainerContent: 0
+      }
+    }
   };
 };

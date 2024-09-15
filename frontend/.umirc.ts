@@ -6,9 +6,10 @@ export default defineConfig({
   model: {},
   initialState: {},
   request: {},
-  layout: {
-    title: '@umijs/max',
+  locale: {
+    default: 'en-US'
   },
+  layout: {},
   routes: [
     {
       path: '/',
@@ -30,6 +31,17 @@ export default defineConfig({
       name: 'Cases',
       path: '/cases',
       component: './Cases',
+      access: 'isVolunteer',
+    },
+    // {
+    //   name: 'Elderly Residents',
+    //   path: '/residents',
+    //   access: 'isVolunteer',
+    //   component: 'Residents',
+    // },
+    {
+      path: '/residents/:id',
+      component: './ResidentProfile',
       access: 'isVolunteer',
     },
   ],
