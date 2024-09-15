@@ -60,14 +60,14 @@ export default {
             visitor: { id: 99, name: 'David', role: 'public' },
             location: 'Home',
             attachments: [],
-            notes: 'All good.'
+            notes: 'All good.',
           },
           {
             date: '09-08-2024 17:00',
             visitor: { id: 2, name: 'David Hiong', role: 'volunteer' },
             location: 'Woodlands Hawker Centre',
             attachments: [],
-            notes: 'Saw auntie at Woodlands Hawker Centre, she\'s doing well'
+            notes: "Saw auntie at Woodlands Hawker Centre, she's doing well",
           },
         ],
       },

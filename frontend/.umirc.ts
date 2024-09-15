@@ -9,7 +9,7 @@ export default defineConfig({
   initialState: {},
   request: {},
   locale: {
-    default: 'en-US'
+    default: 'en-US',
   },
   layout: {},
   routes: [

@@ -11,7 +11,7 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
   // redirect user to login page if not logged in yet
   if (!initialState.initialState?.role) {
     let currentPath = history.location.pathname;
-    const basePath = '/howareyou'
+    const basePath = '/howareyou';
     if (currentPath.startsWith(basePath))
       currentPath = currentPath.slice(basePath.length);
     if (currentPath !== '/login')
@@ -28,8 +28,8 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
     token: {
       pageContainer: {
         paddingBlockPageContainerContent: 0,
-        paddingInlinePageContainerContent: 0
-      }
-    }
+        paddingInlinePageContainerContent: 0,
+      },
+    },
   };
 };
