@@ -6,9 +6,10 @@ export default defineConfig({
   model: {},
   initialState: {},
   request: {},
-  layout: {
-    title: '@umijs/max',
+  locale: {
+    default: 'en-US'
   },
+  layout: {},
   routes: [
     {
       path: '/',
