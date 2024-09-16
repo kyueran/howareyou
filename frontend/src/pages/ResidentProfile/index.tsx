@@ -164,7 +164,7 @@ const ResidentProfilePage: React.FC = () => {
     if (params.id) fetchResidentData();
   }, [params.id]);
 
-  const qrUrl = `${window.location.origin}/howareyou/register-visit/${params.id}`;
+  const qrUrl = `${window.location.origin}/howareyou/#/howareyou/register-visit/${params.id}`;
 
   const showModal = () => {
     setIsModalVisible(true);

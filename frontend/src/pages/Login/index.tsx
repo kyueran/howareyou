@@ -121,8 +121,14 @@ const Login: React.FC = () => {
         // Set user info into global state
         flushSync(() => setInitialState({ ...initialState, ...response.data }));
         // Redirect to respective homepage after successful login
-        const redirectUrl =
-          new URLSearchParams(location.search).get('redirect') || '/';
+        // NOTE: Special handling is done here for Hash routing
+        const getQueryParams = () => {
+          const hash = location.hash || ''; // Get the hash part of the URL
+          const queryString = hash.includes('?') ? hash.split('?')[1] : ''; // Extract the query string
+          return new URLSearchParams(queryString); // Parse the query parameters
+        };
+        const redirectUrl = getQueryParams().get('redirect') || '/';
+
         history.push(redirectUrl);
         message.success('Login successful!');
       } else {

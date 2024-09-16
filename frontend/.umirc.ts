@@ -1,6 +1,10 @@
 import { defineConfig } from '@umijs/max';
 
 export default defineConfig({
+  // NOTE: USING HASH ROUTER MEANS ON LOCALHOST NEED TO GO TO http://localhost:8000/#/howareyou
+  history: {
+    type: 'hash', // Switch to hash-based routing
+  },
   base: '/howareyou/',
   publicPath: '/howareyou/',
   antd: {},
