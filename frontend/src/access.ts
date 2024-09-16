@@ -4,6 +4,9 @@ export default (initialState: API.UserInfo) => {
   const isVolunteer = !!(initialState && initialState.role === 'volunteer');
   const isPublic = !!(initialState && initialState.role === 'public');
   const isStaff = !!(initialState && initialState.role === 'staff');
+
+  console.log('Access check:', { isVolunteer, isPublic, isStaff });
+
   return {
     isVolunteer,
     isPublic,

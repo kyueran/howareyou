@@ -13,7 +13,7 @@ import {
   Upload,
 } from 'antd';
 import type { UploadProps } from 'antd/es/upload/interface';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ButtonGroupInput from '../../components/ButtonGroupInput';
 
 const { TextArea } = Input;
@@ -32,23 +32,61 @@ const RegisterVisitPage: React.FC = () => {
    * BY RIGHT WE ARE SUPPOSED TO HAVE AN ID ATTACHED TO THE URL PATH
    * AND THEN FETCH THE ELDERLY DATA BASED ON THAT ID FROM THE DB
    * BUT FOR NOW WE ARE HARDCODING IT FOR USER TESTING PURPOSES
-   * also can add a loading state for the card to have the loading animation while fetching data
-   * see ResidentProfilePage for example
    */
   const [form] = Form.useForm();
-  form.setFieldsValue({
-    id: 1,
-    elderlyCode: 'WL-8829',
-    aacCode: 'AAC-123162',
-    name: 'Goh Seok Meng',
-    address: 'Woodlands Drive 62, #02-144, S623182',
-    contact: 81234567,
-    nok: [{ name: 'David Goh', relationship: 'Son', contact: 91234567 }],
-    notes:
-      'Goh Seok Meng lives alone on weekdays, can only speak Hokkien, and has difficulty walking. She does not mind having pictures taken.',
-    languages: ['Hokkien'],
-    attachments: [],
-  });
+  // const [data, setData] = useState<ResidentProfileInfo>();
+  const [loading, setLoading] = useState(true);
+
+  // Fetch data when component mounts
+  useEffect(() => {
+    populateForm();
+  }, [form]);
+
+  // Fetch data asynchronously
+  const populateForm = async () => {
+    setLoading(true);
+    try {
+      // const result = await fetch('/api/resident');
+      const result = {
+        id: 1,
+        elderlyCode: 'WL-8829',
+        aacCode: 'AAC-123162',
+        name: 'Goh Seok Meng',
+        address: 'Woodlands Drive 62, #02-144, S623182',
+        contact: 81234567,
+        nok: [{ name: 'David Goh', relationship: 'Son', contact: 91234567 }],
+        notes:
+          'Goh Seok Meng lives alone on weekdays, can only speak Hokkien, and has difficulty walking. She does not mind having pictures taken.',
+        languages: ['Hokkien'],
+        attachments: [],
+        visits: [
+          {
+            datetime: '09-10-2024 20:00',
+            visitor: { id: 99, name: 'David', role: 'public' },
+            location: 'Home',
+            attachments: [],
+            notes: 'All good.',
+          },
+          {
+            datetime: '09-08-2024 17:00',
+            visitor: { id: 2, name: 'David Hiong', role: 'volunteer' },
+            location: 'Woodlands Hawker Centre',
+            attachments: [],
+            notes: "Saw auntie at Woodlands Hawker Centre, she's doing well",
+          },
+        ],
+      };
+      setTimeout(() => {
+        console.log('Fake data fetched');
+      }, 1000);
+      form.setFieldsValue(result);
+    } catch (error) {
+      message.error('Failed to fetch data');
+    } finally {
+      console.log('FINALLY');
+      setLoading(false);
+    }
+  };
 
   const access = useAccess();
   const params = useParams();
@@ -57,6 +95,7 @@ const RegisterVisitPage: React.FC = () => {
   const onFinish = (values: any) => {
     console.log('Form values:', values);
     message.success('Form submitted successfully!');
+    history.push(`/residents`);
   };
 
   // Handle redirect to resident profile page
@@ -107,7 +146,11 @@ const RegisterVisitPage: React.FC = () => {
               Register Visit
             </Title>
             <Access accessible={access.isVolunteer}>
-              <Card style={{ width: '100%' }} bodyStyle={{ padding: '16px' }}>
+              <Card
+                style={{ width: '100%' }}
+                bodyStyle={{ padding: '16px' }}
+                loading={loading}
+              >
                 <Row gutter={16} align="middle">
                   <Col xs={8} sm={6} md={6} lg={6} xl={5}>
                     <div
