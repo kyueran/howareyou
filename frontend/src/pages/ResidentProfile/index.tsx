@@ -164,7 +164,7 @@ const ResidentProfilePage: React.FC = () => {
     if (params.id) fetchResidentData();
   }, [params.id]);
 
-  const qrUrl = `${window.location.origin}/submit/${params.id}`;
+  const qrUrl = `${window.location.origin}/register-visit/${params.id}`;
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -201,7 +201,7 @@ const ResidentProfilePage: React.FC = () => {
   };
 
   const handleRedirectToSubmit = () => {
-    history.push(`/submit/${params.id}`);
+    history.push(`/register-visit/${params.id}`);
   };
 
   return (
