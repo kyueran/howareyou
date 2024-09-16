@@ -7,16 +7,35 @@ import {
   ProTable,
 } from '@ant-design/pro-components';
 import { Access, useAccess } from '@umijs/max';
-import { Button, Col, Divider, Drawer, message, Row, Typography } from 'antd';
-import React, { useRef, useState } from 'react';
-import { history } from 'umi'; // Import history for navigation
-import CreateForm from './components/CreateForm';
-import UpdateForm from './components/UpdateForm';
+import {
+  Button,
+  Col,
+  Divider,
+  Drawer,
+  message,
+  Modal,
+  Row,
+  Typography,
+} from 'antd';
+import { useRef, useState } from 'react';
+//@ts-ignore
+import { history } from 'umi';
+import { PrinterOutlined, SaveOutlined } from '@ant-design/icons';
+import html2canvas from 'html2canvas';
+import { QRCode } from 'antd';
 
-// Define the mock API functions (Replace these with actual API calls in a real application)
+interface ResidentInfo {
+  id: number;
+  elderlyCode: string;
+  aacCode: string;
+  address: string;
+  postalCode: string;
+  lastVisitedDate: string;
+}
+
 const queryResidentsList = async (params: any) => {
   // Mock API call
-  return new Promise<{ data: { list: API.ResidentInfo[] }; success: boolean }>(
+  return new Promise<{ data: { list: ResidentInfo[] }; success: boolean }>(
     (resolve) => {
       setTimeout(() => {
         resolve({
@@ -24,17 +43,19 @@ const queryResidentsList = async (params: any) => {
             list: [
               {
                 id: 1,
-                name: 'John Doe',
+                elderlyCode: 'WL-8829',
+                aacCode: 'AAC-123162',
                 address: '123 Main St',
-                gender: 0,
-                phoneNumber: '123-456-7890',
+                postalCode: '123456',
+                lastVisitedDate: '7 days ago',
               },
               {
                 id: 2,
-                name: 'Jane Smith',
+                elderlyCode: 'WL-8830',
+                aacCode: 'AAC-123163',
                 address: '456 Elm St',
-                gender: 1,
-                phoneNumber: '987-654-3210',
+                postalCode: '654321',
+                lastVisitedDate: '10 days ago',
               },
             ],
           },
@@ -45,27 +66,7 @@ const queryResidentsList = async (params: any) => {
   );
 };
 
-const handleAdd = async (value: API.ResidentInfo) => {
-  // Mock API call
-  return new Promise<boolean>((resolve) => {
-    setTimeout(() => {
-      message.success('Resident added successfully!');
-      resolve(true);
-    }, 500);
-  });
-};
-
-const handleUpdate = async (value: API.ResidentInfo) => {
-  // Mock API call
-  return new Promise<boolean>((resolve) => {
-    setTimeout(() => {
-      message.success('Resident updated successfully!');
-      resolve(true);
-    }, 500);
-  });
-};
-
-const handleRemove = async (selectedRows: API.ResidentInfo[]) => {
+const handleRemove = async (selectedRows: ResidentInfo[]) => {
   // Mock API call
   return new Promise<void>((resolve) => {
     setTimeout(() => {
@@ -75,49 +76,55 @@ const handleRemove = async (selectedRows: API.ResidentInfo[]) => {
   });
 };
 
-const ResidentsTable: React.FC<unknown> = () => {
-  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  const [updateModalVisible, handleUpdateModalVisible] =
-    useState<boolean>(false);
-  const [stepFormValues, setStepFormValues] = useState({});
+const ResidentsTable: React.FC = () => {
   const actionRef = useRef<ActionType>();
-  const [row, setRow] = useState<API.ResidentInfo>();
-  const [selectedRowsState, setSelectedRows] = useState<API.ResidentInfo[]>([]);
+  const [row, setRow] = useState<ResidentInfo>();
+  const [selectedRowsState, setSelectedRows] = useState<ResidentInfo[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [qrResident, setQrResident] = useState<ResidentInfo | null>(null);
+  const qrCodeRef = useRef<HTMLDivElement>(null);
   const access = useAccess();
   const { Text } = Typography;
 
-  const columns: ProDescriptionsItemProps<API.ResidentInfo>[] = [
+  const columns: ProDescriptionsItemProps<ResidentInfo>[] = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      tip: 'Name is a unique key',
+      title: 'Elderly Code',
+      dataIndex: 'elderlyCode',
+      tip: 'Unique identifier for the resident',
       formItemProps: {
         rules: [
           {
             required: true,
-            message: 'Name is required',
+            message: 'Elderly Code is required',
           },
         ],
       },
+      // Removed the responsive property to ensure it's always displayed
+    },
+    {
+      title: 'AAC Code',
+      dataIndex: 'aacCode',
+      valueType: 'text',
+      responsive: ['sm'],
     },
     {
       title: 'Address',
       dataIndex: 'address',
       valueType: 'text',
+      ellipsis: true,
+      responsive: ['md'],
     },
     {
-      title: 'Gender',
-      dataIndex: 'gender',
-      hideInForm: true,
-      valueEnum: {
-        0: { text: 'Male', status: 'MALE' },
-        1: { text: 'Female', status: 'FEMALE' },
-      },
-    },
-    {
-      title: 'Phone Number',
-      dataIndex: 'phoneNumber',
+      title: 'Postal Code',
+      dataIndex: 'postalCode',
       valueType: 'text',
+      responsive: ['lg'],
+    },
+    {
+      title: 'Last Visited Date',
+      dataIndex: 'lastVisitedDate',
+      valueType: 'text',
+      responsive: ['xl'],
     },
     {
       title: 'Actions',
@@ -127,11 +134,11 @@ const ResidentsTable: React.FC<unknown> = () => {
         <>
           <a
             onClick={() => {
-              handleUpdateModalVisible(true);
-              setStepFormValues(record);
+              setQrResident(record);
+              setIsModalVisible(true);
             }}
           >
-            Edit
+            View QR
           </a>
           <Divider type="vertical" />
           <a
@@ -146,6 +153,37 @@ const ResidentsTable: React.FC<unknown> = () => {
     },
   ];
 
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setQrResident(null);
+  };
+
+  const handleSaveAsImage = () => {
+    if (qrCodeRef.current) {
+      html2canvas(qrCodeRef.current).then((canvas) => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = `${qrResident?.elderlyCode}-qr-code.png`;
+        link.click();
+      });
+    }
+  };
+
+  const handlePrint = () => {
+    if (qrCodeRef.current) {
+      html2canvas(qrCodeRef.current).then((canvas) => {
+        const printWindow = window.open('', '_blank');
+        printWindow?.document.write(
+          '<img src="' +
+            canvas.toDataURL('image/png') +
+            '" style="width: 100%;"/>',
+        );
+        printWindow?.document.close();
+        printWindow?.print();
+      });
+    }
+  };
+
   return (
     <>
       <Access accessible={access.isPublic}>
@@ -156,8 +194,7 @@ const ResidentsTable: React.FC<unknown> = () => {
             </Text>
             <br />
             <Text type="secondary">
-              In the near future, you will be able to see all your past visits
-              here!
+              In the near future, you will be able to see all your past visits here!
             </Text>
           </Col>
         </Row>
@@ -169,22 +206,13 @@ const ResidentsTable: React.FC<unknown> = () => {
             title: 'Elderly residents staying near you',
           }}
         >
-          <ProTable<API.ResidentInfo>
+          <ProTable<ResidentInfo>
             headerTitle="Residents List"
             actionRef={actionRef}
             rowKey="id"
             search={{
               labelWidth: 120,
             }}
-            toolBarRender={() => [
-              <Button
-                key="1"
-                type="primary"
-                onClick={() => handleModalVisible(true)}
-              >
-                Add Resident
-              </Button>,
-            ]}
             request={async (params, sorter, filter) => {
               const { data, success } = await queryResidentsList({
                 ...params,
@@ -220,49 +248,8 @@ const ResidentsTable: React.FC<unknown> = () => {
               >
                 Batch Delete
               </Button>
-              <Button type="primary">Batch Approve</Button>
             </FooterToolbar>
           )}
-          <CreateForm
-            onCancel={() => handleModalVisible(false)}
-            modalVisible={createModalVisible}
-          >
-            <ProTable<API.ResidentInfo, API.ResidentInfo>
-              onSubmit={async (value) => {
-                const success = await handleAdd(value);
-                if (success) {
-                  handleModalVisible(false);
-                  if (actionRef.current) {
-                    actionRef.current.reload();
-                  }
-                }
-              }}
-              rowKey="id"
-              type="form"
-              columns={columns}
-            />
-          </CreateForm>
-          {stepFormValues && Object.keys(stepFormValues).length ? (
-            <UpdateForm
-              onSubmit={async (value) => {
-                const success = await handleUpdate(value);
-                if (success) {
-                  handleUpdateModalVisible(false);
-                  setStepFormValues({});
-                  if (actionRef.current) {
-                    actionRef.current.reload();
-                  }
-                }
-              }}
-              onCancel={() => {
-                handleUpdateModalVisible(false);
-                setStepFormValues({});
-              }}
-              updateModalVisible={updateModalVisible}
-              values={stepFormValues}
-            />
-          ) : null}
-
           <Drawer
             width={600}
             open={!!row}
@@ -271,20 +258,63 @@ const ResidentsTable: React.FC<unknown> = () => {
             }}
             closable={false}
           >
-            {row?.name && (
-              <ProDescriptions<API.ResidentInfo>
+            {row?.elderlyCode && (
+              <ProDescriptions<ResidentInfo>
                 column={2}
-                title={row?.name}
+                title={row?.elderlyCode}
                 request={async () => ({
                   data: row || {},
                 })}
                 params={{
-                  id: row?.name,
+                  id: row?.elderlyCode,
                 }}
                 columns={columns}
               />
             )}
           </Drawer>
+
+          {/* QR Code Modal */}
+          <Modal
+            title="QR Code"
+            open={isModalVisible}
+            onCancel={handleCancel}
+            footer={[
+              <Button
+                key="print"
+                icon={<PrinterOutlined />}
+                onClick={handlePrint}
+              >
+                Print
+              </Button>,
+              <Button
+                key="save"
+                type="primary"
+                icon={<SaveOutlined />}
+                onClick={handleSaveAsImage}
+              >
+                Save as Image
+              </Button>,
+            ]}
+          >
+            <div
+              ref={qrCodeRef}
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '16px',
+              }}
+            >
+              <QRCode
+                value={`${window.location.origin}/register-visit/${qrResident?.id}`}
+                size={180}
+                errorLevel="H"
+              />
+            </div>
+            <Typography.Paragraph style={{ textAlign: 'center' }}>
+              Elderly Code: {qrResident?.elderlyCode}
+            </Typography.Paragraph>
+          </Modal>
         </PageContainer>
       </Access>
     </>
