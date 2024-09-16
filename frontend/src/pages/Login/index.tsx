@@ -1,6 +1,15 @@
 import { LockOutlined, PhoneOutlined } from '@ant-design/icons';
-import { Button, Divider, message, Space, Form, Input, Row, Col, Typography } from 'antd';
-import React, { useState, useEffect } from 'react';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  message,
+  Row,
+  Space,
+  Typography,
+} from 'antd';
+import React, { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 //@ts-ignore
 import { history, useModel } from 'umi';
@@ -23,7 +32,7 @@ const verifyOTP = async (otp: string) => {
       status: 'ok',
       data: {
         id: 2,
-        role: 'resident',
+        role: 'public',
         name: 'resname',
         token: 'mock-token-resident',
       },
@@ -37,6 +46,17 @@ const verifyOTP = async (otp: string) => {
         role: 'volunteer',
         name: 'volname',
         token: 'mock-token-volunteer',
+      },
+    };
+  }
+  if (otp === '0002') {
+    return {
+      status: 'ok',
+      data: {
+        id: 1,
+        role: 'staff',
+        name: 'staffname',
+        token: 'mock-token-staff',
       },
     };
   }
@@ -132,10 +152,10 @@ const Login: React.FC = () => {
         width: '100%',
       }}
     >
-      <div style={{ padding: 24, backgroundColor: '#fff', borderRadius: 8 }}> 
-      <Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>
-        HowAreYou Login
-      </Title>
+      <div style={{ padding: 24, backgroundColor: '#fff', borderRadius: 8 }}>
+        <Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>
+          HowAreYou Login
+        </Title>
         <Form
           form={form}
           name="login"
@@ -179,7 +199,7 @@ const Login: React.FC = () => {
                 </Form.Item>
               </Col>
               <Col span={8}>
-              <Button
+                <Button
                   size="large"
                   onClick={handleGetCode}
                   disabled={!isPhoneValid || countdown > 0}

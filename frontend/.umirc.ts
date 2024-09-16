@@ -49,13 +49,6 @@ export default defineConfig({
       layout: false,
       access: 'isVolunteer',
     },
-    {
-      name: 'RegisterVisit',
-      path: '/register-visit',
-      component: './RegisterVisit',
-      layout: false,
-      access: 'isVolunteer',
-    },
   ],
   npmClient: 'pnpm',
 });

@@ -5,5 +5,5 @@ app.egg-info
 .coverage
 htmlcov
 .cache
-.venv
+*venv
 
