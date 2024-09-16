@@ -24,12 +24,6 @@ export default defineConfig({
       layout: false,
     },
     {
-      name: 'Appointments',
-      path: '/appointments',
-      component: './Appointments',
-      access: 'isVolunteer',
-    },
-    {
       name: 'Elderly Residents',
       path: '/residents',
       access: ['isVolunteer', 'isPublic', 'isStaff'],
@@ -46,7 +40,8 @@ export default defineConfig({
       name: 'Register Visit',
       path: '/register-visit/:id',
       component: './RegisterVisit',
-      access: ['isVolunteer', 'isPulic', 'isStaff'],
+      access: ['isVolunteer', 'isPublic', 'isStaff'],
+      hideInMenu: true,
     },
   ],
   npmClient: 'pnpm',
