@@ -180,20 +180,20 @@ const Login: React.FC = () => {
               </Col>
               <Col span={8}>
               <Button
-                size="large"
-                onClick={handleGetCode}
-                disabled={!isPhoneValid || countdown > 0}
-                block
-                style={{
-                  fontSize: countdown > 0 ? '10px' : undefined, // Adjust font size when countdown is active
-                  padding: '0 8px', // Adjust padding to give more space for text
-                  backgroundColor: isPhoneValid ? '#1890ff' : '#bae7ff',
-                  borderColor: isPhoneValid ? '#1890ff' : '#bae7ff',
-                  color: '#fff',
-                }}
-              >
-                {countdown > 0 ? `Re-send (${countdown}s)` : 'Get Code'}
-              </Button>
+                  size="large"
+                  onClick={handleGetCode}
+                  disabled={!isPhoneValid || countdown > 0}
+                  block
+                  style={{
+                    fontSize: countdown > 0 ? '10px' : undefined,
+                    padding: '0 8px',
+                    backgroundColor: countdown > 0 ? '#bae7ff' : '#1890ff', // Light blue when countdown active, dark blue otherwise
+                    borderColor: countdown > 0 ? '#bae7ff' : '#1890ff',
+                    color: '#fff',
+                  }}
+                >
+                  {countdown > 0 ? `Re-send (${countdown}s)` : 'Get Code'}
+                </Button>
               </Col>
             </Row>
           </Form.Item>
