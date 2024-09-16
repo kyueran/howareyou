@@ -102,7 +102,7 @@ const Login: React.FC = () => {
         flushSync(() => setInitialState({ ...initialState, ...response.data }));
         // Redirect to respective homepage after successful login
         const redirectUrl =
-          response.data.role === 'resident' ? '/residents' : '/residents';
+          new URLSearchParams(location.search).get('redirect') || '/';
         history.push(redirectUrl);
         message.success('Login successful!');
       } else {
