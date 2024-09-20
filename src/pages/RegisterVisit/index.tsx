@@ -28,25 +28,14 @@ const normFile = (e: any) => {
 };
 
 const RegisterVisitPage: React.FC = () => {
-  /**
-   * BY RIGHT WE ARE SUPPOSED TO HAVE AN ID ATTACHED TO THE URL PATH
-   * AND THEN FETCH THE ELDERLY DATA BASED ON THAT ID FROM THE DB
-   * BUT FOR NOW WE ARE HARDCODING IT FOR USER TESTING PURPOSES
-   */
   const [form] = Form.useForm();
-  // const [data, setData] = useState<ResidentProfileInfo>();
   const [loading, setLoading] = useState(true);
-
-  // Fetch data when component mounts
-  useEffect(() => {
-    populateForm();
-  }, [form]);
 
   // Fetch data asynchronously
   const populateForm = async () => {
     setLoading(true);
     try {
-      // const result = await fetch('/api/resident');
+      // Simulated fetch data
       const result = {
         id: 1,
         elderlyCode: 'WL-8829',
@@ -88,19 +77,63 @@ const RegisterVisitPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    populateForm();
+  }, [form]);
+
   const access = useAccess();
-  const params = useParams();
+  const params = useParams<{ id: string }>(); // Specify the type of params
 
   // Handle form submission
-  const onFinish = (values: any) => {
+  const onFinish = async (values: any) => {
     console.log('Form values:', values);
-    message.success('Form submitted successfully!');
-    history.push(`/residents`);
+
+    const { id } = params; // Get the resident ID from URL params
+    const { status, comments, upload } = values;
+
+    // Extract photo URL if available
+    let photoUrl = null;
+    if (upload && upload.length > 0) {
+      // Assuming the upload response contains the URL
+      // Adjust according to your actual upload response structure
+      photoUrl = upload[0].response?.url || null;
+    }
+
+    try {
+      const response = await fetch('/api/logVisit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          residentId: parseInt(id, 10), // Ensure residentId is an integer
+          visitorId: 1, // Hardcoded visitorId
+          status,
+          comments,
+          photoUrl,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        message.success('Form submitted and logged successfully!');
+        history.push(`/residents`);
+      } else {
+        message.error(
+          result.message || 'Failed to log the form. Please try again.',
+        );
+      }
+    } catch (error: any) {
+      console.error('Submission error:', error);
+      message.error('There was an error submitting the form.');
+    }
   };
 
   // Handle redirect to resident profile page
   const handleRedirectToResidentProfile = () => {
-    history.push(`/residents/${params.id}`);
+    const { id } = params; // Use dynamic residentId
+    history.push(`/residents/${id}`);
   };
 
   /**
@@ -121,11 +154,6 @@ const RegisterVisitPage: React.FC = () => {
         message.error('You can only upload JPG/PNG file!');
         return Upload.LIST_IGNORE;
       }
-      // const isLt2M = file.size / 1024 / 1024 < 2;
-      // if (!isLt2M) {
-      //   message.error('Image must be smaller than 2MB!');
-      //   return Upload.LIST_IGNORE;
-      // }
       return true;
     },
     onChange(info) {

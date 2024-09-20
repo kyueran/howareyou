@@ -16,7 +16,7 @@ import { history, useModel } from 'umi';
 
 const { Title } = Typography;
 
-const sendOTP = async (phoneNumber: string) => {
+const sendOTP = async () => {
   // Simulate sending OTP instantly
   return {
     status: 'ok',
@@ -26,7 +26,9 @@ const sendOTP = async (phoneNumber: string) => {
 
 const verifyOTP = async (otp: string) => {
   // Simulate verifying OTP
-  await new Promise((res) => setTimeout(res, 1000));
+  await new Promise((res) => {
+    setTimeout(res, 1000);
+  });
   if (otp === '0000') {
     return {
       status: 'ok',
@@ -100,7 +102,7 @@ const Login: React.FC = () => {
     }
     setLoading(true);
     try {
-      const response = await sendOTP(phoneNumber);
+      const response = await sendOTP();
       if (response.status === 'ok') {
         message.success(response.message);
         setCountdown(30); // Start 60-second countdown
@@ -122,7 +124,8 @@ const Login: React.FC = () => {
         flushSync(() => setInitialState({ ...initialState, ...response.data }));
         // Redirect to respective homepage after successful login
         // NOTE: Special handling is done here for Hash routing
-        const redirectUrl = new URLSearchParams(location.search).get('redirect') || '/';
+        const redirectUrl =
+          new URLSearchParams(location.search).get('redirect') || '/';
 
         history.push(redirectUrl);
         message.success('Login successful!');

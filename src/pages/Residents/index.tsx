@@ -19,10 +19,10 @@ import {
 } from 'antd';
 import { useRef, useState } from 'react';
 //@ts-ignore
-import { history } from 'umi';
 import { PrinterOutlined, SaveOutlined } from '@ant-design/icons';
-import html2canvas from 'html2canvas';
 import { QRCode } from 'antd';
+import html2canvas from 'html2canvas';
+import { history } from 'umi';
 
 interface ResidentInfo {
   id: number;
@@ -34,6 +34,7 @@ interface ResidentInfo {
 }
 
 const queryResidentsList = async (params: any) => {
+  console.log(params);
   // Mock API call
   return new Promise<{ data: { list: ResidentInfo[] }; success: boolean }>(
     (resolve) => {
@@ -68,6 +69,7 @@ const queryResidentsList = async (params: any) => {
 
 const handleRemove = async (selectedRows: ResidentInfo[]) => {
   // Mock API call
+  console.log(selectedRows);
   return new Promise<void>((resolve) => {
     setTimeout(() => {
       message.success('Residents deleted successfully!');
@@ -194,7 +196,8 @@ const ResidentsTable: React.FC = () => {
             </Text>
             <br />
             <Text type="secondary">
-              In the near future, you will be able to see all your past visits here!
+              In the near future, you will be able to see all your past visits
+              here!
             </Text>
           </Col>
         </Row>
