@@ -1,3 +1,17 @@
+// {
+//   "extends": "./src/.umi/tsconfig.json"
+// }
 {
-  "extends": "./src/.umi/tsconfig.json"
+  "compilerOptions": {
+    "module": "esnext", // Set to esnext or es2015
+    "moduleResolution": "node", // Use node for module resolution
+    "resolveJsonModule": true, // Keep this as you need to import JSON files
+    "target": "es2018", // Set to appropriate target
+    "jsx": "react", // If using React, otherwise adjust as needed
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "exclude": ["node_modules", "dist"]
 }

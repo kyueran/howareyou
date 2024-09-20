@@ -100,7 +100,7 @@ const RegisterVisitPage: React.FC = () => {
     }
 
     try {
-      const response = await fetch('/api/logVisit', {
+      const response = await fetch('/api/logVisits', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

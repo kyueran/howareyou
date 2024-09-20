@@ -1,71 +1,88 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
+import { createClient } from '@vercel/postgres';
 import dotenv from 'dotenv';
-import { Pool } from 'pg';
 
+// Load environment variables
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config({ path: '.env.local' });
 }
 
-// Determine if the environment is production
-const isProduction = process.env.NODE_ENV === 'production';
-
-// Log environment variables for debugging
-console.log(`Environment: ${process.env.NODE_ENV}`);
-if (isProduction) {
-  console.log('Running in production mode.');
-  // Avoid logging DATABASE_URL in production to protect sensitive data
-} else {
-  console.log('Running in development mode.');
-  console.log(`DATABASE_URL: ${process.env.DATABASE_URL}`);
+// GET function to check if the server is working
+export async function GET(): Promise<Response> {
+  return new Response('LOG VISITS WORKING');
 }
 
-// Initialize a connection pool with environment-based configuration
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // Uses DATABASE_URL from environment variables
-  ssl: {
-    rejectUnauthorized: false, // Required for certain PostgreSQL setups
-  },
-});
+// POST function to insert a new visit into the 'visits' table
+export async function POST(request: Request): Promise<Response> {
+  // Create the PostgreSQL client
+  const client = createClient();
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method === 'POST') {
-    const { residentId, visitorId, status, comments, photoUrl } = req.body;
+  try {
+    // Connect to the database
+    await client.connect();
+
+    // Parse the request body
+    const { residentId, visitorId, status, comments, photoUrl } =
+      await request.json();
 
     // Basic validation
     if (!residentId || !visitorId || !status) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Missing required fields.' });
+      return new Response(
+        JSON.stringify({ success: false, message: 'Missing required fields.' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
     }
 
-    try {
-      const client = await pool.connect();
+    // Insert the new visit into the 'visits' table using @vercel/postgres
+    await client.sql`
+      INSERT INTO visits (resident_id, visitor_id, status, comments, photo_url, visit_time)
+      VALUES (${residentId}, ${visitorId}, ${status}, ${comments || null}, ${
+      photoUrl || null
+    }, NOW());
+    `;
 
-      const query = `
-        INSERT INTO visits (resident_id, visitor_id, status, comments, photo_url, visit_time)
-        VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *;
-      `;
-      const values = [
-        residentId,
-        visitorId,
-        status,
-        comments || null,
-        photoUrl || null,
-      ];
-
-      const result = await client.query(query, values);
-      client.release();
-
-      res.status(200).json({ success: true, data: result.rows[0] });
-    } catch (error: any) {
-      console.error('Error logging visit:', error);
-      res.status(500).json({
+    // Return a success response
+    return new Response(
+      JSON.stringify({ success: true, message: 'Visit logged successfully.' }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
+  } catch (error: any) {
+    console.error('Error logging visit:', error);
+    return new Response(
+      JSON.stringify({
         success: false,
         message: 'Failed to log visit.',
         error: error.message,
-      });
-    }
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
+  } finally {
+    // Ensure the database connection is closed
+    await client.end();
+  }
+}
+
+// Handler to route the request based on the method (GET/POST)
+export async function handler(request: Request): Promise<Response> {
+  if (request.method === 'GET') {
+    return GET();
+  } else if (request.method === 'POST') {
+    return POST(request);
   } else {
-    res.status(405).json({ message: 'Method not allowed. Use POST.' });
+    return new Response(
+      JSON.stringify({ message: 'Method not allowed. Use POST or GET.' }),
+      {
+        status: 405,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
   }
 }
