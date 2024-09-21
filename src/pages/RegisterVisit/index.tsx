@@ -110,25 +110,30 @@ const RegisterVisitPage: React.FC = () => {
     }
 
     try {
+      const visitorId = await getVisitorId(access); // Ensure the visitorId is awaited properly
+      const requestBody = {
+        residentId: parseInt(id, 10), // Ensure residentId is an integer
+        visitorId,
+        status,
+        comments,
+        photoUrl,
+      };
+
+      console.log('Request Body:', JSON.stringify(requestBody, null, 2)); // Pretty-print the JSON
+
       const response = await fetch('/api/logVisits', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          residentId: parseInt(id, 10), // Ensure residentId is an integer
-          visitorId: getVisitorId(access),
-          status,
-          comments,
-          photoUrl,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const result = await response.json();
 
       if (result.success) {
         message.success('Form submitted and logged successfully!');
-        history.push(`/residents`);
+        history.push(`/home`);
       } else {
         message.error(
           result.message || 'Failed to log the form. Please try again.',
@@ -141,9 +146,9 @@ const RegisterVisitPage: React.FC = () => {
   };
 
   // Handle redirect to resident profile page
-  const handleRedirectToResidentProfile = () => {
+  const handleRedirectToElderlyProfile = () => {
     const { id } = params; // Use dynamic residentId
-    history.push(`/residents/${id}`);
+    history.push(`/elderly/${id}`);
   };
 
   /**
@@ -183,7 +188,7 @@ const RegisterVisitPage: React.FC = () => {
             <Title level={3} style={{ marginBottom: '0px' }}>
               Register Visit
             </Title>
-            <Access accessible={access.isVolunteer}>
+            <Access accessible={access.isStaff}>
               <Card
                 style={{ width: '100%' }}
                 bodyStyle={{ padding: '16px' }}
@@ -229,7 +234,7 @@ const RegisterVisitPage: React.FC = () => {
                     <div style={{ marginTop: '8px' }}>
                       <Button
                         type="primary"
-                        onClick={handleRedirectToResidentProfile}
+                        onClick={handleRedirectToElderlyProfile}
                       >
                         View Profile
                       </Button>

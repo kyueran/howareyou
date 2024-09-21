@@ -33,8 +33,8 @@ export default defineConfig({
     },
     {
       name: 'Resident Profile',
-      path: '/residents/:id',
-      component: './ResidentProfile',
+      path: '/elderly/:id',
+      component: './ElderlyProfile',
       access: 'isStaff',
       hideInMenu: true,
     },
