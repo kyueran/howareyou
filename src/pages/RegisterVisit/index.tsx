@@ -20,7 +20,6 @@ const { TextArea } = Input;
 const { Text, Title } = Typography;
 
 const normFile = (e: any) => {
-  console.log('Upload event:', e);
   if (Array.isArray(e)) {
     return e;
   }
@@ -30,6 +29,7 @@ const normFile = (e: any) => {
 const RegisterVisitPage: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
+  const [blob, setBlob] = useState<string | null>(null);
 
   // Fetch data asynchronously
   const populateForm = async () => {
@@ -72,7 +72,6 @@ const RegisterVisitPage: React.FC = () => {
     } catch (error) {
       message.error('Failed to fetch data');
     } finally {
-      console.log('FINALLY');
       setLoading(false);
     }
   };
@@ -82,7 +81,7 @@ const RegisterVisitPage: React.FC = () => {
   }, [form]);
 
   const access = useAccess();
-  const params = useParams<{ id: string }>(); // Specify the type of params
+  const params = useParams<{ id: string }>();
 
   const getVisitorId = async (access: Access) => {
     if (access.isVolunteer) {
@@ -98,28 +97,23 @@ const RegisterVisitPage: React.FC = () => {
   const onFinish = async (values: any) => {
     console.log('Form values:', values);
 
-    const { id } = params; // Get the resident ID from URL params
-    const { status, comments, upload } = values;
+    const { id } = params;
+    const { status, comments } = values;
 
-    // Extract photo URL if available
-    let photoUrl = null;
-    if (upload && upload.length > 0) {
-      // Assuming the upload response contains the URL
-      // Adjust according to your actual upload response structure
-      photoUrl = upload[0].response?.url || null;
-    }
+    // Use the photo URL if the upload was successful
+    const photoUrl = blob;
 
     try {
-      const visitorId = await getVisitorId(access); // Ensure the visitorId is awaited properly
+      const visitorId = await getVisitorId(access);
       const requestBody = {
-        residentId: parseInt(id, 10), // Ensure residentId is an integer
+        residentId: parseInt(id, 10),
         visitorId,
         status,
         comments,
-        photoUrl,
+        photoUrl, // Store the photo URL from Vercel Blob Storage
       };
 
-      console.log('Request Body:', JSON.stringify(requestBody, null, 2)); // Pretty-print the JSON
+      console.log('Request Body:', JSON.stringify(requestBody, null, 2));
 
       const response = await fetch('/api/logVisits', {
         method: 'POST',
@@ -145,22 +139,26 @@ const RegisterVisitPage: React.FC = () => {
     }
   };
 
-  // Handle redirect to resident profile page
-  const handleRedirectToElderlyProfile = () => {
-    const { id } = params; // Use dynamic residentId
-    history.push(`/elderly/${id}`);
+  const handleFileUpload = async (file: File) => {
+    const response = await fetch(`/api/photoUpload?filename=${file.name}`, {
+      method: 'POST',
+      body: file,
+    });
+
+    const uploadedBlob = await response.json();
+    setBlob(uploadedBlob.url);
+    message.success('Photo uploaded successfully!');
   };
 
-  /**
-   * Upload component props
-   * @see https://ant.design/components/upload/#API
-   * @prop action: The URL where the uploaded files will be sent. For a dummy endpoint, you can use a placeholder or mock server.
-   * @prop listType: The type of the upload list. You can use 'text', 'picture', or 'picture-card'. 'picture-card' will display the uploaded image as thumbnails.
-   * @prop beforeUpload: A function that will be called before uploading the file. You can use this function to validate the file type and size.
-   * @prop onChange: A function that will be called when the status of the file changes. You can use this function to show a message when the file is uploaded successfully or failed.
-   */
   const uploadProps: UploadProps = {
-    action: 'https://jsonplaceholder.typicode.com/posts/', // Dummy endpoint
+    customRequest: async ({ file, onSuccess, onError }) => {
+      try {
+        await handleFileUpload(file as File);
+        onSuccess?.('ok');
+      } catch (error) {
+        onError?.(error);
+      }
+    },
     listType: 'picture-card',
     beforeUpload: (file) => {
       const isJpgOrPng =
@@ -178,6 +176,11 @@ const RegisterVisitPage: React.FC = () => {
         message.error(`${info.file.name} file upload failed.`);
       }
     },
+  };
+
+  const handleRedirectToElderlyProfile = () => {
+    const { id } = params; // Use dynamic residentId
+    history.push(`/elderly/${id}`);
   };
 
   return (
@@ -245,11 +248,7 @@ const RegisterVisitPage: React.FC = () => {
             </Access>
             <Form form={form} layout="vertical" onFinish={onFinish}>
               <Form.Item
-                label={
-                  <span style={{ fontWeight: 'bold' }}>
-                    How is he/she doing?
-                  </span>
-                }
+                label="How is he/she doing?"
                 name="status"
                 rules={[{ required: true, message: 'Please select an option' }]}
               >
@@ -262,28 +261,12 @@ const RegisterVisitPage: React.FC = () => {
                 />
               </Form.Item>
 
-              <Form.Item
-                label={
-                  <span style={{ fontWeight: 'bold' }}>
-                    Any comments or observations?
-                  </span>
-                }
-                name="comments"
-              >
+              <Form.Item label="Any comments or observations?" name="comments">
                 <TextArea rows={4} />
               </Form.Item>
 
               <Form.Item
-                label={
-                  <div>
-                    <Text strong>Any photos to share?</Text>
-                    <div>
-                      <Text type="secondary">
-                        Optional. Seek their consent, and be respectful.
-                      </Text>
-                    </div>
-                  </div>
-                }
+                label="Any photos to share?"
                 name="upload"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
