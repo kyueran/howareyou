@@ -21,7 +21,7 @@ export async function POST(request: Request): Promise<Response> {
     await client.connect();
 
     // Parse the request body
-    const { elderlyId, visitorId, status, comments, photoUrl } =
+    const { elderlyId, visitorId, status, comments, photoBase64 } =
       await request.json();
 
     // Basic validation
@@ -37,9 +37,9 @@ export async function POST(request: Request): Promise<Response> {
 
     // Insert the new visit into the 'visits' table using @vercel/postgres
     await client.sql`
-      INSERT INTO visits (elderly_id, visitor_id, status, comments, photo_url, visit_time)
+      INSERT INTO visits (elderly_id, visitor_id, status, comments, photo_base64, visit_time)
       VALUES (${elderlyId}, ${visitorId}, ${status}, ${comments || null}, ${
-      photoUrl || null
+      photoBase64 || null
     }, NOW());
     `;
 

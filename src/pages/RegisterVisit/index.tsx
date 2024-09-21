@@ -19,6 +19,16 @@ import ButtonGroupInput from '../../components/ButtonGroupInput';
 const { TextArea } = Input;
 const { Text, Title } = Typography;
 
+// Function to convert file to Base64
+const getBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
     return e;
@@ -29,7 +39,7 @@ const normFile = (e: any) => {
 const RegisterVisitPage: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
-  const [blob, setBlob] = useState<string | null>(null);
+  const [base64Photo, setBase64Photo] = useState<string | null>(null);
 
   // Fetch data asynchronously
   const populateForm = async () => {
@@ -100,8 +110,8 @@ const RegisterVisitPage: React.FC = () => {
     const { id } = params;
     const { status, comments } = values;
 
-    // Use the photo URL if the upload was successful
-    const photoUrl = blob;
+    // Use the Base64 photo if uploaded
+    const photoBase64 = base64Photo;
 
     try {
       const visitorId = await getVisitorId(access);
@@ -110,7 +120,7 @@ const RegisterVisitPage: React.FC = () => {
         visitorId,
         status,
         comments,
-        photoUrl, // Store the photo URL from Vercel Blob Storage
+        photoBase64, // Store the Base64 photo in the database
       };
 
       console.log('Request Body:', JSON.stringify(requestBody, null, 2));
@@ -139,22 +149,13 @@ const RegisterVisitPage: React.FC = () => {
     }
   };
 
-  const handleFileUpload = async (file: File) => {
-    const response = await fetch(`/api/photoUpload?filename=${file.name}`, {
-      method: 'POST',
-      body: file,
-    });
-
-    const uploadedBlob = await response.json();
-    setBlob(uploadedBlob.url);
-    message.success('Photo uploaded successfully!');
-  };
-
   const uploadProps: UploadProps = {
     customRequest: async ({ file, onSuccess, onError }) => {
       try {
-        await handleFileUpload(file as File);
+        const base64 = await getBase64(file as File); // Convert the file to Base64
+        setBase64Photo(base64); // Set the Base64 encoded string
         onSuccess?.('ok');
+        message.success('Photo converted to Base64 and ready for upload.');
       } catch (error) {
         onError?.(error);
       }
@@ -179,7 +180,7 @@ const RegisterVisitPage: React.FC = () => {
   };
 
   const handleRedirectToElderlyProfile = () => {
-    const { id } = params; // Use dynamic elderlyId
+    const { id } = params;
     history.push(`/elderly/${id}`);
   };
 
@@ -203,9 +204,9 @@ const RegisterVisitPage: React.FC = () => {
                       style={{
                         position: 'relative',
                         width: '100%',
-                        paddingBottom: '100%', // 1:1 aspect ratio
+                        paddingBottom: '100%',
                         overflow: 'hidden',
-                        borderRadius: '8px', // Slightly round the corners
+                        borderRadius: '8px',
                       }}
                     >
                       <img
