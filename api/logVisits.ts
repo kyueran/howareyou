@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 // Load environment variables
 if (process.env.NODE_ENV !== 'production') {
-  dotenv.config({ path: '.env.development.local' });
+  dotenv.config({ path: '.env.local' });
 }
 
 // GET function to check if the server is working

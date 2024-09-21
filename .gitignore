@@ -1,5 +1,6 @@
 /node_modules
 /.env.development.local
+/.env.local
 /.umirc.local.ts
 /config/config.local.ts
 /src/.umi
@@ -13,3 +14,4 @@
 .swc
 .vercel
 .env.development.local
+.env*.local

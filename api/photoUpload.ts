@@ -5,7 +5,7 @@ import { Readable } from 'stream';
 
 // Load environment variables
 if (process.env.NODE_ENV !== 'production') {
-  dotenv.config({ path: '.env.development.local' });
+  dotenv.config({ path: '.env.local' });
 }
 
 export const config = {
