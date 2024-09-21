@@ -17,7 +17,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
     // Fetch all visits from the database
     const visits = await client.sql`
-    SELECT id, elderly_id, visitor_id, status, comments, photo_base64, visit_time
+    SELECT id, elderly_id, visitor_id, status, comments, photo_urls, location, visit_time
     FROM visits
     ORDER BY visit_time DESC;
     `;

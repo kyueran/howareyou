@@ -12,6 +12,7 @@ import {
   Typography,
   Upload,
 } from 'antd';
+import { upload } from '@vercel/blob/client';
 import type { UploadProps } from 'antd/es/upload/interface';
 import React, { useEffect, useState } from 'react';
 import ButtonGroupInput from '../../components/ButtonGroupInput';
@@ -19,17 +20,8 @@ import ButtonGroupInput from '../../components/ButtonGroupInput';
 const { TextArea } = Input;
 const { Text, Title } = Typography;
 
-// Function to convert file to Base64
-const getBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-};
-
 const normFile = (e: any) => {
+  console.log('Upload event:', e);
   if (Array.isArray(e)) {
     return e;
   }
@@ -39,13 +31,13 @@ const normFile = (e: any) => {
 const RegisterVisitPage: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
-  const [base64Photo, setBase64Photo] = useState<string | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Store multiple selected files
+  const [photoUrls, setPhotoUrls] = useState<string[]>([]); // Store the uploaded photo URLs
 
   // Fetch data asynchronously
   const populateForm = async () => {
     setLoading(true);
     try {
-      // Simulated fetch data
       const result = {
         id: 1,
         elderlyCode: 'WL-8829',
@@ -109,22 +101,41 @@ const RegisterVisitPage: React.FC = () => {
 
     const { id } = params;
     const { status, comments } = values;
-
-    // Use the Base64 photo if uploaded
-    const photoBase64 = base64Photo;
+    const location = 'TEST LOC';
 
     try {
       const visitorId = await getVisitorId(access);
+
+      // Ensure that the photos are uploaded before submitting the form data
+      const uploadedPhotoUrls: string[] = [];
+
+      for (const file of selectedFiles) {
+        try {
+          const result = await upload(file.name, file, {
+            access: 'public',
+            handleUploadUrl: '/api/uploadPhoto',
+          });
+          uploadedPhotoUrls.push(result.url); // Add the uploaded photo URL
+          message.success(`Photo ${file.name} uploaded successfully to Blob Storage.`);
+        } catch (error: any) {
+          message.error(`Error uploading photo ${file.name}: ${error.message}`);
+          return; // Stop submission if photo upload fails
+        }
+      }
+
+      // Prepare request body with the uploaded photo URLs
       const requestBody = {
         elderlyId: parseInt(id, 10),
         visitorId,
         status,
         comments,
-        photoBase64, // Store the Base64 photo in the database
+        photoUrls: uploadedPhotoUrls, // Use the array of uploaded photo URLs
+        location,
       };
 
       console.log('Request Body:', JSON.stringify(requestBody, null, 2));
 
+      // Submit the form data to the backend
       const response = await fetch('/api/logVisits', {
         method: 'POST',
         headers: {
@@ -139,9 +150,7 @@ const RegisterVisitPage: React.FC = () => {
         message.success('Form submitted and logged successfully!');
         history.push(`/home`);
       } else {
-        message.error(
-          result.message || 'Failed to log the form. Please try again.',
-        );
+        message.error(result.message || 'Failed to log the form. Please try again.');
       }
     } catch (error: any) {
       console.error('Submission error:', error);
@@ -150,33 +159,29 @@ const RegisterVisitPage: React.FC = () => {
   };
 
   const uploadProps: UploadProps = {
-    customRequest: async ({ file, onSuccess, onError }) => {
-      try {
-        const base64 = await getBase64(file as File); // Convert the file to Base64
-        setBase64Photo(base64); // Set the Base64 encoded string
-        onSuccess?.('ok');
-        message.success('Photo converted to Base64 and ready for upload.');
-      } catch (error) {
-        onError?.(error);
-      }
-    },
-    listType: 'picture-card',
     beforeUpload: (file) => {
-      const isJpgOrPng =
-        file.type === 'image/jpeg' || file.type === 'image/png';
-      if (!isJpgOrPng) {
-        message.error('You can only upload JPG/PNG file!');
+      const isCorrectFormat =
+        file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/heic';
+      if (!isCorrectFormat) {
+        message.error('You can only upload JPG/PNG/HEIC files!');
         return Upload.LIST_IGNORE;
       }
-      return true;
+
+      // Add the selected file to the array
+      setSelectedFiles((prevFiles) => [...prevFiles, file]);
+      return false; // Prevent automatic upload
     },
-    onChange(info) {
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
+    onRemove: (file) => {
+      // Remove the specific file from the selectedFiles array
+      setSelectedFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
+      setPhotoUrls((prevUrls) => prevUrls.filter((url) => url !== file.url));
     },
+    listType: 'picture-card',
+    fileList: selectedFiles.map((file, index) => ({
+      uid: index.toString(),
+      name: file.name,
+      status: 'done',
+    })),
   };
 
   const handleRedirectToElderlyProfile = () => {

@@ -30,7 +30,7 @@ const DisplayVisitsPage: React.FC = () => {
   // Use this function to get visitor's name and role based on access and visitor_id
   const getVisitorInfo = (visitorId: number) => {
     if (visitorId === 1) {
-      return { name: 'Volunteer-1', role: 'volunteer'};
+      return { name: 'Volunteer-1', role: 'volunteer' };
     } else if (visitorId === 2) {
       return { name: 'Staff-1', role: 'staff' };
     } else {
@@ -67,30 +67,43 @@ const DisplayVisitsPage: React.FC = () => {
                         style={{
                           position: 'relative',
                           width: '100%',
-                          paddingBottom: '100%', // 1:1 aspect ratio
                           overflow: 'hidden',
                           borderRadius: '8px',
                           backgroundColor: '#f0f0f0',
                         }}
                       >
-                        {visit.photo_base64 ? (
-                          <img
-                            src={visit.photo_base64}
-                            alt="Visit"
-                            style={{
-                              position: 'absolute',
-                              top: '50%',
-                              left: '50%',
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'cover',
-                              objectPosition: 'center',
-                              transform: 'translate(-50%, -50%)',
-                            }}
-                          />
+                        {visit.photo_urls && visit.photo_urls.length > 0 ? (
+                          // Map over the photo_urls array and display each photo
+                          visit.photo_urls.map((url: string, index: number) => (
+                            <div
+                              key={index}
+                              style={{
+                                marginBottom: '8px',
+                                position: 'relative',
+                                width: '100%',
+                                paddingBottom: '100%', // 1:1 aspect ratio for each image
+                                overflow: 'hidden',
+                              }}
+                            >
+                              <img
+                                src={url}
+                                alt={`Visit Photo ${index + 1}`}
+                                style={{
+                                  position: 'absolute',
+                                  top: '50%',
+                                  left: '50%',
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover',
+                                  objectPosition: 'center',
+                                  transform: 'translate(-50%, -50%)',
+                                }}
+                              />
+                            </div>
+                          ))
                         ) : (
                           <div style={{ textAlign: 'center', paddingTop: '50%' }}>
-                            No Image
+                            No Images
                           </div>
                         )}
                       </div>
