@@ -20,7 +20,7 @@ declare namespace API {
 
   type LoginResponse = ApiResponse<UserInfo>;
 
-  type UserRole = 'volunteer' | 'public' | 'staff';
+  type UserRole = 'volunteer' | 'staff';
 
   type UserInfo = {
     id?: number;

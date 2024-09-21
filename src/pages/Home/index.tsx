@@ -188,11 +188,11 @@ const ResidentsTable: React.FC = () => {
 
   return (
     <>
-      <Access accessible={access.isPublic}>
+      <Access accessible={access.isVolunteer}>
         <Row justify="center" style={{ marginTop: '24px' }}>
           <Col xs={22} sm={20} md={16} lg={12}>
             <Text strong style={{ fontSize: '16px' }}>
-              Thank you for being a kind neighbour! 🏡
+              Thank you for your help! 🏡
             </Text>
             <br />
             <Text type="secondary">
@@ -202,11 +202,11 @@ const ResidentsTable: React.FC = () => {
           </Col>
         </Row>
       </Access>
-      <Access accessible={access.isVolunteer || access.isStaff}>
+      <Access accessible={access.isStaff}>
         <PageContainer
           style={{ padding: '8px' }}
           header={{
-            title: 'Elderly residents staying near you',
+            title: 'Elderly Residents',
           }}
         >
           <ProTable<ResidentInfo>

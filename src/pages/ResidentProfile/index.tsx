@@ -137,14 +137,14 @@ const ResidentProfilePage: React.FC = () => {
                 visits: [
                   {
                     datetime: '09-10-2024 20:00',
-                    visitor: { id: 99, name: 'David', role: 'public' },
+                    visitor: { id: 99, name: 'David', role: 'volunteer' },
                     location: 'Home',
                     attachments: [],
                     notes: 'All good.',
                   },
                   {
                     datetime: '09-08-2024 17:00',
-                    visitor: { id: 2, name: 'David Hiong', role: 'volunteer' },
+                    visitor: { id: 2, name: 'David Hiong', role: 'staff' },
                     location: 'Woodlands Hawker Centre',
                     attachments: [],
                     notes:

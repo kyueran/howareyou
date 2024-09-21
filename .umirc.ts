@@ -17,7 +17,7 @@ export default defineConfig({
   routes: [
     {
       path: '/',
-      redirect: '/residents',
+      redirect: '/home',
     },
     {
       name: 'Login',
@@ -26,23 +26,23 @@ export default defineConfig({
       layout: false,
     },
     {
-      name: 'Elderly Residents',
-      path: '/residents',
-      access: ['isVolunteer', 'isPublic', 'isStaff'],
-      component: './Residents',
+      name: 'Home',
+      path: '/home',
+      access: ['isVolunteer', 'isStaff'],
+      component: './Home',
     },
     {
       name: 'Resident Profile',
       path: '/residents/:id',
       component: './ResidentProfile',
-      access: 'isVolunteer',
+      access: 'isStaff',
       hideInMenu: true,
     },
     {
       name: 'Register Visit',
       path: '/register-visit/:id',
       component: './RegisterVisit',
-      access: ['isVolunteer', 'isPublic', 'isStaff'],
+      access: ['isVolunteer', 'isStaff'],
       hideInMenu: true,
     },
   ],

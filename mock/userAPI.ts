@@ -15,19 +15,19 @@ export default {
         data: {
           id: 1,
           role: 'volunteer',
-          name: 'volname',
+          name: 'Volunteer-1',
           token: 'mock-token-volunteer',
         },
       });
     }
-    if (username === 'resident' && password === 'pword') {
+    if (username === 'staff' && password === 'pword') {
       return res.send({
         status: 'ok',
         data: {
           id: 2,
-          role: 'resident',
-          name: 'resname',
-          token: 'mock-token-resident',
+          role: 'staff',
+          name: 'Staff-1',
+          token: 'mock-token-staff',
         },
       });
     }
@@ -57,14 +57,14 @@ export default {
         visits: [
           {
             datetime: '09-10-2024 20:00',
-            visitor: { id: 99, name: 'David', role: 'public' },
+            visitor: { id: 99, name: 'David', role: 'volunteer' },
             location: 'Home',
             attachments: [],
             notes: 'All good.',
           },
           {
             date: '09-08-2024 17:00',
-            visitor: { id: 2, name: 'David Hiong', role: 'volunteer' },
+            visitor: { id: 2, name: 'David Hiong', role: 'staff' },
             location: 'Woodlands Hawker Centre',
             attachments: [],
             notes: "Saw auntie at Woodlands Hawker Centre, she's doing well",

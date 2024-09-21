@@ -51,14 +51,14 @@ const RegisterVisitPage: React.FC = () => {
         visits: [
           {
             datetime: '09-10-2024 20:00',
-            visitor: { id: 99, name: 'David', role: 'public' },
+            visitor: { id: 99, name: 'David', role: 'volunteer' },
             location: 'Home',
             attachments: [],
             notes: 'All good.',
           },
           {
             datetime: '09-08-2024 17:00',
-            visitor: { id: 2, name: 'David Hiong', role: 'volunteer' },
+            visitor: { id: 2, name: 'David Hiong', role: 'staff' },
             location: 'Woodlands Hawker Centre',
             attachments: [],
             notes: "Saw auntie at Woodlands Hawker Centre, she's doing well",
@@ -84,6 +84,16 @@ const RegisterVisitPage: React.FC = () => {
   const access = useAccess();
   const params = useParams<{ id: string }>(); // Specify the type of params
 
+  const getVisitorId = async (access: Access) => {
+    if (access.isVolunteer) {
+      return 1;
+    } else if (access.isStaff) {
+      return 2;
+    } else {
+      return 3;
+    }
+  };
+
   // Handle form submission
   const onFinish = async (values: any) => {
     console.log('Form values:', values);
@@ -107,7 +117,7 @@ const RegisterVisitPage: React.FC = () => {
         },
         body: JSON.stringify({
           residentId: parseInt(id, 10), // Ensure residentId is an integer
-          visitorId: 1, // Hardcoded visitorId
+          visitorId: getVisitorId(access),
           status,
           comments,
           photoUrl,
@@ -166,7 +176,7 @@ const RegisterVisitPage: React.FC = () => {
   };
 
   return (
-    <Access accessible={access.isVolunteer || access.isPublic}>
+    <Access accessible={access.isVolunteer || access.isStaff}>
       <Row justify="center" style={{ marginTop: '24px' }}>
         <Col xs={22} sm={20} md={16} lg={12}>
           <Space direction="vertical" size={24} style={{ width: '100%' }}>

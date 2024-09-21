@@ -34,9 +34,9 @@ const verifyOTP = async (otp: string) => {
       status: 'ok',
       data: {
         id: 2,
-        role: 'public',
-        name: 'resname',
-        token: 'mock-token-resident',
+        role: 'volunteer',
+        name: 'Volunteer-1',
+        token: 'mock-token-volunteer',
       },
     };
   }
@@ -45,19 +45,8 @@ const verifyOTP = async (otp: string) => {
       status: 'ok',
       data: {
         id: 1,
-        role: 'volunteer',
-        name: 'volname',
-        token: 'mock-token-volunteer',
-      },
-    };
-  }
-  if (otp === '0002') {
-    return {
-      status: 'ok',
-      data: {
-        id: 1,
         role: 'staff',
-        name: 'staffname',
+        name: 'Staff-1',
         token: 'mock-token-staff',
       },
     };
