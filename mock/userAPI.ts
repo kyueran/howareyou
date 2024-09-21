@@ -36,7 +36,7 @@ export default {
       message: 'Invalid username or password',
     });
   },
-  'GET /api/resident/1': async (req: any, res: any) => {
+  'GET /api/elderly/1': async (req: any, res: any) => {
     await new Promise((res) => {
       setTimeout(res, 1000);
     });

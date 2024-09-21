@@ -91,7 +91,7 @@ type Language =
   | 'Teochew'
   | 'Cantonese';
 
-type ResidentProfileInfo = {
+type ElderlyProfileInfo = {
   id: number;
   name: string;
   address: string;
@@ -105,16 +105,16 @@ type ResidentProfileInfo = {
   languages: Language[];
 };
 
-const ResidentProfilePage: React.FC = () => {
+const ElderlyProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<ResidentProfileInfo>();
+  const [data, setData] = useState<ElderlyProfileInfo>();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const qrCodeRef = useRef<HTMLDivElement>(null);
   const params = useParams();
   const { styles } = useGradientButtonStyle();
 
   useEffect(() => {
-    const fetchResidentData = async () => {
+    const fetchElderlyData = async () => {
       setLoading(true);
       try {
         setData(
@@ -156,12 +156,12 @@ const ResidentProfilePage: React.FC = () => {
           }),
         );
       } catch (error) {
-        message.error('An error occurred when fetching resident data.');
+        message.error('An error occurred when fetching elderly data.');
       } finally {
         setLoading(false);
       }
     };
-    if (params.id) fetchResidentData();
+    if (params.id) fetchElderlyData();
   }, [params.id]);
 
   const qrUrl = `${window.location.origin}/register-visit/${params.id}`;
@@ -459,4 +459,4 @@ const ResidentProfilePage: React.FC = () => {
   );
 };
 
-export default ResidentProfilePage;
+export default ElderlyProfilePage;

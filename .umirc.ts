@@ -32,7 +32,7 @@ export default defineConfig({
       component: './Home',
     },
     {
-      name: 'Resident Profile',
+      name: 'Elderly Profile',
       path: '/elderly/:id',
       component: './ElderlyProfile',
       access: 'isStaff',

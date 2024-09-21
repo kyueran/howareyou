@@ -28,12 +28,12 @@ declare namespace API {
     role?: UserRole;
   };
 
-  type ResidentInfo = {
-    id: number; // Unique identifier for the resident
-    name: string; // Resident's name
-    address: string; // Resident's address
+  type ElderlyInfo = {
+    id: number;
+    name: string;
+    address: string;
     gender: number; // 0 for male, 1 for female
-    phoneNumber: string; // Resident's phone number
+    phoneNumber: string;
     [key: string]: any; // Optional: Allows for additional properties
   };
 }

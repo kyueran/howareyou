@@ -106,7 +106,7 @@ const RegisterVisitPage: React.FC = () => {
     try {
       const visitorId = await getVisitorId(access);
       const requestBody = {
-        residentId: parseInt(id, 10),
+        elderlyId: parseInt(id, 10),
         visitorId,
         status,
         comments,
@@ -179,7 +179,7 @@ const RegisterVisitPage: React.FC = () => {
   };
 
   const handleRedirectToElderlyProfile = () => {
-    const { id } = params; // Use dynamic residentId
+    const { id } = params; // Use dynamic elderlyId
     history.push(`/elderly/${id}`);
   };
 

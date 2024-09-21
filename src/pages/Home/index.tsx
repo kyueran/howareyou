@@ -24,7 +24,7 @@ import { QRCode } from 'antd';
 import html2canvas from 'html2canvas';
 import { history } from 'umi';
 
-interface ResidentInfo {
+interface ElderlyInfo {
   id: number;
   elderlyCode: string;
   aacCode: string;
@@ -33,10 +33,10 @@ interface ResidentInfo {
   lastVisitedDate: string;
 }
 
-const queryResidentsList = async (params: any) => {
+const queryElderlyList = async (params: any) => {
   console.log(params);
   // Mock API call
-  return new Promise<{ data: { list: ResidentInfo[] }; success: boolean }>(
+  return new Promise<{ data: { list: ElderlyInfo[] }; success: boolean }>(
     (resolve) => {
       setTimeout(() => {
         resolve({
@@ -67,32 +67,32 @@ const queryResidentsList = async (params: any) => {
   );
 };
 
-const handleRemove = async (selectedRows: ResidentInfo[]) => {
+const handleRemove = async (selectedRows: ElderlyInfo[]) => {
   // Mock API call
   console.log(selectedRows);
   return new Promise<void>((resolve) => {
     setTimeout(() => {
-      message.success('Residents deleted successfully!');
+      message.success('Elderly deleted successfully!');
       resolve();
     }, 500);
   });
 };
 
-const ResidentsTable: React.FC = () => {
+const ElderlyTable: React.FC = () => {
   const actionRef = useRef<ActionType>();
-  const [row, setRow] = useState<ResidentInfo>();
-  const [selectedRowsState, setSelectedRows] = useState<ResidentInfo[]>([]);
+  const [row, setRow] = useState<ElderlyInfo>();
+  const [selectedRowsState, setSelectedRows] = useState<ElderlyInfo[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [qrResident, setQrResident] = useState<ResidentInfo | null>(null);
+  const [qrElderly, setQrElderly] = useState<ElderlyInfo | null>(null);
   const qrCodeRef = useRef<HTMLDivElement>(null);
   const access = useAccess();
   const { Text } = Typography;
 
-  const columns: ProDescriptionsItemProps<ResidentInfo>[] = [
+  const columns: ProDescriptionsItemProps<ElderlyInfo>[] = [
     {
       title: 'Elderly Code',
       dataIndex: 'elderlyCode',
-      tip: 'Unique identifier for the resident',
+      tip: 'Unique identifier for the elderly',
       formItemProps: {
         rules: [
           {
@@ -136,7 +136,7 @@ const ResidentsTable: React.FC = () => {
         <>
           <a
             onClick={() => {
-              setQrResident(record);
+              setQrElderly(record);
               setIsModalVisible(true);
             }}
           >
@@ -145,7 +145,7 @@ const ResidentsTable: React.FC = () => {
           <Divider type="vertical" />
           <a
             onClick={() => {
-              history.push(`/residents/${record.id}`);
+              history.push(`/elderly/${record.id}`);
             }}
           >
             View Details
@@ -157,7 +157,7 @@ const ResidentsTable: React.FC = () => {
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    setQrResident(null);
+    setQrElderly(null);
   };
 
   const handleSaveAsImage = () => {
@@ -165,7 +165,7 @@ const ResidentsTable: React.FC = () => {
       html2canvas(qrCodeRef.current).then((canvas) => {
         const link = document.createElement('a');
         link.href = canvas.toDataURL('image/png');
-        link.download = `${qrResident?.elderlyCode}-qr-code.png`;
+        link.download = `${qrElderly?.elderlyCode}-qr-code.png`;
         link.click();
       });
     }
@@ -206,18 +206,18 @@ const ResidentsTable: React.FC = () => {
         <PageContainer
           style={{ padding: '8px' }}
           header={{
-            title: 'Elderly Residents',
+            title: 'Elderly Elderlys',
           }}
         >
-          <ProTable<ResidentInfo>
-            headerTitle="Residents List"
+          <ProTable<ElderlyInfo>
+            headerTitle="Elderly List"
             actionRef={actionRef}
             rowKey="id"
             search={{
               labelWidth: 120,
             }}
             request={async (params, sorter, filter) => {
-              const { data, success } = await queryResidentsList({
+              const { data, success } = await queryElderlyList({
                 ...params,
                 sorter,
                 filter,
@@ -262,7 +262,7 @@ const ResidentsTable: React.FC = () => {
             closable={false}
           >
             {row?.elderlyCode && (
-              <ProDescriptions<ResidentInfo>
+              <ProDescriptions<ElderlyInfo>
                 column={2}
                 title={row?.elderlyCode}
                 request={async () => ({
@@ -309,13 +309,13 @@ const ResidentsTable: React.FC = () => {
               }}
             >
               <QRCode
-                value={`${window.location.origin}/register-visit/${qrResident?.id}`}
+                value={`${window.location.origin}/register-visit/${qrElderly?.id}`}
                 size={180}
                 errorLevel="H"
               />
             </div>
             <Typography.Paragraph style={{ textAlign: 'center' }}>
-              Elderly Code: {qrResident?.elderlyCode}
+              Elderly Code: {qrElderly?.elderlyCode}
             </Typography.Paragraph>
           </Modal>
         </PageContainer>
@@ -324,4 +324,4 @@ const ResidentsTable: React.FC = () => {
   );
 };
 
-export default ResidentsTable;
+export default ElderlyTable;

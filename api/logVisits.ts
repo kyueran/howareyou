@@ -21,11 +21,11 @@ export async function POST(request: Request): Promise<Response> {
     await client.connect();
 
     // Parse the request body
-    const { residentId, visitorId, status, comments, photoUrl } =
+    const { elderlyId, visitorId, status, comments, photoUrl } =
       await request.json();
 
     // Basic validation
-    if (!residentId || !visitorId || !status) {
+    if (!elderlyId || !visitorId || !status) {
       return new Response(
         JSON.stringify({ success: false, message: 'Missing required fields.' }),
         {
@@ -37,8 +37,8 @@ export async function POST(request: Request): Promise<Response> {
 
     // Insert the new visit into the 'visits' table using @vercel/postgres
     await client.sql`
-      INSERT INTO visits (resident_id, visitor_id, status, comments, photo_url, visit_time)
-      VALUES (${residentId}, ${visitorId}, ${status}, ${comments || null}, ${
+      INSERT INTO visits (elderly_id, visitor_id, status, comments, photo_url, visit_time)
+      VALUES (${elderlyId}, ${visitorId}, ${status}, ${comments || null}, ${
       photoUrl || null
     }, NOW());
     `;
