@@ -12,3 +12,4 @@
 /.mfsu
 .swc
 .vercel
+.env.development.local
