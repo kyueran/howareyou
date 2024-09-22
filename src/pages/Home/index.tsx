@@ -243,7 +243,7 @@ const ResidentListPage: React.FC = () => {
               : null;
             const daysSinceLastVisit = mostRecentVisit ? dayjs().diff(mostRecentVisit, 'days') : 'No visits';
             const distance = currentPosition
-              ? `${(calculateDistance(1.3521, 103.8198, currentPosition.lat, currentPosition.lon) / 1000).toFixed(1)} km`
+              ? `${(calculateDistance(1.3521, 103.8198, currentPosition.lat, currentPosition.lon) / 1000).toFixed(1)} km away`
               : 'Fetching distance...';
 
             return (
@@ -325,7 +325,7 @@ const ResidentListPage: React.FC = () => {
                             visited {daysSinceLastVisit} days ago
                           </Text>
                           <Text type="secondary" style={{ fontSize: '12px' }}>
-                            📍 {distance ? `${distance} away` : distance}
+                            📍 {distance}
                           </Text>
                         </Space>
                       </Space>
