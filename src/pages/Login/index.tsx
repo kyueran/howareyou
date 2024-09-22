@@ -35,7 +35,7 @@ const verifyOTP = async (otp: string) => {
       data: {
         id: 2,
         role: 'volunteer',
-        name: 'Volunteer-1',
+        name: 'Mr Wong Ah Fook',
       },
     };
   }
@@ -45,7 +45,7 @@ const verifyOTP = async (otp: string) => {
       data: {
         id: 1,
         role: 'staff',
-        name: 'Staff-1',
+        name: 'Ms Josephine Lam',
       },
     };
   }

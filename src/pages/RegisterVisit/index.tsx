@@ -133,7 +133,7 @@ const RegisterVisitPage: React.FC = () => {
   
       if (result.success) {
         message.success('Form submitted and logged successfully!');
-        history.push(`/home`);
+        history.push(`/display-visits`);
       } else {
         message.error(result.message || 'Failed to log the form. Please try again.');
       }
