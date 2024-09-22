@@ -5,11 +5,10 @@ import {
   PrinterOutlined,
   QrcodeOutlined,
   SaveOutlined,
-  UserAddOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
-import { history, useParams } from '@umijs/max';
+import { useParams } from '@umijs/max';
 import {
   Avatar,
   Button,
@@ -17,7 +16,6 @@ import {
   Col,
   ConfigProvider,
   Divider,
-  Flex,
   Image,
   List,
   message,
@@ -32,7 +30,8 @@ import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import html2canvas from 'html2canvas';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ElderlyInfo, Language } from '../Home'; // Ensure this path is correct
 
 const useGradientButtonStyle = createStyles(({ prefixCls, css }) => ({
   gradientButton: css`
@@ -68,100 +67,59 @@ const dateformat = 'D MMM YYYY, hA';
 
 const { Title, Text, Paragraph } = Typography;
 
-type VisitInfo = {
-  datetime: string;
-  notes: string;
-  visitor: API.UserInfo;
-  location: string;
-  attachments: string[];
-};
-
-type NokInfo = {
-  name: string;
-  relationship: string;
-  contact: number;
-};
-
-type Language =
-  | 'Chinese'
-  | 'Mandarin'
-  | 'Malay'
-  | 'Tamil'
-  | 'Hokkien'
-  | 'Teochew'
-  | 'Cantonese';
-
-type ElderlyProfileInfo = {
-  id: number;
-  name: string;
-  address: string;
-  nok: NokInfo[];
-  notes: string;
-  contact: number;
-  elderlyCode: string;
-  aacCode: string;
-  attachments: string[];
-  visits: VisitInfo[];
-  languages: Language[];
-};
-
-const ElderlyProfilePage: React.FC = () => {
+const ResidentProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<ElderlyProfileInfo>();
+  const [data, setData] = useState<ElderlyInfo | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const qrCodeRef = useRef<HTMLDivElement>(null);
-  const params = useParams();
+  const params = useParams<{ id: string }>(); // Ensure params id is typed
   const { styles } = useGradientButtonStyle();
 
   useEffect(() => {
-    const fetchElderlyData = async () => {
+    const fetchResidentData = async () => {
       setLoading(true);
       try {
-        setData(
-          await new Promise((resolve) => {
-            setTimeout(() => {
-              resolve({
-                id: 1,
-                elderlyCode: 'WL-8829',
-                aacCode: 'AAC-123162',
-                name: 'Goh Seok Meng',
-                address: 'Woodlands Drive 62, #02-144, S623182',
-                contact: 81234567,
-                nok: [
-                  { name: 'David Goh', relationship: 'Son', contact: 91234567 },
-                ],
-                notes:
-                  'Goh Seok Meng lives alone on weekdays, can only speak Hokkien, and has difficulty walking. She does not mind having pictures taken.',
-                languages: ['Hokkien'],
-                attachments: [],
-                visits: [
-                  {
-                    datetime: '09-10-2024 20:00',
-                    visitor: { id: 99, name: 'David', role: 'volunteer' },
-                    location: 'Home',
-                    attachments: [],
-                    notes: 'All good.',
-                  },
-                  {
-                    datetime: '09-08-2024 17:00',
-                    visitor: { id: 2, name: 'David Hiong', role: 'staff' },
-                    location: 'Woodlands Hawker Centre',
-                    attachments: [],
-                    notes:
-                      "Saw auntie at Woodlands Hawker Centre, she's doing well",
-                  },
-                ],
-              });
-            }, 1000);
-          }),
-        );
+        // Fetch data for the specific elderly using the ID from params
+        const response = await fetch(`/api/senior/${params.id}`);
+        const result = await response.json();
+        const seniors: ElderlyInfo[] = result.map((row: any) => ({
+          id: row.id,
+          elderlyCode: row.elderly_code,
+          aacCode: row.aac_code,
+          name: row.name,
+          contactDetails: row.contact_details,
+          nok: [
+            {
+              name: row.nok_name,
+              relationship: row.relationship_with_nok,
+              contactDetails: row.nok_contact_details,
+            },
+          ],
+          block: row.block,
+          floor: row.floor,
+          unitNumber: row.unit_number,
+          address: row.address, // General address (e.g., street name)
+          postalCode: row.postal_code,
+          notes: row.notes,
+          keyAttachments: JSON.parse(row.key_attachments || '[]'), // Parsing the key_attachments if it's stored as a serialized string
+          noOfDaysLivingAlone: row.no_of_days_living_alone,
+          adlDifficulty: row.adl_difficulty || [], // Parsing the adl_difficulty JSONB field
+          fallRisk: row.fall_risk,
+          fallHistory: row.fall_history || [], // Parsing the fall_history JSONB field
+          socialInteraction: row.social_interaction,
+          photoBase64: row.photo_base64,
+          languages: [row.languages as Language], // Assuming languages is a single enum value
+          visits: [], // Handle visits if applicable
+        }));
+        setData(seniors[0]); // Assuming result matches the ElderlyInfo type
       } catch (error) {
-        message.error('An error occurred when fetching elderly data.');
+        message.error('An error occurred when fetching resident data.');
       } finally {
         setLoading(false);
       }
     };
-    if (params.id) fetchElderlyData();
+
+    if (params.id) fetchResidentData();
   }, [params.id]);
 
   const qrUrl = `${window.location.origin}/register-visit/${params.id}`;
@@ -185,23 +143,9 @@ const ElderlyProfilePage: React.FC = () => {
     }
   };
 
-  const handlePrint = () => {
-    if (qrCodeRef.current) {
-      html2canvas(qrCodeRef.current).then((canvas) => {
-        const printWindow = window.open('', '_blank');
-        printWindow?.document.write(
-          '<img src="' +
-            canvas.toDataURL('image/png') +
-            '" style="width: 100%;"/>',
-        );
-        printWindow?.document.close();
-        printWindow?.print();
-      });
-    }
-  };
-
-  const handleRedirectToSubmit = () => {
-    history.push(`/register-visit/${params.id}`);
+  // Print the entire page with all elderly information
+  const handlePrintPage = () => {
+    window.print();
   };
 
   return (
@@ -217,9 +161,7 @@ const ElderlyProfilePage: React.FC = () => {
                 <Avatar
                   size={96}
                   shape="square"
-                  src={
-                    data?.attachments[0] || 'https://via.placeholder.com/128'
-                  }
+                  src={data?.photoBase64 || 'https://via.placeholder.com/128'}
                   alt="Elderly Profile Picture"
                 />
               </Col>
@@ -235,7 +177,7 @@ const ElderlyProfilePage: React.FC = () => {
                   <Row justify="space-between">
                     <Col>
                       <Text strong style={{ fontSize: '14px' }}>
-                        Elderly Code:
+                        Senior Code:
                       </Text>{' '}
                       {data?.elderlyCode}
                     </Col>
@@ -245,14 +187,6 @@ const ElderlyProfilePage: React.FC = () => {
                         onClick={showModal}
                         icon={<QrcodeOutlined style={{ fontSize: '24px' }} />}
                       />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      <Text strong style={{ fontSize: '14px' }}>
-                        AAC Code:
-                      </Text>{' '}
-                      {data?.aacCode}
                     </Col>
                   </Row>
                 </Space>
@@ -273,7 +207,7 @@ const ElderlyProfilePage: React.FC = () => {
                   Contact:
                 </Text>{' '}
                 <Text>
-                  {data?.contact} <PhoneOutlined />
+                  {data?.contactDetails} <PhoneOutlined />
                 </Text>
               </Col>
               {data?.nok.map((nok, index) => (
@@ -282,7 +216,7 @@ const ElderlyProfilePage: React.FC = () => {
                     NOK ({nok.relationship}):
                   </Text>{' '}
                   <Text>
-                    {nok.name}, {nok.contact} <PhoneOutlined />
+                    {nok.name}, {nok.contactDetails} <PhoneOutlined />
                   </Text>
                 </Col>
               ))}
@@ -290,7 +224,7 @@ const ElderlyProfilePage: React.FC = () => {
                 <Text strong style={{ fontSize: '14px' }}>
                   Address:
                 </Text>{' '}
-                <Text>{data?.address}</Text>
+                <Text>{`${data?.block} ${data?.floor}-${data?.unitNumber}, ${data?.address}, ${data?.postalCode}`}</Text>
               </Col>
               <Col xs={24} sm={12}>
                 <Text strong style={{ fontSize: '14px' }}>
@@ -307,49 +241,34 @@ const ElderlyProfilePage: React.FC = () => {
                   Attachments:
                 </Text>{' '}
                 <Text>
-                  {data?.attachments.length > 0 ? 'Available' : 'None'}
+                  {data?.keyAttachments && data?.keyAttachments.length > 0
+                    ? 'Available'
+                    : 'None'}
                 </Text>
               </Col>
               <Col xs={24} sm={12}>
-                <Flex justify="space-between">
-                  <div>
-                    <Text strong style={{ fontSize: '14px' }}>
-                      Last Visit:
-                    </Text>
-                    {data?.visits && data.visits.length > 0 ? (
-                      <>
-                        <br />
-                        <Text>
-                          {dayjs(data.visits[0].datetime).format(dateformat)}
-                        </Text>{' '}
-                        <br />
-                        By {data.visits[0].visitor.name} (
-                        <Text type="secondary">
-                          {data.visits[0].visitor.role}
-                        </Text>
-                        ) <br />
-                        <Text style={{ color: 'green' }}>
-                          {dayjs().diff(dayjs(data.visits[0].datetime), 'days')}{' '}
-                          days ago
-                        </Text>
-                      </>
-                    ) : (
-                      <Text>No visits</Text>
-                    )}
-                  </div>
-                  <Button
-                    type="primary"
-                    icon={<UserAddOutlined />}
-                    onClick={handleRedirectToSubmit}
-                    style={{
-                      marginTop: '24px',
-                      paddingTop: '20px',
-                      paddingBottom: '20px',
-                    }}
-                  >
-                    Submit Info
-                  </Button>
-                </Flex>
+                <Space direction="vertical" size="small">
+                  <Text strong style={{ fontSize: '14px' }}>
+                    Last Visit:
+                  </Text>
+                  {data?.visits && data.visits.length > 0 ? (
+                    <>
+                      <Text>
+                        {dayjs(data.visits[0].datetime).format(dateformat)}
+                      </Text>{' '}
+                      By {data.visits[0].visitor.name} (
+                      <Text type="secondary">
+                        {data.visits[0].visitor.role}
+                      </Text>
+                      <Text style={{ color: 'green' }}>
+                        {dayjs().diff(dayjs(data.visits[0].datetime), 'days')}{' '}
+                        days ago
+                      </Text>
+                    </>
+                  ) : (
+                    <Text>No visits</Text>
+                  )}
+                </Space>
               </Col>
             </Row>
           </Card>
@@ -424,9 +343,9 @@ const ElderlyProfilePage: React.FC = () => {
               <Button
                 key="print"
                 icon={<PrinterOutlined />}
-                onClick={handlePrint}
+                onClick={handlePrintPage}
               >
-                Print
+                Print Profile
               </Button>,
               <Button
                 key="save"
@@ -450,13 +369,24 @@ const ElderlyProfilePage: React.FC = () => {
               <QRCode value={qrUrl} size={180} errorLevel="H" />
             </div>
             <Paragraph style={{ textAlign: 'center' }}>
-              Elderly Code: {data?.elderlyCode}
+              Senior Code: {data?.elderlyCode}
             </Paragraph>
           </Modal>
+
+          {/* Add a dedicated print button on the main page */}
+          <div style={{ textAlign: 'right', marginTop: '16px' }}>
+            <Button
+              type="primary"
+              icon={<PrinterOutlined />}
+              onClick={handlePrintPage}
+            >
+              Print All Information
+            </Button>
+          </div>
         </ConfigProvider>
       )}
     </PageContainer>
   );
 };
 
-export default ElderlyProfilePage;
+export default ResidentProfilePage;
