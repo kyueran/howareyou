@@ -4,7 +4,7 @@ import { history } from 'umi';
 
 const ForbiddenPage: React.FC = () => {
   const handleBackHome = () => {
-    history.push('/home'); // Redirect to home or another relevant page
+    history.push('/'); // Redirect to home or another relevant page
   };
 
   return (
