@@ -16,11 +16,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     await client.connect();
 
     // Fetch all visits from the database
-    const visits = await client.sql`
-    SELECT id, elderly_id, visitor_id, status, comments, photo_urls, location, visit_time
-    FROM visits
-    ORDER BY visit_time DESC;
-    `;
+    const visits = await client.sql`SELECT * FROM visits`;
 
     // Set status code and return the visits data as JSON
     res.statusCode = 200;

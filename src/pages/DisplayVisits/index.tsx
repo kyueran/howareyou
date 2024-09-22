@@ -30,16 +30,22 @@ const DisplayVisitsPage: React.FC = () => {
   // Use this function to get visitor's name and role based on access and visitor_id
   const getVisitorInfo = (visitorId: number) => {
     if (visitorId === 1) {
-      return { name: 'Volunteer-1', role: 'volunteer' };
+      return { name: 'Mr Wong Ah Fook', role: 'volunteer' };
     } else if (visitorId === 2) {
-      return { name: 'Staff-1', role: 'staff' };
+      return { name: 'Ms Josephine Lam', role: 'staff' };
     } else {
       return { name: 'Unknown', role: 'unknown' };
     }
   };
 
+  // Polling every 5 seconds
   useEffect(() => {
-    fetchVisits();
+    fetchVisits(); // Initial fetch
+    const interval = setInterval(() => {
+      fetchVisits();
+    }, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(interval); // Clear the interval when the component is unmounted
   }, []);
 
   const formatDateTime = (dateTime: string) => {
@@ -73,7 +79,6 @@ const DisplayVisitsPage: React.FC = () => {
                         }}
                       >
                         {visit.photo_urls && visit.photo_urls.length > 0 ? (
-                          // Map over the photo_urls array and display each photo
                           visit.photo_urls.map((url: string, index: number) => (
                             <div
                               key={index}
@@ -81,7 +86,7 @@ const DisplayVisitsPage: React.FC = () => {
                                 marginBottom: '8px',
                                 position: 'relative',
                                 width: '100%',
-                                paddingBottom: '100%', // 1:1 aspect ratio for each image
+                                paddingBottom: '100%',
                                 overflow: 'hidden',
                               }}
                             >
@@ -118,15 +123,18 @@ const DisplayVisitsPage: React.FC = () => {
                           <span role="img" aria-label="visitor">
                             👤
                           </span>{' '}
-                          {visitorInfo.name}, {visitorInfo.role}
+                          {visitorInfo.name}, 
+                          <span style={{ color: visitorInfo.role === 'staff' ? 'red' : 'blue', textTransform: 'uppercase' }}>
+                            {visitorInfo.role}
+                          </span>
                         </Text>
                         <br />
                         <Text type="secondary">
                           <span role="img" aria-label="date">
                             📅
                           </span>{' '}
-                          {formatDateTime(visit.visit_time)} (
-                          {Math.floor((Date.now() - new Date(visit.visit_time).getTime()) / (1000 * 60 * 60 * 24))}{' '}
+                          {formatDateTime(visit.submission_time)} (
+                          {Math.floor((Date.now() - new Date(visit.submission_time).getTime()) / (1000 * 60 * 60 * 24))}{' '}
                           days ago)
                         </Text>
                         <br />
@@ -134,7 +142,7 @@ const DisplayVisitsPage: React.FC = () => {
                           <span role="img" aria-label="location">
                             📍
                           </span>{' '}
-                          {visit.location || 'Location not available'}
+                          {visit.mode_of_interaction || 'Location not available'}
                         </Text>
                       </div>
                     </Col>

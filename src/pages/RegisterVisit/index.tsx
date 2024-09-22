@@ -22,7 +22,6 @@ const RegisterVisitPage: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Store multiple selected files
-  const [photoUrls, setPhotoUrls] = useState<string[]>([]); // Store the uploaded photo URLs
   const [customMode, setCustomMode] = useState(false); // State to enable custom mode input
   const [seniorData, setSeniorData] = useState<any>(null); // Store fetched senior data
 
@@ -80,32 +79,70 @@ const RegisterVisitPage: React.FC = () => {
   // Handle form submission
   const onFinish = async (values: any) => {
     console.log('Form values:', values);
-
+  
     const { id } = params;
-    const { status, comments } = values;
-    const location = 'TEST LOC';
-
+    const { status, comments, relationship, modeOfInteraction, customModeOfInteraction, duration } = values;
+  
+    // Determine the mode_of_interaction
+    const mode_of_interaction = modeOfInteraction === 'others' ? customModeOfInteraction : modeOfInteraction;
+  
     try {
-      const visitorId = await getVisitorId(access);
-
+      const visitor_id = await getVisitorId(access);
+  
+      // Ensure that the photos are uploaded before submitting the form data
+      const uploadedPhotoUrls: string[] = [];
+  
+      for (const file of selectedFiles) {
+        try {
+          const result = await upload(file.name, file, {
+            access: 'public',
+            handleUploadUrl: '/api/uploadPhoto',
+          });
+          uploadedPhotoUrls.push(result.url); // Add the uploaded photo URL
+          message.success(`Photo ${file.name} uploaded successfully to Blob Storage.`);
+        } catch (error: any) {
+          message.error(`Error uploading photo ${file.name}: ${error.message}`);
+          return; // Stop submission if photo upload fails
+        }
+      }
+  
+      // Prepare request body with the uploaded photo URLs and form values
       const requestBody = {
-        elderlyId: parseInt(id, 10),
-        visitorId,
-        status,
-        comments,
-        photoUrls: [], // Add your photo URL logic here
-        location,
+        elderly_id: parseInt(id, 10),         // Elderly ID from params
+        visitor_id,                           // Visitor ID determined based on user role
+        relationship,                         // Relationship from form
+        mode_of_interaction,                  // Mode of interaction from form, handling "Others"
+        duration_of_contact: duration,        // Duration of contact from form
+        status,                               // Status from form
+        comments,                             // Comments from form
+        photoUrls: uploadedPhotoUrls,         // Use the array of uploaded photo URLs
       };
-
+  
       console.log('Request Body:', JSON.stringify(requestBody, null, 2));
-
-      // Mock request
-      message.success('Form submitted and logged successfully!');
-      history.push(`/home`);
+  
+      // Submit the form data to the backend
+      const response = await fetch('/api/logVisits', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+  
+      const result = await response.json();
+  
+      if (result.success) {
+        message.success('Form submitted and logged successfully!');
+        history.push(`/home`);
+      } else {
+        message.error(result.message || 'Failed to log the form. Please try again.');
+      }
     } catch (error: any) {
+      console.error('Submission error:', error);
       message.error('There was an error submitting the form.');
     }
   };
+
 
   // Handle changes in Mode of Interaction selection
   const handleModeChange = (value: string) => {
@@ -132,7 +169,6 @@ const RegisterVisitPage: React.FC = () => {
     onRemove: (file) => {
       // Remove the specific file from the selectedFiles array
       setSelectedFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
-      setPhotoUrls((prevUrls) => prevUrls.filter((url) => url !== file.url));
     },
     listType: 'picture-card',
     fileList: selectedFiles.map((file, index) => ({

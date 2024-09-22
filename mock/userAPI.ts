@@ -15,8 +15,7 @@ export default {
         data: {
           id: 1,
           role: 'volunteer',
-          name: 'Volunteer-1',
-          token: 'mock-token-volunteer',
+          name: 'Mr Wong Ah Fook',
         },
       });
     }
@@ -26,8 +25,7 @@ export default {
         data: {
           id: 2,
           role: 'staff',
-          name: 'Staff-1',
-          token: 'mock-token-staff',
+          name: 'Ms Josephine Lam',
         },
       });
     }

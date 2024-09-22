@@ -12,10 +12,9 @@ export async function POST(request: Request): Promise<Response> {
   try {
     await client.connect();
 
-    // Parse the request body
-    const { elderlyId, visitorId, status, comments, photoUrls, location } = await request.json();
+    const { elderly_id, visitor_id, relationship, mode_of_interaction, duration_of_contact, status, comments, photoUrls} = await request.json();
 
-    if (!elderlyId || !visitorId || !status) {
+    if (!elderly_id || !visitor_id || !status) {
       return new Response(
         JSON.stringify({ success: false, message: 'Missing required fields.' }),
         {
@@ -27,8 +26,8 @@ export async function POST(request: Request): Promise<Response> {
 
     // Insert the new visit into the 'visits' table using the photo URL
     await client.sql`
-      INSERT INTO visits (elderly_id, visitor_id, status, comments, photo_urls, location, visit_time)
-      VALUES (${elderlyId}, ${visitorId}, ${status}, ${comments || null}, ${photoUrls || null}, ${location}, NOW());
+      INSERT INTO visits (elderly_id, visitor_id, relationship, mode_of_interaction, duration_of_contact, status, comments, photo_urls, submission_time)
+      VALUES (${elderly_id}, ${visitor_id}, ${relationship}, ${mode_of_interaction}, ${duration_of_contact}, ${status}, ${comments || null}, ${photoUrls || null}, NOW());
     `;
 
     return new Response(
