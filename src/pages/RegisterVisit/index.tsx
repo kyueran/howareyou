@@ -24,6 +24,7 @@ const RegisterVisitPage: React.FC = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Store multiple selected files
   const [customMode, setCustomMode] = useState(false); // State to enable custom mode input
   const [seniorData, setSeniorData] = useState<any>(null); // Store fetched senior data
+  const [submitting, setSubmitting] = useState(false);
 
   const access = useAccess();
   const params = useParams<{ id: string }>();
@@ -78,7 +79,7 @@ const RegisterVisitPage: React.FC = () => {
 
   // Handle form submission
   const onFinish = async (values: any) => {
-    console.log('Form values:', values);
+    setSubmitting(true); 
   
     const { id } = params;
     const { status, comments, relationship, modeOfInteraction, customModeOfInteraction, duration } = values;
@@ -101,6 +102,7 @@ const RegisterVisitPage: React.FC = () => {
           uploadedPhotoUrls.push(result.url); // Add the uploaded photo URL
           message.success(`Photo ${file.name} uploaded successfully to Blob Storage.`);
         } catch (error: any) {
+          setSubmitting(false);
           message.error(`Error uploading photo ${file.name}: ${error.message}`);
           return; // Stop submission if photo upload fails
         }
@@ -140,6 +142,8 @@ const RegisterVisitPage: React.FC = () => {
     } catch (error: any) {
       console.error('Submission error:', error);
       message.error('There was an error submitting the form.');
+    } finally {
+      setSubmitting(false); // Re-enable the submit button after processing
     }
   };
 
@@ -316,8 +320,8 @@ const RegisterVisitPage: React.FC = () => {
               </Form.Item>
 
               <Form.Item>
-                <Button type="primary" htmlType="submit" block>
-                  Submit
+              <Button type="primary" htmlType="submit" block disabled={submitting}>
+                  {submitting ? 'Submitting...' : 'Submit'}
                 </Button>
               </Form.Item>
             </Form>

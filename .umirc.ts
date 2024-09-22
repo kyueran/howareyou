@@ -51,6 +51,13 @@ export default defineConfig({
       access: ['isVolunteer', 'isStaff'],
       hideInMenu: true,
     },
+    {
+      name: 'Visit Detail',
+      path: '/visit/:id',
+      component: './VisitDetail',
+      access: ['isVolunteer', 'isStaff'],
+      hideInMenu: true,
+    },
   ],
   npmClient: 'pnpm',
 });
