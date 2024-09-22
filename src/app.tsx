@@ -1,5 +1,7 @@
 import { RunTimeLayoutConfig } from '@umijs/max';
+import React from 'react';
 import { history } from 'umi';
+import CustomNavbar from './components/CustomNavbar';
 import './global.css';
 
 type UserRole = 'volunteer' | 'staff';
@@ -28,7 +30,7 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
       currentPath = currentPath.slice(basePath.length);
     if (currentPath !== '/login')
       history.push(`/login?redirect=${currentPath}`);
-  } 
+  }
 
   return {
     title: '',
@@ -39,14 +41,15 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
     logout: (initialState: any) => {
       localStorage.removeItem('userRole');
       localStorage.removeItem('user');
-      history.push('/login')
+      history.push('/login');
     },
-    locale: 'en-US',
     token: {
       pageContainer: {
         paddingBlockPageContainerContent: 0,
         paddingInlinePageContainerContent: 0,
       },
     },
+    menuRender: false,
+    headerRender: () => <CustomNavbar />,
   };
 };
