@@ -1,5 +1,6 @@
 import { RunTimeLayoutConfig } from '@umijs/max';
-import { history, terminal } from 'umi';
+import { history } from 'umi';
+import './global.css'
 
 type UserRole = 'volunteer' | 'staff';
 

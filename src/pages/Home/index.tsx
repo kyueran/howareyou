@@ -249,9 +249,30 @@ const ResidentListPage: React.FC = () => {
             return (
               <List.Item style={{ padding: 0, paddingBottom: 8 }}>
                 <Card
-                  style={{ cursor: 'pointer' }}
+                  style={{
+                    cursor: 'pointer',
+                    transition: 'transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Initial light shadow
+                    overflow: 'hidden',
+                  }}
                   bodyStyle={{ padding: '8px 16px' }}
                   onClick={() => history.push(`/elderly/${elderly.id}`)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.03)'; // Slightly enlarge the card
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.15)'; // Darker shadow
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)'; // Reset scale
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)'; // Reset shadow
+                  }}
+                  onTouchStart={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.03)'; // Enlarge slightly on touch
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.15)'; // Darker shadow
+                  }}
+                  onTouchEnd={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)'; // Reset scale
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)'; // Reset shadow
+                  }}
                 >
                   <Row gutter={0} justify='space-between'>
                     <Col xs={8} sm={6} style={{ alignContent: 'center' }}>
@@ -291,7 +312,9 @@ const ResidentListPage: React.FC = () => {
                             size="small"
                             style={{ marginLeft: 0, borderRadius: 4 }}
                             icon={<CopyOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />}
-                            onClick={(e) => handleCopy(e, `${elderly.address}, ${elderly.postalCode}`)}
+                            onClick={(e) => {
+                              handleCopy(e, `${elderly.address}, ${elderly.postalCode}`)
+                            }}
                           >
                             <Text type='secondary'>Copy</Text>
                           </Button>
