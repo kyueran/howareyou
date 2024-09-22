@@ -18,7 +18,7 @@ CREATE TABLE seniors (
     fall_risk VARCHAR(10),
     fall_history JSONB,
     social_interaction VARCHAR(10),
-    photo_base64 TEXT,
+    photo_url VARCHAR(255),
     languages LANGUAGE, -- Assuming LANGUAGE is an ENUM
     nok_name VARCHAR(255)
 );
@@ -27,7 +27,7 @@ CREATE TABLE seniors (
 INSERT INTO seniors (
     elderly_code, aac_code, name, contact_details, relationship_with_nok, nok_contact_details, 
     block, floor, unit_number, address, postal_code, notes, key_attachments, 
-    no_of_days_living_alone, adl_difficulty, fall_risk, fall_history, social_interaction, photo_base64, languages, nok_name
+    no_of_days_living_alone, adl_difficulty, fall_risk, fall_history, social_interaction, photo_url, languages, nok_name
 ) VALUES (
     'EC001', 'AAC001', 'Tan Ah Kow', '98765432', 'Son', '91234567',
     'Blk 50', '05', '123A', 'Strathmore Ave', '140050', 
@@ -39,7 +39,7 @@ INSERT INTO seniors (
 INSERT INTO seniors (
     elderly_code, aac_code, name, contact_details, relationship_with_nok, nok_contact_details, 
     block, floor, unit_number, address, postal_code, notes, key_attachments, 
-    no_of_days_living_alone, adl_difficulty, fall_risk, fall_history, social_interaction, photo_base64, languages, nok_name
+    no_of_days_living_alone, adl_difficulty, fall_risk, fall_history, social_interaction, photo_url, languages, nok_name
 ) VALUES (
     'EC002', 'AAC002', 'Lim Mei Ling', '87654321', 'Daughter', '92233445',
     'Blk 51', '12', '456B', 'Strathmore Ave', '140051', 
@@ -51,7 +51,7 @@ INSERT INTO seniors (
 INSERT INTO seniors (
     elderly_code, aac_code, name, contact_details, relationship_with_nok, nok_contact_details, 
     block, floor, unit_number, address, postal_code, notes, key_attachments, 
-    no_of_days_living_alone, adl_difficulty, fall_risk, fall_history, social_interaction, photo_base64, languages, nok_name
+    no_of_days_living_alone, adl_difficulty, fall_risk, fall_history, social_interaction, photo_url, languages, nok_name
 ) VALUES (
     'EC003', 'AAC003', 'Goh Ah Seng', '91234567', 'Granddaughter', '92345678',
     'Blk 55', '10', '789C', 'Tanglin Halt Rd', '141055', 
@@ -63,7 +63,7 @@ INSERT INTO seniors (
 INSERT INTO seniors (
     elderly_code, aac_code, name, contact_details, relationship_with_nok, nok_contact_details, 
     block, floor, unit_number, address, postal_code, notes, key_attachments, 
-    no_of_days_living_alone, adl_difficulty, fall_risk, fall_history, social_interaction, photo_base64, languages, nok_name
+    no_of_days_living_alone, adl_difficulty, fall_risk, fall_history, social_interaction, photo_url, languages, nok_name
 ) VALUES (
     'EC004', 'AAC004', 'Ng Siew Lin', '96543210', 'Son', '98765431',
     'Blk 56', '08', '321A', 'Tanglin Halt Rd', '141056', 
@@ -75,7 +75,7 @@ INSERT INTO seniors (
 INSERT INTO seniors (
     elderly_code, aac_code, name, contact_details, relationship_with_nok, nok_contact_details, 
     block, floor, unit_number, address, postal_code, notes, key_attachments, 
-    no_of_days_living_alone, adl_difficulty, fall_risk, fall_history, social_interaction, photo_base64, languages, nok_name
+    no_of_days_living_alone, adl_difficulty, fall_risk, fall_history, social_interaction, photo_url, languages, nok_name
 ) VALUES (
     'EC005', 'AAC005', 'Cheng Wei Long', '94567890', 'Son', '93324567',
     'Blk 58', '06', '987B', 'Commonwealth Dr', '140058', 

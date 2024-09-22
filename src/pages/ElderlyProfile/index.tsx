@@ -107,7 +107,7 @@ const ResidentProfilePage: React.FC = () => {
           fallRisk: row.fall_risk,
           fallHistory: row.fall_history || [], // Parsing the fall_history JSONB field
           socialInteraction: row.social_interaction,
-          photoBase64: row.photo_base64,
+          photoUrl: row.photo_url,
           languages: [row.languages as Language], // Assuming languages is a single enum value
           visits: [], // Handle visits if applicable
         }));
@@ -161,7 +161,7 @@ const ResidentProfilePage: React.FC = () => {
                 <Avatar
                   size={96}
                   shape="square"
-                  src={data?.photoBase64 || 'https://via.placeholder.com/128'}
+                  src={data?.photoUrl || 'https://via.placeholder.com/128'}
                   alt="Elderly Profile Picture"
                 />
               </Col>

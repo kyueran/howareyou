@@ -40,7 +40,7 @@ export type ElderlyInfo = {
   fallRisk: string;
   fallHistory: FallHistory[];
   socialInteraction: string;
-  photoBase64: string;
+  photoUrl: string;
   languages: Language[];
   visits: VisitInfo[];
 };
@@ -111,7 +111,7 @@ const ResidentListPage: React.FC = () => {
           fallRisk: row.fall_risk,
           fallHistory: row.fall_history || [], // Parsing the fall_history JSONB field
           socialInteraction: row.social_interaction,
-          photoBase64: row.photo_base64,
+          photoUrl: row.photo_url,
           languages: [row.languages as Language], // Assuming languages is a single enum value
           visits: [], // Handle visits if applicable
         }));
@@ -150,7 +150,7 @@ const ResidentListPage: React.FC = () => {
                     <Avatar
                       size={96}
                       src={
-                        elderly.photoBase64 || 'https://via.placeholder.com/96'
+                        elderly.photoUrl || 'https://via.placeholder.com/96'
                       }
                       shape="square"
                       alt={elderly.name}
