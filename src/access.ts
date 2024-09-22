@@ -1,6 +1,7 @@
+import { history } from 'umi';
+
 export default (initialState: API.UserInfo) => {
-  // 在这里按照初始化数据定义项目中的权限，统一管理
-  // 参考文档 https://umijs.org/docs/max/access
+  // Determine whether the current user is a volunteer or staff
   const isVolunteer = !!(initialState && initialState.role === 'volunteer');
   const isStaff = !!(initialState && initialState.role === 'staff');
 

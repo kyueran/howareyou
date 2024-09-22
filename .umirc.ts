@@ -4,7 +4,6 @@ export default defineConfig({
   history: {
     type: 'browser', // Use browser-based routing
   },
-  // Remove base and publicPath to serve from the root
   antd: {},
   access: {},
   model: {},
@@ -51,7 +50,7 @@ export default defineConfig({
       component: './DisplayVisits',
       access: 'isStaff',
       hideInMenu: true,
-    }
+    },
   ],
   npmClient: 'pnpm',
 });

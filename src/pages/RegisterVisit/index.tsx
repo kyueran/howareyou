@@ -1,17 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Access, history, useAccess, useParams } from '@umijs/max';
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  Input,
-  message,
-  Row,
-  Space,
-  Typography,
-  Upload,
-} from 'antd';
+import { Button, Card, Col, Form, Input, message, Row, Space, Typography, Upload, Select } from 'antd';
 import { upload } from '@vercel/blob/client';
 import type { UploadProps } from 'antd/es/upload/interface';
 import React, { useEffect, useState } from 'react';
@@ -19,6 +8,7 @@ import ButtonGroupInput from '../../components/ButtonGroupInput';
 
 const { TextArea } = Input;
 const { Text, Title } = Typography;
+const { Option } = Select;
 
 const normFile = (e: any) => {
   console.log('Upload event:', e);
@@ -33,57 +23,27 @@ const RegisterVisitPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Store multiple selected files
   const [photoUrls, setPhotoUrls] = useState<string[]>([]); // Store the uploaded photo URLs
-
-  // Fetch data asynchronously
-  const populateForm = async () => {
-    setLoading(true);
-    try {
-      const result = {
-        id: 1,
-        elderlyCode: 'WL-8829',
-        aacCode: 'AAC-123162',
-        name: 'Goh Seok Meng',
-        address: 'Woodlands Drive 62, #02-144, S623182',
-        contact: 81234567,
-        nok: [{ name: 'David Goh', relationship: 'Son', contact: 91234567 }],
-        notes:
-          'Goh Seok Meng lives alone on weekdays, can only speak Hokkien, and has difficulty walking. She does not mind having pictures taken.',
-        languages: ['Hokkien'],
-        attachments: [],
-        visits: [
-          {
-            datetime: '09-10-2024 20:00',
-            visitor: { id: 99, name: 'David', role: 'volunteer' },
-            location: 'Home',
-            attachments: [],
-            notes: 'All good.',
-          },
-          {
-            datetime: '09-08-2024 17:00',
-            visitor: { id: 2, name: 'David Hiong', role: 'staff' },
-            location: 'Woodlands Hawker Centre',
-            attachments: [],
-            notes: "Saw auntie at Woodlands Hawker Centre, she's doing well",
-          },
-        ],
-      };
-      setTimeout(() => {
-        console.log('Fake data fetched');
-      }, 1000);
-      form.setFieldsValue(result);
-    } catch (error) {
-      message.error('Failed to fetch data');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    populateForm();
-  }, [form]);
+  const [customMode, setCustomMode] = useState(false); // State to enable custom mode input
+  const [seniorData, setSeniorData] = useState<any>(null); // Store fetched senior data
 
   const access = useAccess();
   const params = useParams<{ id: string }>();
+
+  useEffect(() => {
+    const fetchSeniorData = async () => {
+      try {
+        const response = await fetch(`/api/senior/${params.id}`);
+        const data = await response.json();
+        console.log(data[0])
+        setSeniorData(data[0]);
+      } catch (error) {
+        message.error('Failed to fetch senior data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSeniorData();
+  }, [params.id]);
 
   const getVisitorId = async (access: Access) => {
     if (access.isVolunteer) {
@@ -92,6 +52,28 @@ const RegisterVisitPage: React.FC = () => {
       return 2;
     } else {
       return 3;
+    }
+  };
+
+  useEffect(() => {
+    populateForm();
+  }, [form]);
+
+  const populateForm = async () => {
+    setLoading(true);
+    try {
+      const result = {
+        id: 1,
+        elderlyCode: 'WL-8829',
+        name: 'Goh Seok Meng',
+        address: 'Woodlands Drive 62, #02-144, S623182',
+        contact: 81234567,
+      };
+      form.setFieldsValue(result);
+    } catch (error) {
+      message.error('Failed to fetch data');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,55 +88,31 @@ const RegisterVisitPage: React.FC = () => {
     try {
       const visitorId = await getVisitorId(access);
 
-      // Ensure that the photos are uploaded before submitting the form data
-      const uploadedPhotoUrls: string[] = [];
-
-      for (const file of selectedFiles) {
-        try {
-          const result = await upload(file.name, file, {
-            access: 'public',
-            handleUploadUrl: '/api/uploadPhoto',
-          });
-          uploadedPhotoUrls.push(result.url); // Add the uploaded photo URL
-          message.success(`Photo ${file.name} uploaded successfully to Blob Storage.`);
-        } catch (error: any) {
-          message.error(`Error uploading photo ${file.name}: ${error.message}`);
-          return; // Stop submission if photo upload fails
-        }
-      }
-
-      // Prepare request body with the uploaded photo URLs
       const requestBody = {
         elderlyId: parseInt(id, 10),
         visitorId,
         status,
         comments,
-        photoUrls: uploadedPhotoUrls, // Use the array of uploaded photo URLs
+        photoUrls: [], // Add your photo URL logic here
         location,
       };
 
       console.log('Request Body:', JSON.stringify(requestBody, null, 2));
 
-      // Submit the form data to the backend
-      const response = await fetch('/api/logVisits', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        message.success('Form submitted and logged successfully!');
-        history.push(`/home`);
-      } else {
-        message.error(result.message || 'Failed to log the form. Please try again.');
-      }
+      // Mock request
+      message.success('Form submitted and logged successfully!');
+      history.push(`/home`);
     } catch (error: any) {
-      console.error('Submission error:', error);
       message.error('There was an error submitting the form.');
+    }
+  };
+
+  // Handle changes in Mode of Interaction selection
+  const handleModeChange = (value: string) => {
+    if (value === 'others') {
+      setCustomMode(true); // Enable custom mode input
+    } else {
+      setCustomMode(false); // Disable custom mode input
     }
   };
 
@@ -198,11 +156,7 @@ const RegisterVisitPage: React.FC = () => {
               Register Visit
             </Title>
             <Access accessible={access.isStaff}>
-              <Card
-                style={{ width: '100%' }}
-                bodyStyle={{ padding: '16px' }}
-                loading={loading}
-              >
+              <Card style={{ width: '100%' }} bodyStyle={{ padding: '16px' }} loading={loading}>
                 <Row gutter={16} align="middle">
                   <Col xs={8} sm={6} md={6} lg={6} xl={5}>
                     <div
@@ -215,7 +169,7 @@ const RegisterVisitPage: React.FC = () => {
                       }}
                     >
                       <img
-                        src="https://www.josejeuland.com/wp-content/uploads/2022/11/DSF6022.jpg"
+                        src={seniorData?.photo_url || 'https://via.placeholder.com/150'}
                         alt="Profile"
                         style={{
                           position: 'absolute',
@@ -233,18 +187,15 @@ const RegisterVisitPage: React.FC = () => {
                   <Col xs={16} sm={18} md={18} lg={18} xl={19}>
                     <div>
                       <Text strong style={{ fontSize: '16px' }}>
-                        Goh Seok Meng
+                        {seniorData?.name || 'Loading name...'}
                       </Text>
                       <br />
                       <Text type="secondary">
-                        Woodlands Drive 62, #02-144, S623182
+                        {`${seniorData?.block} ${seniorData?.floor}-${seniorData?.unit_number}, ${seniorData?.address}, ${seniorData?.postal_code}`}
                       </Text>
                     </div>
                     <div style={{ marginTop: '8px' }}>
-                      <Button
-                        type="primary"
-                        onClick={handleRedirectToElderlyProfile}
-                      >
+                      <Button type="primary" onClick={handleRedirectToElderlyProfile}>
                         View Profile
                       </Button>
                     </div>
@@ -252,17 +203,65 @@ const RegisterVisitPage: React.FC = () => {
                 </Row>
               </Card>
             </Access>
+
             <Form form={form} layout="vertical" onFinish={onFinish}>
+              {/* For Volunteers only */}
+              {access.isVolunteer && (
+                <Form.Item
+                  label="Relationship to the elderly"
+                  name="relationship"
+                  rules={[{ required: true, message: 'Please enter the relationship to the elderly' }]}
+                >
+                  <Input />
+                </Form.Item>
+              )}
+
+              {/* Mode of Interaction */}
+              <Form.Item label="Mode of Interaction" required>
+                <Row gutter={8}>
+                  <Col span={8}>
+                    <Form.Item
+                      name="modeOfInteraction"
+                      rules={[{ required: true, message: 'Please select a mode of interaction or enter custom interaction' }]}
+                      noStyle
+                    >
+                      <Select onChange={handleModeChange} placeholder="Select Mode">
+                        <Option value="homeVisit">Home Visit</Option>
+                        {access.isStaff && <Option value="neighborhood">Met around Neighborhood</Option>}
+                        {access.isStaff && <Option value="phoneCall">Phone Call</Option>}
+                        <Option value="others">Others</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  {customMode && (
+                    <Col span={16}>
+                      <Form.Item
+                        name="customModeOfInteraction"
+                        rules={[{ required: true, message: 'Please specify the mode of interaction' }]}
+                        noStyle
+                      >
+                        <Input placeholder="Specify mode" />
+                      </Form.Item>
+                    </Col>
+                  )}
+                </Row>
+              </Form.Item>
+
+              {/* Duration of Contact */}
               <Form.Item
-                label="How is he/she doing?"
-                name="status"
-                rules={[{ required: true, message: 'Please select an option' }]}
+                label="Duration of contact (minutes)"
+                name="duration"
+                rules={[{ required: true, message: 'Please enter the duration of contact in minutes' }]}
               >
+                <Input type="number" style={{ width: '33%' }} />
+              </Form.Item>
+
+              <Form.Item label="How is he/she doing?" name="status" rules={[{ required: true, message: 'Please select an option' }]}>
                 <ButtonGroupInput
                   options={[
-                    { value: 'good', label: 'GOOD' },
-                    { value: 'notGood', label: 'NOT GOOD' },
-                    { value: 'notAround', label: 'NOT AROUND' },
+                    { value: 'good', label: '😄 GOOD' },
+                    { value: 'notGood', label: '😰 NOT GOOD' },
+                    { value: 'notAround', label: '❌ NOT AROUND' },
                   ]}
                 />
               </Form.Item>
@@ -271,12 +270,7 @@ const RegisterVisitPage: React.FC = () => {
                 <TextArea rows={4} />
               </Form.Item>
 
-              <Form.Item
-                label="Any photos to share?"
-                name="upload"
-                valuePropName="fileList"
-                getValueFromEvent={normFile}
-              >
+              <Form.Item label="Any photos to share?" name="upload" valuePropName="fileList" getValueFromEvent={normFile}>
                 <Upload {...uploadProps}>
                   <div>
                     <PlusOutlined />

@@ -36,7 +36,6 @@ const verifyOTP = async (otp: string) => {
         id: 2,
         role: 'volunteer',
         name: 'Volunteer-1',
-        token: 'mock-token-volunteer',
       },
     };
   }
@@ -47,7 +46,6 @@ const verifyOTP = async (otp: string) => {
         id: 1,
         role: 'staff',
         name: 'Staff-1',
-        token: 'mock-token-staff',
       },
     };
   }
