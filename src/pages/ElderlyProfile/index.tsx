@@ -2,21 +2,19 @@ import {
   CalendarOutlined,
   EnvironmentOutlined,
   PhoneOutlined,
+  PlusOutlined,
   PrinterOutlined,
   QrcodeOutlined,
   SaveOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
-import { useParams } from '@umijs/max';
+import { useParams, useNavigate } from '@umijs/max';
 import {
-  Avatar,
   Button,
   Card,
   Col,
   ConfigProvider,
-  Divider,
-  Image,
   List,
   message,
   Modal,
@@ -25,13 +23,20 @@ import {
   Skeleton,
   Space,
   Typography,
+  Image,
 } from 'antd';
 import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
-import html2canvas from 'html2canvas';
 import React, { useEffect, useRef, useState } from 'react';
-import { ElderlyInfo, Language } from '../Home'; // Ensure this path is correct
+import { ElderlyInfo, VisitInfo } from '../Home'; // Ensure path is correct
+import html2canvas from 'html2canvas';
+
+const { Title, Text, Paragraph } = Typography;
+
+dayjs.extend(advancedFormat);
+
+const dateformat = 'D MMM YYYY, hA';
 
 const useGradientButtonStyle = createStyles(({ prefixCls, css }) => ({
   gradientButton: css`
@@ -61,25 +66,20 @@ const useGradientButtonStyle = createStyles(({ prefixCls, css }) => ({
   `,
 }));
 
-dayjs.extend(advancedFormat);
-
-const dateformat = 'D MMM YYYY, hA';
-
-const { Title, Text, Paragraph } = Typography;
-
 const ResidentProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ElderlyInfo | null>(null);
+  const [visits, setVisits] = useState<VisitInfo[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const qrCodeRef = useRef<HTMLDivElement>(null);
-  const params = useParams<{ id: string }>(); // Ensure params id is typed
+  const params = useParams<{ id: string }>();
+  const navigate = useNavigate(); // To navigate to /register-visit/:id
   const { styles } = useGradientButtonStyle();
 
   useEffect(() => {
     const fetchResidentData = async () => {
       setLoading(true);
       try {
-        // Fetch data for the specific elderly using the ID from params
         const response = await fetch(`/api/senior/${params.id}`);
         const result = await response.json();
         const seniors: ElderlyInfo[] = result.map((row: any) => ({
@@ -98,20 +98,20 @@ const ResidentProfilePage: React.FC = () => {
           block: row.block,
           floor: row.floor,
           unitNumber: row.unit_number,
-          address: row.address, // General address (e.g., street name)
+          address: row.address,
           postalCode: row.postal_code,
           notes: row.notes,
-          keyAttachments: JSON.parse(row.key_attachments || '[]'), // Parsing the key_attachments if it's stored as a serialized string
+          keyAttachments: JSON.parse(row.key_attachments || '[]'),
           noOfDaysLivingAlone: row.no_of_days_living_alone,
-          adlDifficulty: row.adl_difficulty || [], // Parsing the adl_difficulty JSONB field
+          adlDifficulty: row.adl_difficulty || [],
           fallRisk: row.fall_risk,
-          fallHistory: row.fall_history || [], // Parsing the fall_history JSONB field
+          fallHistory: row.fall_history || [],
           socialInteraction: row.social_interaction,
           photoUrl: row.photo_url,
-          languages: [row.languages as Language], // Assuming languages is a single enum value
-          visits: [], // Handle visits if applicable
+          languages: [row.languages],
+          visits: [],
         }));
-        setData(seniors[0]); // Assuming result matches the ElderlyInfo type
+        setData(seniors[0]);
       } catch (error) {
         message.error('An error occurred when fetching resident data.');
       } finally {
@@ -119,7 +119,24 @@ const ResidentProfilePage: React.FC = () => {
       }
     };
 
-    if (params.id) fetchResidentData();
+    const fetchVisits = async () => {
+      try {
+        const response = await fetch(`/api/fetchVisits`);
+        const result = await response.json();
+        if (result.success) {
+          setVisits(result.data.filter((visit: VisitInfo) => visit.elderly_id === Number(params.id)));
+        } else {
+          message.error(result.message || 'Failed to fetch visits.');
+        }
+      } catch (error) {
+        message.error('There was an error fetching the visits.');
+      }
+    };
+
+    if (params.id) {
+      fetchResidentData();
+      fetchVisits();
+    }
   }, [params.id]);
 
   const qrUrl = `${window.location.origin}/register-visit/${params.id}`;
@@ -143,9 +160,40 @@ const ResidentProfilePage: React.FC = () => {
     }
   };
 
-  // Print the entire page with all elderly information
-  const handlePrintPage = () => {
-    window.print();
+  // Redirect to the submission page
+  const handleSubmitInfo = () => {
+    navigate(`/register-visit/${params.id}`);
+  };
+
+  // Function to get text color based on values
+  const getTextColor = (value: string) => {
+    const valueLower = value.toLowerCase();
+    switch (valueLower) {
+      case 'low':
+      case 'mild':
+      case 'isolated':
+      case 'washing':
+      case 'toileting':
+      case 'dressing':
+      case 'feeding':
+      case 'mobility':
+      case 'transferring':
+        return { color: 'red' }; // Use Ant Design built-in red color for warnings
+      case 'high':
+        return { color: '#fa8c16' }; // Orange
+      default:
+        return { color: '#595959' }; // Default gray
+    }
+  };
+
+  const getDaysLivingAloneColor = (days: number) => {
+    if (days <= 3) {
+      return { color: 'red' };
+    } else if (days <= 5) {
+      return { color: '#fa8c16' }; // Orange
+    } else {
+      return { color: '#52c41a' }; // Green
+    }
   };
 
   return (
@@ -156,176 +204,126 @@ const ResidentProfilePage: React.FC = () => {
         <ConfigProvider button={{ className: styles.gradientButton }}>
           {/* Profile Information Section */}
           <Card style={{ marginBottom: 8 }} bodyStyle={{ padding: '16px' }}>
-            <Row gutter={[8, 8]} align="middle">
-              <Col xs={8} sm={6}>
-                <Avatar
-                  size={96}
-                  shape="square"
+            <Row>
+              <Col>
+                <Title level={4} style={{ margin: 0 }}>{data?.name}</Title>
+                <Text style={{ color: '#7b7b7b' }}>{`${data?.block} ${data?.floor}-${data?.unitNumber}, ${data?.address}, ${data?.postalCode}`}</Text>
+              </Col>
+            </Row>
+
+            <Row style={{ marginTop: 4 }} gutter={0} align='middle' justify='space-between'>
+              <Col xs={10}>
+                <Image
+                  style={{ maxWidth: '120px', maxHeight: '120px', cursor: 'pointer' }} 
+                  width='100%'
+                  height='100%'
                   src={data?.photoUrl || 'https://via.placeholder.com/128'}
                   alt="Elderly Profile Picture"
                 />
               </Col>
-              <Col xs={16} sm={18}>
-                <Space
-                  direction="vertical"
-                  size="small"
-                  style={{ width: '100%' }}
-                >
-                  <Title level={4} style={{ margin: 0 }}>
-                    Elderly Profile
-                  </Title>
-                  <Row justify="space-between">
-                    <Col>
-                      <Text strong style={{ fontSize: '14px' }}>
-                        Senior Code:
-                      </Text>{' '}
-                      {data?.elderlyCode}
-                    </Col>
-                    <Col>
-                      <Button
-                        type="text"
-                        onClick={showModal}
-                        icon={<QrcodeOutlined style={{ fontSize: '24px' }} />}
-                      />
-                    </Col>
-                  </Row>
+              <Col xs={14}>
+                <Space direction='horizontal' style={{ width: '100%', maxWidth: 240, justifyContent: 'space-between' }}>
+                  <Space direction='vertical' style={{ paddingLeft: 12 }}>
+                    <div>
+                      <Text strong>Senior Code:</Text> <Text>{data?.elderlyCode}</Text>
+                      <br />
+                      <Text strong>Centre Code:</Text> <Text>{data?.aacCode}</Text>
+                    </div>
+                    <Button style={{ marginTop: 8 }} type="primary" icon={<PlusOutlined />} onClick={handleSubmitInfo}>
+                      Add Visit
+                    </Button>
+                  </Space>
+                  <Button onClick={showModal} icon={<QrcodeOutlined style={{ fontSize: '24px', alignItems: 'center' }} />} />
                 </Space>
               </Col>
             </Row>
-            <Divider style={{ margin: '16px 0' }} />
 
-            {/* Custom Layout for Descriptions */}
-            <Row gutter={[4, 4]}>
-              <Col xs={24} sm={12}>
-                <Text strong style={{ fontSize: '14px' }}>
-                  Name:
-                </Text>{' '}
-                <Text>{data?.name}</Text>
-              </Col>
-              <Col xs={24} sm={12}>
-                <Text strong style={{ fontSize: '14px' }}>
-                  Contact:
-                </Text>{' '}
-                <Text>
-                  {data?.contactDetails} <PhoneOutlined />
-                </Text>
-              </Col>
-              {data?.nok.map((nok, index) => (
-                <Col xs={24} sm={12} key={index}>
-                  <Text strong style={{ fontSize: '14px' }}>
-                    NOK ({nok.relationship}):
-                  </Text>{' '}
-                  <Text>
-                    {nok.name}, {nok.contactDetails} <PhoneOutlined />
+            {/* NOK Section */}
+            <Row style={{ marginTop: '12px' }}>
+              <Col>
+                <Text strong>NOK:</Text> 
+                {data?.nok.map((nok, index) => (
+                  <Text key={index} style={{ display: 'block', fontSize: '14px' }}>
+                    {nok.name} ({nok.relationship}) - {nok.contactDetails} <PhoneOutlined />
                   </Text>
-                </Col>
-              ))}
-              <Col xs={24} sm={12}>
-                <Text strong style={{ fontSize: '14px' }}>
-                  Address:
-                </Text>{' '}
-                <Text>{`${data?.block} ${data?.floor}-${data?.unitNumber}, ${data?.address}, ${data?.postalCode}`}</Text>
+                ))}
               </Col>
-              <Col xs={24} sm={12}>
-                <Text strong style={{ fontSize: '14px' }}>
-                  Notes:
-                </Text>{' '}
-                <Paragraph
-                  ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}
-                >
-                  {data?.notes}
-                </Paragraph>
+            </Row>
+
+            {/* Social Information */}
+            <Row style={{ marginTop: '12px' }}>
+              <Col>
+                <Text strong>Days Living Alone: </Text> 
+                <Text style={getDaysLivingAloneColor(data?.noOfDaysLivingAlone || 0)}>{data?.noOfDaysLivingAlone} days</Text>
+                <br />
+                <Text strong>Social Interaction Level: </Text> 
+                <Text style={getTextColor(data?.socialInteraction || '')}>{data?.socialInteraction}</Text>
               </Col>
-              <Col xs={24} sm={12}>
-                <Text strong style={{ fontSize: '14px' }}>
-                  Attachments:
-                </Text>{' '}
-                <Text>
-                  {data?.keyAttachments && data?.keyAttachments.length > 0
-                    ? 'Available'
+            </Row>
+
+            {/* Health Information */}
+            <Row style={{ marginTop: '12px' }}>
+              <Col>
+                <Text strong>ADL Difficulty: </Text> 
+                <Text style={getTextColor(data?.adlDifficulty.join(', ') || '')}>
+                  {data?.adlDifficulty.join(', ') || 'None'}
+                </Text>
+                <br />
+                <Text strong>Fall Risk: </Text> 
+                <Text style={getTextColor(data?.fallRisk || '')}>{data?.fallRisk}</Text>
+                <br />
+                <Text strong>Fall History:</Text>
+                <ul style={{ margin: 0, marginLeft: 8, paddingLeft: '16px' }}>
+                  {data?.fallHistory
+                    ? data.fallHistory.map((fall, index) => (
+                        <li key={index}>
+                          {dayjs(fall.date).format('D MMM YYYY')} - {fall.details}
+                        </li>
+                      ))
                     : 'None'}
-                </Text>
+                </ul>
               </Col>
-              <Col xs={24} sm={12}>
-                <Space direction="vertical" size="small">
-                  <Text strong style={{ fontSize: '14px' }}>
-                    Last Visit:
-                  </Text>
-                  {data?.visits && data.visits.length > 0 ? (
-                    <>
-                      <Text>
-                        {dayjs(data.visits[0].datetime).format(dateformat)}
-                      </Text>{' '}
-                      By {data.visits[0].visitor.name} (
-                      <Text type="secondary">
-                        {data.visits[0].visitor.role}
-                      </Text>
-                      <Text style={{ color: 'green' }}>
-                        {dayjs().diff(dayjs(data.visits[0].datetime), 'days')}{' '}
-                        days ago
-                      </Text>
-                    </>
-                  ) : (
-                    <Text>No visits</Text>
-                  )}
-                </Space>
+            </Row>
+
+            {/* Other Information */}
+            <Row style={{ marginTop: '12px' }}>
+              <Col>
+                <Text strong>Notes:</Text>
+                <Paragraph ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}>{data?.notes}</Paragraph>
+                <Text strong>Key Attachments: </Text> 
+                <Text>{data?.keyAttachments.length > 0 ? 'Available' : 'None'}</Text>
               </Col>
             </Row>
           </Card>
 
           {/* Recent Visits Section */}
           <Card style={{ marginTop: 8 }} bodyStyle={{ padding: '16px' }}>
-            <Title level={4} style={{ marginBottom: 8 }}>
-              Recent Visits
-            </Title>
+            <Title level={4} style={{ marginBottom: 8 }}>Recent Visits</Title>
             <List
               itemLayout="vertical"
-              dataSource={data?.visits || []}
+              dataSource={visits}
               renderItem={(visit) => (
-                <List.Item style={{ padding: '8px' }}>
-                  <Card
-                    bordered={false}
-                    style={{ backgroundColor: '#f9f9f9' }}
-                    bodyStyle={{ padding: '8px' }}
-                  >
-                    <Row gutter={[8, 8]}>
-                      <Col xs={8} sm={6}>
-                        {visit.attachments && visit.attachments.length > 0 ? (
+                <List.Item>
+                  <Card bordered={false} style={{ backgroundColor: '#f9f9f9' }} bodyStyle={{ padding: '8px' }}>
+                    <Row gutter={[0, 0]}>
+                      <Col xs={8}>
+                        {visit.photo_urls?.[0] ? (
                           <Image
-                            width={64}
-                            height={48}
-                            src={visit.attachments[0]}
-                            alt={`Visit image`}
-                            style={{ borderRadius: '4px' }}
+                            src={visit.photo_urls[0]}
+                            width={96}
+                            height={96}
+                            style={{ maxWidth: '200px', maxHeight: '200px', cursor: 'pointer' }}
                           />
                         ) : (
-                          <Image
-                            width={64}
-                            height={48}
-                            src="https://via.placeholder.com/64x48?text=No+Image"
-                            alt="Placeholder"
-                            style={{ borderRadius: '4px' }}
-                          />
+                          <Image src="https://via.placeholder.com/64x48?text=No+Image" width={64} height={48} />
                         )}
                       </Col>
-                      <Col xs={16} sm={18}>
-                        <Space direction="vertical" size="small">
-                          <Text style={{ fontSize: '14px' }}>
-                            {visit.notes}
-                          </Text>
-                          <Text style={{ fontSize: '14px' }}>
-                            <UserOutlined /> {visit.visitor.name},{' '}
-                            <Text type="secondary">{visit.visitor.role}</Text>
-                          </Text>
-                          <Text style={{ fontSize: '14px' }}>
-                            <CalendarOutlined />{' '}
-                            {dayjs(visit.datetime).format(dateformat)} (
-                            {dayjs().diff(dayjs(visit.datetime), 'days')} days
-                            ago)
-                          </Text>
-                          <Text style={{ fontSize: '14px' }}>
-                            <EnvironmentOutlined /> {visit.location}
-                          </Text>
+                      <Col xs={16}>
+                        <Space size={0} direction="vertical">
+                          <Text>{visit.comments || 'No comments available.'}</Text>
+                          <Text>👤 {visit.visitor_id}</Text>
+                          <Text>📅 {dayjs(visit.submission_time).format(dateformat)}</Text>
+                          <Text>📍 {visit.mode_of_interaction || 'N/A'}</Text>
                         </Space>
                       </Col>
                     </Row>
@@ -335,54 +333,20 @@ const ResidentProfilePage: React.FC = () => {
             />
           </Card>
 
-          <Modal
-            title="QR Code"
-            open={isModalVisible}
-            onCancel={handleCancel}
-            footer={[
-              <Button
-                key="print"
-                icon={<PrinterOutlined />}
-                onClick={handlePrintPage}
-              >
-                Print Profile
-              </Button>,
-              <Button
-                key="save"
-                type="primary"
-                icon={<SaveOutlined />}
-                onClick={handleSaveAsImage}
-              >
-                Save as Image
-              </Button>,
-            ]}
-          >
-            <div
-              ref={qrCodeRef}
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '16px',
-              }}
-            >
-              <QRCode value={qrUrl} size={180} errorLevel="H" />
+          <Modal title="QR Code" open={isModalVisible} onCancel={handleCancel} footer={[
+              <Button key="print" icon={<PrinterOutlined />} onClick={() => html2canvas(qrCodeRef.current!).then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const printWindow = window.open('', '_blank');
+                printWindow?.document.write(`<img src='${imgData}' style='width: 100%' />`);
+                printWindow?.document.close();
+                printWindow?.print();
+              })}>Print QR Code</Button>,
+              <Button key="save" type="primary" icon={<SaveOutlined />} onClick={handleSaveAsImage}>Save as Image</Button>,
+            ]}>
+            <div ref={qrCodeRef} style={{ textAlign: 'center' }}>
+              <QRCode value={qrUrl} size={180} />
             </div>
-            <Paragraph style={{ textAlign: 'center' }}>
-              Senior Code: {data?.elderlyCode}
-            </Paragraph>
           </Modal>
-
-          {/* Add a dedicated print button on the main page */}
-          <div style={{ textAlign: 'right', marginTop: '16px' }}>
-            <Button
-              type="primary"
-              icon={<PrinterOutlined />}
-              onClick={handlePrintPage}
-            >
-              Print All Information
-            </Button>
-          </div>
         </ConfigProvider>
       )}
     </PageContainer>

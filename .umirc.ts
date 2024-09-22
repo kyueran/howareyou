@@ -1,7 +1,6 @@
 import { defineConfig } from '@umijs/max';
 
 export default defineConfig({
-  esbuildMinifyIIFE: true,
   history: {
     type: 'browser', // Use browser-based routing
   },
@@ -32,7 +31,6 @@ export default defineConfig({
       component: './Home',
     },
     {
-      name: 'Elderly Profile',
       path: '/elderly/:id',
       component: './ElderlyProfile',
       access: 'isStaff',
