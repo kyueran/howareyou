@@ -151,19 +151,9 @@ const DisplayVisitsPage: React.FC = () => {
 
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
-    return date.toLocaleString('en-SG', { 
-      timeZone: 'Asia/Singapore', 
-      year: 'numeric', 
-      month: '2-digit', 
-      day: '2-digit', 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      second: '2-digit', 
-      hour12: false 
-    });
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
   };
   
-
   const getVisitorInfo = (visitorId: number) => {
     if (visitorId === 1) {
       return { name: 'Mr Wong Ah Fook', role: 'volunteer' };
