@@ -1,13 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Row, Space, Typography, message } from 'antd';
+import { Card, Col, Row, Space, Typography, message, AutoComplete, Button } from 'antd';
 import { useAccess } from '@umijs/max';
 
 const { Text, Title } = Typography;
 
 const DisplayVisitsPage: React.FC = () => {
   const [visits, setVisits] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [filteredVisits, setFilteredVisits] = useState<any[]>([]);
+  const [seniors, setSeniors] = useState<any[]>([]); // Store seniors as an array
+  const [options, setOptions] = useState<any[]>([]); // For AutoComplete options
+  const [showAllVisits, setShowAllVisits] = useState(false); // Toggle for staff to see all visits or my visits only
+  const [searchElderlyId, setSearchElderlyId] = useState<number | null>(null); // Elderly ID to filter by
+  const [searchValue, setSearchValue] = useState<string>(''); // Current value of the AutoComplete input
   const access = useAccess(); // To get access control info
+  const [loading, setLoading] = useState(true);
+
+  // Determine the visitor's role and ID
+  const visitorId = access.isStaff ? 2 : 1;
+  const visitorInfo = access.isStaff
+    ? { name: 'Ms Josephine Lam', role: 'staff' }
+    : { name: 'Mr Wong Ah Fook', role: 'volunteer' };
+
+  // Fetch seniors data once and store in state
+  const fetchSeniors = async () => {
+    try {
+      const response = await fetch('/api/fetchSeniors');
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch seniors: ${response.statusText}`);
+      }
+
+      const seniorsData = await response.json();
+
+      if (Array.isArray(seniorsData)) {
+        setSeniors(seniorsData); // Store the seniors array
+      } else {
+        throw new Error('Unexpected API response format');
+      }
+    } catch (error) {
+      console.error('Error fetching seniors:', error);
+      message.error('There was an error fetching the seniors.');
+    }
+  };
 
   // Fetch visits from the API
   const fetchVisits = async () => {
@@ -16,6 +50,7 @@ const DisplayVisitsPage: React.FC = () => {
       const result = await response.json();
       if (result.success) {
         setVisits(result.data);
+        // The applyFilters function will handle the filtering
       } else {
         message.error(result.message || 'Failed to fetch visits.');
       }
@@ -27,7 +62,95 @@ const DisplayVisitsPage: React.FC = () => {
     }
   };
 
-  // Use this function to get visitor's name and role based on access and visitor_id
+  // Polling visits every 5 seconds
+  useEffect(() => {
+    fetchSeniors(); // Fetch seniors data once
+    fetchVisits(); // Initial fetch
+    const interval = setInterval(() => {
+      fetchVisits();
+    }, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(interval); // Clear the interval when the component is unmounted
+  }, []);
+
+  // Apply filters whenever visits, showAllVisits, or searchElderlyId change
+  useEffect(() => {
+    applyFilters(visits);
+  }, [visits, showAllVisits, searchElderlyId]);
+
+  // Function to apply the current active filter to the visits
+  const applyFilters = (visitsData: any[]) => {
+    let filtered = visitsData;
+
+    // Volunteers can only see their own visits
+    if (visitorInfo.role === 'volunteer') {
+      filtered = filtered.filter((visit) => Number(visit.visitor_id) === visitorId);
+    } else if (visitorInfo.role === 'staff') {
+      // Staff can toggle between all visits and their own visits
+      if (!showAllVisits) {
+        filtered = filtered.filter((visit) => Number(visit.visitor_id) === visitorId);
+      }
+    }
+
+    // If a search is active, filter by elderly_id
+    if (searchElderlyId !== null) {
+      filtered = filtered.filter((visit) => Number(visit.elderly_id) === searchElderlyId);
+    }
+
+    setFilteredVisits(filtered);
+  };
+
+  // Handle filtering visits based on search query
+  const handleSearch = (value: string) => {
+    setSearchValue(value); // Update the input value
+    const searchQuery = value.toLowerCase();
+
+    // Filter options for AutoComplete dropdown
+    const filteredOptions = seniors
+      .filter(
+        (senior) =>
+          senior.name.toLowerCase().includes(searchQuery) ||
+          senior.elderly_code.toLowerCase().includes(searchQuery)
+      )
+      .map((senior) => {
+        const displayText = `[${senior.elderly_code}] - ${senior.name.toUpperCase()}`;
+        return {
+          value: displayText, // This will be displayed in the input when selected
+          label: displayText, // This will be displayed in the dropdown
+          seniorId: senior.id, // Include the senior's id for reference
+        };
+      });
+
+    setOptions(filteredOptions); // Update the dropdown options
+  };
+
+  // Handle selection of a specific elderly name or code from AutoComplete
+  const handleSelect = (value: string, option: any) => {
+    setSearchValue(value); // Set the input to display the selected value
+    const seniorId = option.seniorId;
+    if (seniorId !== undefined) {
+      setSearchElderlyId(seniorId); // Set the elderly_id to filter by
+    } else {
+      message.warning('No matching senior found.');
+    }
+  };
+
+  // Clear search filter when input is cleared
+  const handleClearSearch = () => {
+    setSearchValue(''); // Clear the input value
+    setSearchElderlyId(null);
+  };
+
+  // Toggle between all visits and my visits (staff only)
+  const toggleShowAllVisits = () => {
+    setShowAllVisits(!showAllVisits); // Toggle the state
+  };
+
+  const formatDateTime = (dateTime: string) => {
+    const date = new Date(dateTime);
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+  };
+
   const getVisitorInfo = (visitorId: number) => {
     if (visitorId === 1) {
       return { name: 'Mr Wong Ah Fook', role: 'volunteer' };
@@ -38,21 +161,6 @@ const DisplayVisitsPage: React.FC = () => {
     }
   };
 
-  // Polling every 5 seconds
-  useEffect(() => {
-    fetchVisits(); // Initial fetch
-    const interval = setInterval(() => {
-      fetchVisits();
-    }, 5000); // Poll every 5 seconds
-
-    return () => clearInterval(interval); // Clear the interval when the component is unmounted
-  }, []);
-
-  const formatDateTime = (dateTime: string) => {
-    const date = new Date(dateTime);
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-  };
-
   return (
     <Row justify="center" style={{ marginTop: '24px' }}>
       <Col xs={22} sm={20} md={16} lg={12}>
@@ -60,11 +168,39 @@ const DisplayVisitsPage: React.FC = () => {
           <Title level={3} style={{ marginBottom: '0px' }}>
             Visit Logs
           </Title>
-          {visits.length === 0 && !loading ? (
+
+          {/* Button to toggle between "My Visits" and "All Visits" for staff */}
+          {visitorInfo.role === 'staff' && (
+            <Button type="primary" onClick={toggleShowAllVisits}>
+              {showAllVisits ? 'Show My Visits' : 'Show All Visits'}
+            </Button>
+          )}
+
+          {/* AutoComplete search for elderly (staff only) */}
+          {visitorInfo.role === 'staff' && (
+            <AutoComplete
+              options={options} // AutoComplete options
+              onSearch={handleSearch} // Search input handler
+              onSelect={handleSelect} // Selection handler
+              onChange={(value) => {
+                if (!value) {
+                  handleClearSearch();
+                } else {
+                  setSearchValue(value);
+                }
+              }}
+              value={searchValue} // Display the selected value in the input
+              allowClear
+              placeholder="Search by elderly name or code"
+              style={{ width: '100%', marginBottom: '20px' }}
+            />
+          )}
+
+          {filteredVisits.length === 0 && !loading ? (
             <Text>No visits found.</Text>
           ) : (
-            visits.map((visit) => {
-              const visitorInfo = getVisitorInfo(visit.visitor_id);
+            filteredVisits.map((visit) => {
+              const visitor = getVisitorInfo(Number(visit.visitor_id));
               return (
                 <Card key={visit.id} style={{ width: '100%' }} loading={loading}>
                   <Row gutter={16} align="middle">
@@ -115,17 +251,23 @@ const DisplayVisitsPage: React.FC = () => {
                     </Col>
                     <Col xs={16} sm={18} md={18} lg={19}>
                       <div>
-                        <Text strong style={{ fontSize: '16px' }}>
-                          {visit.comments || 'No comments.'}
+                        <Text strong style={{ fontSize: '16px', display: 'block' }}>
+                          <strong>{seniors.filter((senior) => senior.id === visit.elderly_id).map((senior) => senior.name)}</strong>
                         </Text>
+                        <Text>{visit.comments || 'No comments.'}</Text>
                         <br />
                         <Text type="secondary">
                           <span role="img" aria-label="visitor">
                             👤
                           </span>{' '}
-                          {visitorInfo.name}, 
-                          <span style={{ color: visitorInfo.role === 'staff' ? 'red' : 'blue', textTransform: 'uppercase' }}>
-                            {visitorInfo.role}
+                          {visitor.name},{' '}
+                          <span
+                            style={{
+                              color: visitor.role === 'staff' ? 'red' : 'blue',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            {visitor.role}
                           </span>
                         </Text>
                         <br />
@@ -134,7 +276,10 @@ const DisplayVisitsPage: React.FC = () => {
                             📅
                           </span>{' '}
                           {formatDateTime(visit.submission_time)} (
-                          {Math.floor((Date.now() - new Date(visit.submission_time).getTime()) / (1000 * 60 * 60 * 24))}{' '}
+                          {Math.floor(
+                            (Date.now() - new Date(visit.submission_time).getTime()) /
+                              (1000 * 60 * 60 * 24),
+                          )}{' '}
                           days ago)
                         </Text>
                         <br />

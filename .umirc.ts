@@ -49,7 +49,7 @@ export default defineConfig({
       name: 'Display Visits',
       path: '/display-visits',
       component: './DisplayVisits',
-      access: 'isStaff',
+      access: ['isVolunteer', 'isStaff'],
       hideInMenu: true,
     },
   ],
