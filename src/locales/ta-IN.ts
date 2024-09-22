@@ -9,4 +9,11 @@ export default {
   reSendCode: `மீண்டும் அனுப்பவும் ({countdown} விநாடிகள்)`,
   enterOtp: 'OTP-ஐ உள்ளிடவும்!',
   signIn: 'உள்நுழைய',
+  'menu.Login': 'உள்நுழை',
+  'menu.LinkTree.Volunteer': 'தன்னார்வாளர்',
+  'menu.LinkTree.Staff': 'ஊழியர்',
+  'menu.ElderlyProfile': 'மூத்த குடிமகனின் விவரம்',
+  'menu.RegisterVisit': 'பார்வையை பதிவு செய்',
+  'menu.DisplayVisits': 'பார்வைகளை காட்டு',
+  welcome: 'வரவேற்கிறோம், {name}!',
 };

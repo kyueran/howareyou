@@ -9,4 +9,11 @@ export default {
   reSendCode: `重新发送 ({countdown}秒)`,
   enterOtp: '请输入验证码！',
   signIn: '登录',
+  'menu.Login': '登录',
+  'menu.LinkTree.Volunteer': '志愿者',
+  'menu.LinkTree.Staff': '员工',
+  'menu.ElderlyProfile': '老人档案',
+  'menu.RegisterVisit': '登记访问',
+  'menu.DisplayVisits': '显示访问',
+  welcome: '欢迎, {name}!',
 };

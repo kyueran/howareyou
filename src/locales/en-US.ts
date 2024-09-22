@@ -9,4 +9,11 @@ export default {
   reSendCode: `Re-send ({countdown}s)`,
   enterOtp: 'Please enter the OTP!',
   signIn: 'Sign In',
+  'menu.Login': 'Login',
+  'menu.LinkTree.Volunteer': 'Volunteer',
+  'menu.LinkTree.Staff': 'Staff',
+  'menu.ElderlyProfile': 'Elderly Profile',
+  'menu.RegisterVisit': 'Register Visit',
+  'menu.DisplayVisits': 'Display Visits',
+  welcome: 'Welcome, {name}!',
 };

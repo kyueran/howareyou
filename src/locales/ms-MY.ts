@@ -9,4 +9,11 @@ export default {
   reSendCode: `Hantar Semula ({countdown}s)`,
   enterOtp: 'Sila masukkan OTP anda!',
   signIn: 'Log Masuk',
+  'menu.Login': 'Log Masuk',
+  'menu.LinkTree.Volunteer': 'Sukarelawan',
+  'menu.LinkTree.Staff': 'Kakitangan',
+  'menu.ElderlyProfile': 'Profil Warga Emas',
+  'menu.RegisterVisit': 'Daftar Lawatan',
+  'menu.DisplayVisits': 'Paparan Lawatan',
+  welcome: 'Selamat datang, {name}!',
 };
