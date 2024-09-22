@@ -1,6 +1,5 @@
 import { RunTimeLayoutConfig } from '@umijs/max';
-import { history } from 'umi';
-import React from 'react';
+import { history, terminal } from 'umi';
 
 type UserRole = 'volunteer' | 'staff';
 
@@ -38,6 +37,10 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
     logo: 'https://img.alicdn.com/tfs/TB1YHEpwUT1gK0jSZFhXXaAtVXa-28-27.svg',
     menu: {
       locale: false,
+    },
+    logout: (initialState: any) => {
+      localStorage.removeItem('userRole');
+      history.push('/login')
     },
     locale: 'en-US',
     token: {

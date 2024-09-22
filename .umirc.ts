@@ -26,7 +26,7 @@ export default defineConfig({
       layout: false,
     },
     {
-      name: 'Home',
+      name: 'Elderly Residents',
       path: '/home',
       access: ['isVolunteer', 'isStaff'],
       component: './Home',

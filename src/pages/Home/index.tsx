@@ -1,16 +1,14 @@
-import { CopyOutlined, EnvironmentOutlined, RightOutlined } from '@ant-design/icons';
-import { PageContainer } from '@ant-design/pro-components';
-import { useNavigate } from '@umijs/max';
-import { Avatar, Button, Card, Col, List, message, Row, Skeleton, Space, Typography } from 'antd';
+import { Button, Input, List, Card, Row, Col, Image, Space, Typography, Skeleton, message } from 'antd';
+import { CloseOutlined, RightOutlined, CopyOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { PageContainer } from '@ant-design/pro-components';
+import { history } from 'umi';
 
 const { Title, Text } = Typography;
 
 dayjs.extend(advancedFormat);
-
-const dateformat = 'D MMM YYYY, hA';
 
 export type ElderlyInfo = {
   id: number;
@@ -62,18 +60,16 @@ export type FallHistory = {
 };
 
 const ResidentListPage: React.FC = () => {
-  const [loading, setLoading] = useState(true);
   const [data, setData] = useState<ElderlyInfo[]>([]);
-  const [visits, setVisits] = useState<VisitInfo[]>([]);
+  const [filteredData, setFilteredData] = useState<ElderlyInfo[]>([]);
   const [currentPosition, setCurrentPosition] = useState<{ lat: number; lon: number } | null>(null);
-
-  const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        // Fetch seniors and visits concurrently
         const [seniorsResponse, visitsResponse] = await Promise.all([
           fetch('/api/fetchSeniors'),
           fetch('/api/fetchVisits'),
@@ -95,26 +91,23 @@ const ResidentListPage: React.FC = () => {
           block: row.block,
           floor: row.floor,
           unitNumber: row.unit_number,
-          address: row.address, // General address (e.g., street name)
+          address: row.address,
           postalCode: row.postal_code,
           notes: row.notes,
-          keyAttachments: JSON.parse(row.key_attachments || '[]'), // Parsing the key_attachments if it's stored as a serialized string
+          keyAttachments: JSON.parse(row.key_attachments || '[]'),
           noOfDaysLivingAlone: row.no_of_days_living_alone,
-          adlDifficulty: row.adl_difficulty || [], // Parsing the adl_difficulty JSONB field
+          adlDifficulty: row.adl_difficulty || [],
           fallRisk: row.fall_risk,
-          fallHistory: row.fall_history || [], // Parsing the fall_history JSONB field
+          fallHistory: row.fall_history || [],
           socialInteraction: row.social_interaction,
           photoUrl: row.photo_url,
-          languages: [row.languages as Language], // Assuming languages is a single enum value
-          visits: [], // Handle visits if applicable
+          languages: [row.languages as Language],
+          visits: [],
         }));
-        const visitsResult = await visitsResponse.json();
 
-        if (visitsResult.success) {
-          setVisits(visitsResult.data);
-        } else {
-          message.error(visitsResult.message || 'Failed to fetch visits.');
-        }
+        const visitsResult = await visitsResponse.json();
+        const visits: VisitInfo[] = visitsResult.success ? visitsResult.data : [];
+
         // Combine seniors with their most recent visits
         const seniorsWithVisits = seniors.map((senior: ElderlyInfo) => {
           const recentVisits = visits.filter((visit: VisitInfo) => visit.elderly_id === senior.id);
@@ -124,9 +117,11 @@ const ResidentListPage: React.FC = () => {
           };
         });
 
-        setData(seniorsWithVisits);
+        const sortedData = sortData(seniorsWithVisits);
+        setData(sortedData);
+        setFilteredData(sortedData); // Initialize filtered data with sorted data
       } catch (error) {
-        message.error('An error occurred when fetching resident data.');
+        console.error('Error fetching resident data', error);
       } finally {
         setLoading(false);
       }
@@ -142,22 +137,17 @@ const ResidentListPage: React.FC = () => {
           lon: position.coords.longitude,
         });
       });
-    } else {
-      message.warning('Geolocation is not supported by this browser.');
     }
   }, []);
 
-  const handleCardClick = (id: number) => {
-    navigate(`/elderly/${id}`); // Navigate to the detailed page with the id
+  // Function to calculate the number of days since last visit
+  const calculateDaysSinceLastVisit = (recentVisits: VisitInfo[]) => {
+    if (recentVisits.length === 0) return Infinity;
+    const lastVisitDate = dayjs(recentVisits[0].submission_time);
+    return dayjs().diff(lastVisitDate, 'days');
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      message.success('Postal code copied!');
-    });
-  };
-
-  // Function to calculate distance between two coordinates using Haversine formula
+  // Function to calculate the distance between two coordinates using the Haversine formula
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const toRad = (value: number) => (value * Math.PI) / 180;
     const R = 6371e3; // Earth radius in meters
@@ -167,114 +157,154 @@ const ResidentListPage: React.FC = () => {
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+    return R * c; // Returns distance in meters
   };
 
-  const distanceFromUser = (lat: number, lon: number) => {
-    if (!currentPosition) return null;
-    return calculateDistance(currentPosition.lat, currentPosition.lon, lat, lon);
-  };
+  // Function to sort the data based on the most recent visit and distance
+  const sortData = useCallback((residents: ElderlyInfo[]) => {
+    return residents
+      .slice() // Create a copy of the array
+      .sort((a, b) => {
+        // Sort by days since last visit first
+        const daysA = calculateDaysSinceLastVisit(a.recentVisits || []);
+        const daysB = calculateDaysSinceLastVisit(b.recentVisits || []);
 
-  // Function to get dynamic background color based on days since last visit
-  const getBackgroundColor = (daysSinceLastVisit: number) => {
-    const maxDays = 7; // You can adjust this based on your requirement
-    const intensity = Math.min(daysSinceLastVisit / maxDays, 1); // Normalize between 0 and 1
-    const red = Math.floor(255 * intensity);
-    const green = Math.floor(255 * (1 - intensity));
-    return `rgba(${red}, ${green}, 100, 0.2)`; // RGBA format for transparency
+        if (daysA !== daysB) {
+          return daysB - daysA; // Sort by descending days since last visit
+        }
+
+        // Then sort by distance if the location is available
+        if (currentPosition) {
+          const distanceA = calculateDistance(1.3521, 103.8198, currentPosition.lat, currentPosition.lon);
+          const distanceB = calculateDistance(1.3521, 103.8198, currentPosition.lat, currentPosition.lon);
+          return distanceA - distanceB; // Sort by ascending distance
+        }
+
+        return 0; // If no distance information, keep the original order
+      });
+  }, [currentPosition]);
+
+  // Handle search filtering
+  const handleSearch = useCallback((searchText: string) => {
+    setSearchValue(searchText);
+
+    const filtered = data.filter(
+      (elderly) =>
+        elderly.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        elderly.block.toLowerCase().includes(searchText.toLowerCase()) ||
+        elderly.unitNumber.includes(searchText) ||
+        elderly.address.toLowerCase().includes(searchText.toLowerCase()) ||
+        elderly.elderlyCode.toLowerCase().includes(searchText.toLowerCase()) ||
+        elderly.postalCode.includes(searchText) ||
+        elderly.aacCode.toLowerCase().includes(searchText.toLowerCase())
+    );
+    setFilteredData(filtered);
+  }, [data]);
+
+  const handleClear = useCallback(() => {
+    setSearchValue(''); // Clear the search value
+    setFilteredData(data); // Reset filtered data to the full list
+  }, [data]);
+
+  const handleCopy = (e: React.MouseEvent, text: string) => {
+    e.stopPropagation(); // Prevent triggering the card onClick event
+    navigator.clipboard.writeText(text).then(() => {
+      message.success('Address copied to clipboard!'); // Show success message
+    }).catch((err) => {
+      message.error('Failed to copy address');
+    });
   };
 
   return (
-    <PageContainer>
+    <PageContainer style={{ margin: '0 8px' }}>
+      <Text>You are viewing residents in the <Text type='danger'>Queenstown</Text> area!</Text>
+      <Input
+        style={{ width: '100%', margin: '8px 0' }}
+        size="large"
+        placeholder="Find elderly using their address, code..."
+        suffix={searchValue.length > 0 ? (
+          <CloseOutlined
+            style={{ fontSize: '20px', color: 'rgba(0, 0, 0, 0.45)', cursor: 'pointer' }}
+            onClick={handleClear}
+          />
+        ) : <span />}
+        value={searchValue}
+        onChange={(e) => handleSearch(e.target.value)}
+      />
       {loading ? (
-        <Skeleton active title paragraph={{ rows: 4 }} />
+        <Skeleton.Node active style={{ width: '100vw' }} />
       ) : (
         <List
           itemLayout="vertical"
-          dataSource={data}
+          dataSource={filteredData}
           renderItem={(elderly) => {
             const mostRecentVisit = elderly.recentVisits && elderly.recentVisits.length > 0
               ? dayjs(elderly.recentVisits[0].submission_time)
               : null;
-            const daysSinceLastVisit = mostRecentVisit ? dayjs().diff(mostRecentVisit, 'days') : null;
-            const backgroundColor = daysSinceLastVisit !== null ? getBackgroundColor(daysSinceLastVisit) : 'white';
+            const daysSinceLastVisit = mostRecentVisit ? dayjs().diff(mostRecentVisit, 'days') : 'No visits';
+            const distance = currentPosition
+              ? `${(calculateDistance(1.3521, 103.8198, currentPosition.lat, currentPosition.lon) / 1000).toFixed(1)} km`
+              : 'Fetching distance...';
 
             return (
-              <List.Item>
+              <List.Item style={{ padding: 0, paddingBottom: 8 }}>
                 <Card
-                  bordered={false}
-                  style={{
-                    marginBottom: 2, // Reduced margin between cards for a more compact layout
-                    cursor: 'pointer',
-                    backgroundColor: backgroundColor, // Dynamic background color based on last visit
-                  }}
-                  onClick={() => handleCardClick(elderly.id)} // Make card clickable
+                  style={{ cursor: 'pointer' }}
+                  bodyStyle={{ padding: '8px 16px' }}
+                  onClick={() => history.push(`/elderly/${elderly.id}`)}
                 >
-                  <Row gutter={16}>
-                    <Col xs={6} sm={4}>
-                      <Avatar
-                        size={64} // Reduced size to make more compact
-                        src={elderly.photoUrl || 'https://via.placeholder.com/64'}
-                        shape="square"
-                        alt={elderly.name}
+                  <Row gutter={0} justify='space-between'>
+                    <Col xs={8} sm={6} style={{ alignContent: 'center' }}>
+                      <Image
+                        src={elderly.photoUrl || 'https://via.placeholder.com/48x48'} // Reduce size for compact layout
+                        width={96}
+                        height={96}
+                        style={{ cursor: 'pointer' }}
                       />
                     </Col>
-                    <Col xs={18} sm={20}>
-                      <Space
-                        direction="vertical"
-                        size="small"
-                        style={{ width: '100%' }}
-                      >
-                        <Title level={5} style={{ margin: 0 }}>
-                          {elderly.name} ({elderly.elderlyCode})
-                        </Title>
+                    <Col xs={16} sm={18}>
+                      <Space direction="vertical" size={0} style={{ width: '100%' }}>
+                        <Space direction="horizontal" style={{ justifyContent: 'space-between', width: '100%' }}>
+                          <Title level={5} style={{ margin: 0 }}>
+                            {elderly.name} ({elderly.elderlyCode})
+                          </Title>
+                          
+                          {/* Right-aligned RightOutlined icon */}
+                          <div style={{ marginLeft: 'auto' }}>
+                            <RightOutlined style={{ fontSize: '14px' }} />
+                          </div>
+                        </Space>
 
-                        {/* Display Address in sections for better wrapping */}
+                        {/* Block, Floor, Unit, Address */}
                         <Text type="secondary">
-                          {elderly.block} {elderly.floor}-{elderly.unitNumber}
+                          {elderly.block} {elderly.floor}-{elderly.unitNumber}, {elderly.address}
                         </Text>
-                        <Text type="secondary">
-                          {elderly.address}, {elderly.postalCode}
+
+                        <Space direction="horizontal" style={{ justifyContent: 'flex-start', width: '100%' }}>
+                          <Text type="secondary">
+                            Singapore {elderly.postalCode}
+                          </Text>
+
+                          {/* Secondary-colored Copy button */}
                           <Button
                             type="default"
                             size="small"
-                            style={{ marginLeft: 8, borderRadius: 4 }} // Make it look more like a button
-                            icon={<CopyOutlined />}
-                            onClick={() => copyToClipboard(elderly.postalCode)}
+                            style={{ marginLeft: 0, borderRadius: 4 }}
+                            icon={<CopyOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />}
+                            onClick={(e) => handleCopy(e, `${elderly.address}, ${elderly.postalCode}`)}
                           >
-                            Copy
+                            <Text type='secondary'>Copy</Text>
                           </Button>
-                        </Text>
+                        </Space>
 
-                        {/* Display Distance */}
-                        <Text>
-                          <EnvironmentOutlined />{' '}
-                          {distanceFromUser(1.3521, 103.8198)
-                            ? `${(distanceFromUser(1.3521, 103.8198) / 1000).toFixed(1)} km`
-                            : 'Fetching distance...'}
-                        </Text>
-
-                        <Text type="secondary" style={{ fontSize: '12px' }}>
-                          {elderly.noOfDaysLivingAlone} days living alone
-                        </Text>
-
-                        {/* Most Recent Visit Information */}
-                        {mostRecentVisit && (
+                        <Space direction='horizontal' style={{ width: '100%', justifyContent: 'space-between'}}>
                           <Text type="secondary" style={{ fontSize: '12px' }}>
-                            Last visit: {mostRecentVisit.format(dateformat)}
-                            <br />
-                            Mode: {elderly.recentVisits[0].mode_of_interaction}, Duration: {elderly.recentVisits[0].duration_of_contact} minutes
-                            <br />
-                            Status: {elderly.recentVisits[0].status}
-                            <br />
-                            Comments: {elderly.recentVisits[0].comments}
+                            visited {daysSinceLastVisit} days ago
                           </Text>
-                        )}
-
-                        {/* Add view profile indicator */}
-                        <Text type="secondary" style={{ fontSize: '12px', color: '#1890ff' }}>
-                          View Profile <RightOutlined />
-                        </Text>
+                          <Text type="secondary" style={{ fontSize: '12px' }}>
+                            📍 {distance ? `${distance} away` : distance}
+                          </Text>
+                        </Space>
                       </Space>
                     </Col>
                   </Row>
