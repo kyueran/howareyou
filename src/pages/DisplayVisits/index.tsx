@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Row, Space, Typography, message, Image } from 'antd';
+import { Card, Col, Row, Space, Typography, message, Button, AutoComplete } from 'antd';
 import { useAccess } from '@umijs/max';
 import { useNavigate } from '@umijs/max';
 
@@ -151,8 +151,18 @@ const DisplayVisitsPage: React.FC = () => {
 
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+    return date.toLocaleString('en-SG', { 
+      timeZone: 'Asia/Singapore', 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit', 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit', 
+      hour12: false 
+    });
   };
+  
 
   const getVisitorInfo = (visitorId: number) => {
     if (visitorId === 1) {
@@ -171,10 +181,36 @@ const DisplayVisitsPage: React.FC = () => {
           <Title level={3} style={{ marginBottom: '0px' }}>
             Visit Logs
           </Title>
-          {visits.length === 0 && !loading ? (
+          {/* Button to toggle between "My Visits" and "All Visits" for staff */}
+          {visitorInfo.role === 'staff' && (
+            <Button type="primary" onClick={toggleShowAllVisits}>
+              {showAllVisits ? 'Show My Visits' : 'Show All Visits'}
+            </Button>
+          )}
+
+          {/* AutoComplete search for elderly (staff only) */}
+          {visitorInfo.role === 'staff' && (
+            <AutoComplete
+              options={options} // AutoComplete options
+              onSearch={handleSearch} // Search input handler
+              onSelect={handleSelect} // Selection handler
+              onChange={(value) => {
+                if (!value) {
+                  handleClearSearch();
+                } else {
+                  setSearchValue(value);
+                }
+              }}
+              value={searchValue} // Display the selected value in the input
+              allowClear
+              placeholder="Search by elderly name or code"
+              style={{ width: '100%', marginBottom: '20px' }}
+            />
+          )}
+          {filteredVisits.length === 0 && !loading ? (
             <Text>No visits found.</Text>
           ) : (
-            visits.map((visit) => {
+            filteredVisits.map((visit) => {
               const visitorInfo = getVisitorInfo(visit.visitor_id);
               return (
                 <Card
@@ -222,8 +258,8 @@ const DisplayVisitsPage: React.FC = () => {
                                     <div
                                     style={{
                                         position: 'absolute',
-                                        top: '-5px',
-                                        left: '-5px',
+                                        top: '-3px',
+                                        left: '-3px',
                                         width: '100%',
                                         height: '100%',
                                         zIndex: 1, // Behind the image
@@ -234,8 +270,8 @@ const DisplayVisitsPage: React.FC = () => {
                                     <div
                                     style={{
                                         position: 'absolute',
-                                        top: '-10px',
-                                        left: '-10px',
+                                        top: '-6px',
+                                        left: '-6px',
                                         width: '100%',
                                         height: '100%',
                                         zIndex: 0, // Further behind the image
@@ -245,6 +281,9 @@ const DisplayVisitsPage: React.FC = () => {
                                     />
                                 </>
                                 )}
+                                <div style={{ textAlign: 'center', marginTop: '5px', fontSize: '12px', color: '#888' }}>
+                                    {visit.photo_urls.length > 1 ? `${visit.photo_urls.length} photos` : '1 photo'}
+                                </div>
                             </div>
                             ) : (
                             <div style={{ textAlign: 'center', paddingTop: '50%' }}>No Images</div>
@@ -272,7 +311,7 @@ const DisplayVisitsPage: React.FC = () => {
                                 📅
                             </span>{' '}
                             {formatDateTime(visit.submission_time)} (
-                            {Math.floor((Date.now() - new Date(visit.submission_time).getTime()) / (1000 * 60 * 60 * 24))}{' '}
+                            {Math.floor((Date.now() + (8 * 60 * 60 * 1000) - new Date(visit.submission_time).getTime()) / (1000 * 60 * 60 * 24))}{' '}
                             days ago)
                             </Text>
                             <br />

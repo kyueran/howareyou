@@ -1,3 +1,4 @@
+// Import necessary packages
 import { createClient } from '@vercel/postgres';
 import dotenv from 'dotenv';
 
@@ -12,7 +13,7 @@ export async function POST(request: Request): Promise<Response> {
   try {
     await client.connect();
 
-    const { elderly_id, visitor_id, relationship, mode_of_interaction, duration_of_contact, status, comments, photoUrls} = await request.json();
+    const { elderly_id, visitor_id, relationship, mode_of_interaction, duration_of_contact, status, comments, photoUrls } = await request.json();
 
     if (!elderly_id || !visitor_id || !status) {
       return new Response(
@@ -24,10 +25,30 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    // Insert the new visit into the 'visits' table using the photo URL
+    // Insert the new visit into the 'visits' table with Singapore time for submission_time
     await client.sql`
-      INSERT INTO visits (elderly_id, visitor_id, relationship, mode_of_interaction, duration_of_contact, status, comments, photo_urls, submission_time)
-      VALUES (${elderly_id}, ${visitor_id}, ${relationship}, ${mode_of_interaction}, ${duration_of_contact}, ${status}, ${comments || null}, ${photoUrls || null}, NOW());
+      INSERT INTO visits (
+        elderly_id, 
+        visitor_id, 
+        relationship, 
+        mode_of_interaction, 
+        duration_of_contact, 
+        status, 
+        comments, 
+        photo_urls, 
+        submission_time
+      )
+      VALUES (
+        ${elderly_id}, 
+        ${visitor_id}, 
+        ${relationship}, 
+        ${mode_of_interaction}, 
+        ${duration_of_contact}, 
+        ${status}, 
+        ${comments || null}, 
+        ${photoUrls || null}, 
+        NOW() AT TIME ZONE 'Asia/Singapore'
+      );
     `;
 
     return new Response(

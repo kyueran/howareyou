@@ -14,7 +14,7 @@ import { flushSync } from 'react-dom';
 //@ts-ignore
 import { history, useModel } from 'umi';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const sendOTP = async () => {
   // Simulate sending OTP instantly
@@ -92,7 +92,7 @@ const Login: React.FC = () => {
       const response = await sendOTP();
       if (response.status === 'ok') {
         message.success(response.message);
-        setCountdown(30); // Start 60-second countdown
+        setCountdown(30); // Start 30-second countdown
       } else {
         message.error(response.message || 'Failed to send OTP!');
       }
@@ -110,7 +110,6 @@ const Login: React.FC = () => {
         // Set user info into global state
         flushSync(() => setInitialState({ ...initialState, ...response.data }));
         // Redirect to respective homepage after successful login
-        // NOTE: Special handling is done here for Hash routing
         const redirectUrl =
           new URLSearchParams(location.search).get('redirect') || '/';
 
@@ -171,9 +170,9 @@ const Login: React.FC = () => {
             />
           </Form.Item>
           <Form.Item
-            label="OTP"
+            label=""
             required
-            style={{ marginBottom: 24 }} // Increased bottom margin for spacing
+            style={{ marginBottom: 24 }}
           >
             <Row gutter={8}>
               <Col span={16}>
@@ -198,7 +197,7 @@ const Login: React.FC = () => {
                   style={{
                     fontSize: countdown > 0 ? '10px' : undefined,
                     padding: '0 8px',
-                    backgroundColor: countdown > 0 ? '#bae7ff' : '#1890ff', // Light blue when countdown active, dark blue otherwise
+                    backgroundColor: countdown > 0 ? '#bae7ff' : '#1890ff',
                     borderColor: countdown > 0 ? '#bae7ff' : '#1890ff',
                     color: '#fff',
                   }}
