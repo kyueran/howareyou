@@ -1,6 +1,7 @@
 import { defineConfig } from '@umijs/max';
 
 export default defineConfig({
+  esbuildMinifyIIFE: true,
   history: {
     type: 'browser', // Use browser-based routing
   },
