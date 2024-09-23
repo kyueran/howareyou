@@ -11,9 +11,10 @@ export default {
   signIn: 'Sign In',
 
   // Custom Navbar translations
-  'menu.Login': 'Login',
   'menu.LinkTree.Volunteer': 'Volunteer',
   'menu.LinkTree.Staff': 'Staff',
+  'menu.Login': 'Login',
+  'menu.ElderlyResidents': 'Elderly Residents',
   'menu.ElderlyProfile': 'Elderly Profile',
   'menu.RegisterVisit': 'Register Visit',
   'menu.DisplayVisits': 'Visit Logs',

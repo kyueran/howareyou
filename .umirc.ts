@@ -33,9 +33,11 @@ export default defineConfig({
       layout: false,
     },
     {
-      path: '/elderly',
-      access: 'isStaff',
-      component: './Home',
+      name: 'menu.ElderlyResidents',
+      path: '/elderly-residents',
+      access: ['isVolunteer', 'isStaff'],
+      component: './ElderlyResidents',
+      layout: true,
     },
     {
       path: '/elderly/:id',
@@ -62,7 +64,7 @@ export default defineConfig({
       path: '/visit/:id',
       component: './VisitDetail',
       access: ['isVolunteer', 'isStaff'],
-      hideInMenu: true,
+      layout: true,
     },
   ],
   npmClient: 'pnpm',
