@@ -4,7 +4,7 @@ import {
   PlusOutlined,
   QuestionCircleFilled,
 } from '@ant-design/icons';
-import { Access, history, useAccess, useParams } from '@umijs/max';
+import { Access, history, useAccess, useIntl, useParams } from '@umijs/max';
 import { upload } from '@vercel/blob/client';
 import {
   Button,
@@ -41,7 +41,7 @@ const RecordVisit: React.FC = () => {
   const [customMode, setCustomMode] = useState(false);
   const [seniorData, setSeniorData] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
-
+  const intl = useIntl();
   const access = useAccess();
   const params = useParams<{ id: string }>();
 
@@ -104,7 +104,10 @@ const RecordVisit: React.FC = () => {
           });
           uploadedPhotoUrls.push(result.url);
           message.success(
-            `Photo ${file.name} uploaded successfully to Blob Storage.`,
+            intl.formatMessage(
+              { id: 'photoUploadSuccess' },
+              { filename: file.name },
+            ),
           );
         } catch (error: any) {
           setSubmitting(false);
@@ -130,8 +133,6 @@ const RecordVisit: React.FC = () => {
         });
       }
 
-      console.log('Request Body:', JSON.stringify(requestBody, null, 2));
-
       const response = await fetch('/api/logVisits', {
         method: 'POST',
         headers: {
@@ -143,7 +144,7 @@ const RecordVisit: React.FC = () => {
       const result = await response.json();
 
       if (result.success) {
-        message.success('Form submitted and logged successfully!');
+        message.success(intl.formatMessage({ id: 'formSubmitSuccess' }));
         history.push(`/display-visits`);
       } else {
         message.error(
@@ -203,12 +204,12 @@ const RecordVisit: React.FC = () => {
         <Col xs={22} sm={20} md={16} lg={12}>
           <Space direction="vertical" size={20} style={{ width: '100%' }}>
             <Title level={3} style={{ marginBottom: '0px' }}>
-              Record New Visit
+              {intl.formatMessage({ id: 'menu.RecordVisit' })}
             </Title>
             <div>
               <Space direction="vertical" size="small">
                 <Text strong style={{ fontSize: '16px' }}>
-                  Resident's Address
+                  {intl.formatMessage({ id: 'residentsAddress' })}
                 </Text>{' '}
                 {/* Bold and slightly larger label */}
                 <Text
@@ -222,15 +223,24 @@ const RecordVisit: React.FC = () => {
                   }}
                 >
                   {`${seniorData?.block} ${seniorData?.floor}-${seniorData?.unit_number}, ${seniorData?.address}, ${seniorData?.postal_code}` ||
-                    'Loading address...'}
+                    intl.formatMessage({ id: 'loading' })}
                 </Text>
               </Space>
             </div>
             <Form form={form} layout="vertical" onFinish={onFinish}>
               <Form.Item
-                label={<Text strong>How is the Resident doing?</Text>}
+                label={
+                  <Text strong>
+                    {intl.formatMessage({ id: 'howIsTheResidentDoing' })}
+                  </Text>
+                }
                 name="status"
-                rules={[{ required: true, message: 'Please select an option' }]}
+                rules={[
+                  {
+                    required: true,
+                    message: intl.formatMessage({ id: 'pleaseSelect' }),
+                  },
+                ]}
               >
                 <Space size={40}>
                   {' '}
@@ -266,7 +276,7 @@ const RecordVisit: React.FC = () => {
                       e.currentTarget.style.transform = 'scale(1)';
                     }}
                   >
-                    Good
+                    {intl.formatMessage({ id: 'good' })}
                   </Button>
                   <Button
                     type="default"
@@ -300,7 +310,7 @@ const RecordVisit: React.FC = () => {
                       e.currentTarget.style.transform = 'scale(1)';
                     }}
                   >
-                    Not Around
+                    {intl.formatMessage({ id: 'notAround' })}
                   </Button>
                   <Button
                     type="default"
@@ -334,26 +344,28 @@ const RecordVisit: React.FC = () => {
                       e.currentTarget.style.transform = 'scale(1)';
                     }}
                   >
-                    Not Good
+                    {intl.formatMessage({ id: 'notGood' })}
                   </Button>
                 </Space>
               </Form.Item>
 
               {/* Comments */}
-              <Text strong>Comments</Text>
+              <Text strong>{intl.formatMessage({ id: 'comments' })}</Text>
               <br />
               <Text style={{ fontSize: '12px', color: 'gray' }}>
-                Share your interactions and observations, if any.
+                {intl.formatMessage({ id: 'shareInteractions' })}
               </Text>
               <Form.Item name="comments">
                 <TextArea rows={4} />
               </Form.Item>
 
               {/* Key Concerns for Staff only */}
-              <Text strong>Key Concerns</Text>
+              <Text strong>
+                {intl.formatMessage({ id: 'keyConcernsLabel' })}
+              </Text>
               <br />
               <Text style={{ fontSize: '12px', color: 'gray' }}>
-                New needs or areas of concern.
+                {intl.formatMessage({ id: 'keyConcernsPlaceholder' })}
               </Text>
               {access.isStaff && (
                 <Form.Item name="key_concerns">
@@ -364,14 +376,19 @@ const RecordVisit: React.FC = () => {
               {/* Duration for Staff only */}
               {access.isStaff && (
                 <Form.Item
-                  label={<Text strong>Duration</Text>}
+                  label={
+                    <Text strong>{intl.formatMessage({ id: 'duration' })}</Text>
+                  }
                   name="duration"
                   rules={[
-                    { required: true, message: 'Please select a duration' },
+                    {
+                      required: true,
+                      message: intl.formatMessage({ id: 'pleaseDuration' }),
+                    },
                   ]}
                 >
                   <Text style={{ fontSize: '12px', color: 'gray' }}>
-                    Interaction period (in minutes)
+                    {intl.formatMessage({ id: 'interactionPeriod' })}
                   </Text>
                   <Select
                     placeholder="Select Duration"
@@ -395,7 +412,11 @@ const RecordVisit: React.FC = () => {
 
               {/* Upload Photos */}
               <Form.Item
-                label={<Text strong>Upload Photos</Text>}
+                label={
+                  <Text strong>
+                    {intl.formatMessage({ id: 'uploadPhotos' })}
+                  </Text>
+                }
                 name="upload"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
@@ -403,15 +424,17 @@ const RecordVisit: React.FC = () => {
                 <Upload {...uploadProps}>
                   <div>
                     <PlusOutlined />
-                    <div style={{ marginTop: 8 }}>Camera / Gallery</div>
+                    <div style={{ marginTop: 8 }}>
+                      {intl.formatMessage({ id: 'camera' })}
+                    </div>
                   </div>
                 </Upload>
               </Form.Item>
 
-              <Text strong>Relationship</Text>
+              <Text strong>{intl.formatMessage({ id: 'relationship' })}</Text>
               <br />
               <Text style={{ fontSize: '12px', color: 'gray' }}>
-                Indicate especially if it is your first visit with the resident.
+                {intl.formatMessage({ id: 'indicateRelationship' })}
               </Text>
               {access.isVolunteer && (
                 <Form.Item name="relationship">

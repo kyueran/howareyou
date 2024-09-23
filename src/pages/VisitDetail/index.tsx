@@ -11,8 +11,8 @@ import {
   message,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { history } from 'umi';
+import { useParams } from 'react-router-dom';
+import { history, useIntl } from 'umi';
 
 const { Title, Text } = Typography;
 
@@ -22,9 +22,9 @@ interface VisitDetailParams {
 
 const VisitDetailPage: React.FC = () => {
   const { id } = useParams<VisitDetailParams>();
-  const navigate = useNavigate();
   const [visit, setVisit] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const intl = useIntl();
 
   const fetchSeniorById = async (elderlyId: string) => {
     try {
@@ -86,9 +86,9 @@ const VisitDetailPage: React.FC = () => {
           icon={<LeftOutlined />}
           onClick={() => history.push(`/elderly/${visit.elderly_id}`)}
         >
-          Back
+          {intl.formatMessage({ id: 'backBtn' })}
         </Button>
-        <Title level={3}>Visit Details</Title>
+        <Title level={3}>{intl.formatMessage({ id: 'visitDetails' })}</Title>
       </Space>
 
       {loading ? (
@@ -96,43 +96,59 @@ const VisitDetailPage: React.FC = () => {
       ) : visit ? (
         <>
           <Descriptions bordered size="small" style={{ marginBottom: '24px' }}>
-            <Descriptions.Item label="Elderly Name">
+            <Descriptions.Item
+              label={intl.formatMessage({ id: 'elderlyName' })}
+            >
               {visit.elderly_name}
             </Descriptions.Item>
-            <Descriptions.Item label="Relationship">
-              {visit.relationship || 'N/A'}
+            <Descriptions.Item
+              label={intl.formatMessage({ id: 'relationship' })}
+            >
+              {visit.relationship || intl.formatMessage({ id: 'NA' })}
             </Descriptions.Item>
-            <Descriptions.Item label="Mode of Interaction">
-              {visit.mode_of_interaction || 'N/A'}
+            <Descriptions.Item
+              label={intl.formatMessage({ id: 'modeOfInteraction' })}
+            >
+              {visit.mode_of_interaction || intl.formatMessage({ id: 'NA' })}
             </Descriptions.Item>
-            <Descriptions.Item label="Duration of Contact">
+            <Descriptions.Item
+              label={intl.formatMessage({ id: 'durationOfContact' })}
+            >
               {visit.duration_of_contact
-                ? `${visit.duration_of_contact} minutes`
-                : 'N/A'}
+                ? intl.formatMessage(
+                    { id: 'minutes' },
+                    { mins: visit.duration_of_contact },
+                  )
+                : intl.formatMessage({ id: 'NA' })}
             </Descriptions.Item>
-            <Descriptions.Item label="Status">
-              {visit.status || 'N/A'}
+            <Descriptions.Item label={intl.formatMessage({ id: 'status' })}>
+              {visit.status || intl.formatMessage({ id: 'NA' })}
             </Descriptions.Item>
-            <Descriptions.Item label="Comments">
-              {visit.comments || 'No comments.'}
+            <Descriptions.Item label={intl.formatMessage({ id: 'comments' })}>
+              {visit.comments || intl.formatMessage({ id: 'noComments' })}
             </Descriptions.Item>
-            <Descriptions.Item label="Visitor">
+            <Descriptions.Item label={intl.formatMessage({ id: 'visitor' })}>
               {getVisitorInfo(Number(visit.visitor_id)).name} (
               {getVisitorInfo(Number(visit.visitor_id)).role})
             </Descriptions.Item>
-            <Descriptions.Item label="Date of Visit">
+            <Descriptions.Item
+              label={intl.formatMessage({ id: 'dateOfVisit' })}
+            >
               {formatDateTime(visit.submission_time)}
             </Descriptions.Item>
           </Descriptions>
 
-          <Title level={4}>Photos</Title>
+          <Title level={4}>{intl.formatMessage({ id: 'photos' })}</Title>
           {visit.photo_urls && visit.photo_urls.length > 0 ? (
             <Carousel arrows dotPosition="left" infinite={false}>
               {visit.photo_urls.map((url: string, index: number) => (
                 <div key={index}>
                   <Image
                     src={url}
-                    alt={`Visit Photo ${index + 1}`}
+                    alt={intl.formatMessage(
+                      { id: 'visitPhotoCount' },
+                      { index: index + 1 },
+                    )}
                     style={{
                       maxHeight: '300px',
                       objectFit: 'cover',
@@ -143,11 +159,13 @@ const VisitDetailPage: React.FC = () => {
               ))}
             </Carousel>
           ) : (
-            <Text type="secondary">No Images</Text>
+            <Text type="secondary">
+              {intl.formatMessage({ id: 'noPhotos' })}
+            </Text>
           )}
         </>
       ) : (
-        <Text>No visit details available.</Text>
+        <Text>{intl.formatMessage({ id: 'noVisitDetails' })}</Text>
       )}
     </PageContainer>
   );

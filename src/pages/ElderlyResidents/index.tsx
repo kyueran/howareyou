@@ -15,7 +15,7 @@ import {
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import React, { useCallback, useEffect, useState } from 'react';
-import { history } from 'umi';
+import { FormattedMessage, history, useIntl } from 'umi';
 
 const { Title, Text } = Typography;
 
@@ -89,6 +89,14 @@ const ResidentListPage: React.FC = () => {
   } | null>(null);
   const [searchValue, setSearchValue] = useState('');
   const [loading, setLoading] = useState(true);
+  const intl = useIntl();
+
+  // Sorry I see the width damn messed up on frontend i damn keh kao
+  const customStyles = `
+    .skeleton-full-width {
+      width: 100% !important; /* Force width to be 100% */
+    }
+  `;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -267,7 +275,7 @@ const ResidentListPage: React.FC = () => {
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        message.success('Address copied to clipboard!'); // Show success message
+        message.success(intl.formatMessage({ id: 'copiedSuccess' })); // Show success message
       })
       .catch((err) => {
         message.error('Failed to copy address');
@@ -277,16 +285,16 @@ const ResidentListPage: React.FC = () => {
   return (
     <div style={{ margin: '0 8px' }}>
       <Title level={3} style={{ marginTop: 16, marginBottom: 0 }}>
-        Elderly Residents
+        {intl.formatMessage({ id: 'visitDetails' })}
       </Title>
-      <Text>
-        You are viewing residents in the <Text type="danger">Queenstown</Text>{' '}
-        area!
-      </Text>
+      <FormattedMessage
+        id="topWarningMsg"
+        values={{ location: <Text type="danger">Queenstown</Text> }}
+      />
       <Input
         style={{ width: '100%', margin: '8px 0' }}
         size="large"
-        placeholder="Find elderly using their address, code..."
+        placeholder={intl.formatMessage({ id: 'searchElderlyPlaceholder' })}
         suffix={
           searchValue.length > 0 ? (
             <CloseOutlined
@@ -344,7 +352,7 @@ const ResidentListPage: React.FC = () => {
                     currentPosition.lon,
                   ) / 1000
                 ).toFixed(1)} km away`
-              : 'loading...';
+              : intl.formatMessage({ id: 'loading' });
             return (
               <List.Item style={{ padding: 0, paddingBottom: 8 }}>
                 <Card
@@ -448,7 +456,9 @@ const ResidentListPage: React.FC = () => {
                               );
                             }}
                           >
-                            <Text type="secondary">Copy</Text>
+                            <Text type="secondary">
+                              {intl.formatMessage({ id: 'copy' })}
+                            </Text>
                           </Button>
                         </Space>
 

@@ -11,10 +11,9 @@ import {
   QrcodeOutlined,
   RightOutlined,
   SaveOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
-import { useAccess, useNavigate, useParams } from '@umijs/max';
+import { useAccess, useIntl, useNavigate, useParams } from '@umijs/max';
 import {
   Button,
   Card,
@@ -38,7 +37,7 @@ import html2canvas from 'html2canvas';
 import React, { useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
 import VisitModal from '../../components/VisitModal';
-import { ElderlyInfo, VisitInfo } from '../Home'; // Ensure path is correct
+import { ElderlyInfo, VisitInfo } from '../ElderlyResidents'; // Ensure path is correct
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -84,6 +83,7 @@ const ResidentProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const { styles } = useGradientButtonStyle();
   const access = useAccess();
+  const intl = useIntl();
 
   useEffect(() => {
     const fetchResidentData = async () => {
@@ -218,7 +218,7 @@ const ResidentProfilePage: React.FC = () => {
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        message.success('Address copied to clipboard!'); // Show success message
+        message.success(intl.formatMessage({ id: 'copiedSuccess' })); // Show success message
       })
       .catch((err) => {
         message.error('Failed to copy address');
@@ -237,7 +237,7 @@ const ResidentProfilePage: React.FC = () => {
   };
 
   return (
-    <PageContainer style={{ padding: '8px' }}>
+    <div style={{ padding: '24px' }}>
       <Space
         direction="horizontal"
         style={{ width: '100%', justifyContent: 'flex-start' }}
@@ -248,9 +248,11 @@ const ResidentProfilePage: React.FC = () => {
           icon={<LeftOutlined />}
           onClick={() => history.push('/elderly')}
         >
-          Back
+          {intl.formatMessage({ id: 'backBtn' })}
         </Button>
-        <Title level={3}>Elderly Profile</Title>
+        <Title level={3}>
+          {intl.formatMessage({ id: 'menu.ElderlyProfile' })}
+        </Title>
       </Space>
 
       {loading || !data ? (
@@ -313,7 +315,7 @@ const ResidentProfilePage: React.FC = () => {
                   width="100%"
                   height="100%"
                   src={data.photoUrl || 'https://via.placeholder.com/128'}
-                  alt="Elderly Profile Picture"
+                  alt={intl.formatMessage({ id: 'altProfilePic' })}
                 />
               </Col>
               <Col xs={15}>
@@ -327,10 +329,14 @@ const ResidentProfilePage: React.FC = () => {
                 >
                   <Space direction="vertical" align="center">
                     <div>
-                      <Text strong>Senior Code:</Text>{' '}
+                      <Text strong>
+                        {intl.formatMessage({ id: 'seniorCode' })}
+                      </Text>
                       <Text>{data.elderlyCode}</Text>
                       <br />
-                      <Text strong>Centre Code:</Text>{' '}
+                      <Text strong>
+                        {intl.formatMessage({ id: 'centreCode' })}
+                      </Text>
                       <Text>{data.centreCode}</Text>
                     </div>
                     <Button
@@ -338,7 +344,7 @@ const ResidentProfilePage: React.FC = () => {
                       icon={<PlusOutlined />}
                       onClick={handleSubmitInfo}
                     >
-                      Add Visit
+                      {intl.formatMessage({ id: 'addVisitBtn' })}
                     </Button>
                   </Space>
                   <Button
@@ -359,13 +365,15 @@ const ResidentProfilePage: React.FC = () => {
                 style={{ width: '100%', justifyContent: 'space-between' }}
               >
                 <Space direction="horizontal">
-                  <Text strong>Contact:</Text>
+                  <Text strong>{intl.formatMessage({ id: 'contact' })}</Text>
                   <Text style={{ display: 'block', fontSize: '14px' }}>
                     {data.contactDetails} <PhoneOutlined />
                   </Text>
                 </Space>
                 <Space direction="horizontal">
-                  <Text strong>Call Response:</Text>
+                  <Text strong>
+                    {intl.formatMessage({ id: 'callResponse' })}
+                  </Text>
                   <Text
                     strong
                     style={{
@@ -374,7 +382,7 @@ const ResidentProfilePage: React.FC = () => {
                       color: data.callResponse === 'Low' ? 'red' : 'gray',
                     }}
                   >
-                    {data.callResponse ?? 'None'}
+                    {data.callResponse ?? intl.formatMessage({ id: 'none' })}
                   </Text>
                 </Space>
               </Space>
@@ -383,8 +391,8 @@ const ResidentProfilePage: React.FC = () => {
             {/* NOK Section */}
             <Row style={{ marginTop: 4 }}>
               <Col>
-                <Text strong>Next-of-kin:</Text>
-                {data.nok.map((nok, index) => (
+                <Text strong>{intl.formatMessage({ id: 'nok' })}</Text>
+                {data?.nok.map((nok, index) => (
                   <Text
                     key={index}
                     style={{ display: 'block', fontSize: '14px' }}
@@ -398,7 +406,7 @@ const ResidentProfilePage: React.FC = () => {
 
             <Row style={{ marginTop: 8 }}>
               <Col>
-                <Text strong>Languages: </Text>
+                <Text strong>{intl.formatMessage({ id: 'languages' })}</Text>
                 {data.languages.length > 0 ? (
                   data.languages.map((lang, i) => (
                     <Tag key={i} color="" bordered={false}>
@@ -406,7 +414,7 @@ const ResidentProfilePage: React.FC = () => {
                     </Tag>
                   ))
                 ) : (
-                  <Text color="gray">None</Text>
+                  <Text color="gray">{intl.formatMessage({ id: 'none' })}</Text>
                 )}
               </Col>
             </Row>
@@ -416,7 +424,9 @@ const ResidentProfilePage: React.FC = () => {
               <Col style={{ width: '100%', maxWidth: 240 }}>
                 <Row justify="space-between">
                   <Col>
-                    <Text strong>Days Living Alone (a week): </Text>
+                    <Text strong>
+                      {intl.formatMessage({ id: 'daysLivingAlone' })}
+                    </Text>
                   </Col>
                   <Col>
                     <Text
@@ -427,15 +437,16 @@ const ResidentProfilePage: React.FC = () => {
                         ),
                       }}
                     >
-                      {data.noOfDaysLivingAlone === 1
-                        ? `${data.noOfDaysLivingAlone} day`
-                        : `${data.noOfDaysLivingAlone} days`}
+                      {data.noOfDaysLivingAlone}
+                      {intl.formatMessage({ id: 'days' })}
                     </Text>
                   </Col>
                 </Row>
                 <Row justify="space-between">
                   <Col>
-                    <Text strong>Social Interaction Level: </Text>
+                    <Text strong>
+                      {intl.formatMessage({ id: 'socialInteractionLevel' })}
+                    </Text>
                   </Col>
                   <Col>
                     <Text
@@ -454,7 +465,9 @@ const ResidentProfilePage: React.FC = () => {
             {/* Health Information */}
             <Row style={{ marginTop: 8 }}>
               <Col>
-                <Text strong>ADL Difficulty: </Text>
+                <Text strong>
+                  {intl.formatMessage({ id: 'adlDifficulty' })}
+                </Text>
                 {data.adlDifficulty.length > 0 ? (
                   data.adlDifficulty.map((adl, i) => (
                     <Tag key={i} color={'red'} bordered={false}>
@@ -462,14 +475,14 @@ const ResidentProfilePage: React.FC = () => {
                     </Tag>
                   ))
                 ) : (
-                  <Text color="gray">None</Text>
+                  <Text color="gray">{intl.formatMessage({ id: 'none' })}</Text>
                 )}
               </Col>
             </Row>
 
             <Row style={{ marginTop: 8 }}>
               <Col>
-                <Text strong>Fall Risk: </Text>
+                <Text strong>{intl.formatMessage({ id: 'fallRisk' })}</Text>
                 <Text
                   strong
                   style={{ color: getTextColor(data.fallRisk || '') }}
@@ -477,7 +490,7 @@ const ResidentProfilePage: React.FC = () => {
                   {data.fallRisk}
                 </Text>
                 <br />
-                <Text strong>Fall History:</Text>
+                <Text strong>{intl.formatMessage({ id: 'fallHistory' })}</Text>
                 {data.fallHistory.length > 0 ? (
                   <ul
                     style={{
@@ -496,12 +509,14 @@ const ResidentProfilePage: React.FC = () => {
                 ) : (
                   <>
                     <br />
-                    <Text type="secondary">None</Text>
+                    <Text type="secondary">
+                      {intl.formatMessage({ id: 'none' })}
+                    </Text>
                     <br />
                   </>
                 )}
 
-                <Text strong>Key Concerns (from visits):</Text>
+                <Text strong>{intl.formatMessage({ id: 'keyConcerns' })}</Text>
                 {data.keyConcerns.length > 0 ? (
                   <ul style={{ margin: 0, marginLeft: 8, paddingLeft: '16px' }}>
                     {data.keyConcerns.map((concern, index) => (
@@ -514,7 +529,9 @@ const ResidentProfilePage: React.FC = () => {
                 ) : (
                   <>
                     <br />
-                    <Text type="secondary">None</Text>
+                    <Text type="secondary">
+                      {intl.formatMessage({ id: 'none' })}
+                    </Text>
                   </>
                 )}
               </Col>
@@ -523,15 +540,19 @@ const ResidentProfilePage: React.FC = () => {
             {/* Other Information */}
             <Row style={{ marginTop: 8 }}>
               <Col>
-                <Text strong>Notes:</Text>
+                <Text strong>{intl.formatMessage({ id: 'notes' })}</Text>
                 <Paragraph
                   ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}
                 >
                   {data.notes}
                 </Paragraph>
-                <Text strong>Key Attachments: </Text>
+                <Text strong>
+                  {intl.formatMessage({ id: 'keyAttachments' })}
+                </Text>
                 <Text type="secondary">
-                  {data.keyAttachments.length > 0 ? 'Available' : 'None'}
+                  {data.keyAttachments.length > 0
+                    ? intl.formatMessage({ id: 'available' })
+                    : intl.formatMessage({ id: 'none' })}
                 </Text>
               </Col>
             </Row>
@@ -539,7 +560,7 @@ const ResidentProfilePage: React.FC = () => {
 
           {/* Recent Visits Section */}
           <Title level={4} style={{ marginTop: 16 }}>
-            Recent Visits
+            {intl.formatMessage({ id: 'recentVisits' })}
           </Title>
           <List
             itemLayout="vertical"
@@ -661,7 +682,7 @@ const ResidentProfilePage: React.FC = () => {
           />
 
           <Modal
-            title="QR Code"
+            title={intl.formatMessage({ id: 'QRCode' })}
             open={isModalVisible}
             onCancel={handleCancel}
             footer={[
@@ -680,7 +701,7 @@ const ResidentProfilePage: React.FC = () => {
                   })
                 }
               >
-                Print QR Code
+                {intl.formatMessage({ id: 'printQRCode' })}
               </Button>,
               <Button
                 key="save"
@@ -688,7 +709,7 @@ const ResidentProfilePage: React.FC = () => {
                 icon={<SaveOutlined />}
                 onClick={handleSaveAsImage}
               >
-                Save as Image
+                {intl.formatMessage({ id: 'saveAsImage' })}
               </Button>,
             ]}
           >
@@ -708,7 +729,7 @@ const ResidentProfilePage: React.FC = () => {
           )}
         </ConfigProvider>
       )}
-    </PageContainer>
+    </div>
   );
 };
 

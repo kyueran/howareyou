@@ -12,43 +12,59 @@ export default defineConfig({
   request: {},
   locale: {
     default: 'en-US',
+    antd: true, // Enable Ant Design localization
+    baseNavigator: true, // Use the browser's language settings
+    baseSeparator: '-', // Locale code separator
+    useLocalStorage: true, // Save locale to localStorage
   },
   layout: {},
   routes: [
     {
       path: '/',
-      redirect: '/elderly',
+      name: 'menu.LinkTree',
+      component: './LinkTree',
+      layout: true,
+      access: ['isVolunteer', 'isStaff'],
     },
     {
-      name: 'Login',
+      name: 'menu.Login',
       path: '/login',
       component: './Login',
       layout: false,
     },
     {
-      name: 'Elderly Residents',
+      name: 'menu.ElderlyResidents',
       path: '/elderly',
-      access: 'isStaff',
-      component: './Home',
+      access: ['isVolunteer', 'isStaff'],
+      component: './ElderlyResidents',
+      layout: true,
     },
     {
       path: '/elderly/:id',
       component: './ElderlyProfile',
+      name: 'menu.ElderlyProfile',
       access: 'isStaff',
-      hideInMenu: true,
+      layout: true,
     },
     {
-      name: 'Register Visit',
       path: '/record-visit/:id',
       component: './RecordVisit',
+      name: 'menu.RecordVisit',
       access: ['isVolunteer', 'isStaff'],
-      hideInMenu: true,
+      layout: true,
     },
     {
-      name: 'Display Visits',
+      name: 'menu.DisplayVisits',
       path: '/display-visits',
       component: './DisplayVisits',
       access: ['isVolunteer', 'isStaff'],
+      layout: true,
+    },
+    {
+      path: '/visit/:id',
+      component: './VisitDetail',
+      access: ['isVolunteer', 'isStaff'],
+      layout: true,
     },
   ],
   npmClient: 'pnpm',

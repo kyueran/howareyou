@@ -1,5 +1,7 @@
 import { RunTimeLayoutConfig } from '@umijs/max';
+import React from 'react';
 import { history } from 'umi';
+import CustomNavbar from './components/CustomNavbar';
 import './global.css';
 
 type UserRole = 'volunteer' | 'staff';
@@ -31,7 +33,7 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
   }
 
   return {
-    title: '',
+    title: 'HowAreYou',
     logo: 'https://img.alicdn.com/tfs/TB1YHEpwUT1gK0jSZFhXXaAtVXa-28-27.svg',
     menu: {
       locale: false,
@@ -41,12 +43,14 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
       localStorage.removeItem('user');
       history.push('/login');
     },
-    locale: 'en-US',
     token: {
       pageContainer: {
         paddingBlockPageContainerContent: 0,
         paddingInlinePageContainerContent: 0,
       },
     },
+    menuRender: false,
+    headerRender: () => <CustomNavbar />,
+    pageTitleRender: false,
   };
 };
