@@ -37,7 +37,7 @@ import html2canvas from 'html2canvas';
 import React, { useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
 import VisitModal from '../../components/VisitModal';
-import { ElderlyInfo, VisitInfo } from '../ElderlyResidents'; // Ensure path is correct
+import { ElderlyInfo, LineItem, VisitInfo } from '../ElderlyResidents'; // Ensure path is correct
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -84,6 +84,7 @@ const ResidentProfilePage: React.FC = () => {
   const { styles } = useGradientButtonStyle();
   const access = useAccess();
   const intl = useIntl();
+  const [keyConcerns, setKeyConcerns] = useState<LineItem[]>([]);
 
   useEffect(() => {
     const fetchResidentData = async () => {
@@ -119,7 +120,6 @@ const ResidentProfilePage: React.FC = () => {
           socialInteraction: row.social_interaction,
           photoUrl: row.photo_url,
           languages: [row.languages],
-          keyConcerns: row.key_concerns || [],
         }));
         setData(seniors[0]);
       } catch (error) {
@@ -134,11 +134,26 @@ const ResidentProfilePage: React.FC = () => {
         const response = await fetch(`/api/fetchVisits`);
         const result = await response.json();
         if (result.success) {
-          const visits: VisitInfo[] = result.data.filter(
-            (visit: VisitInfo) => visit.elderly_id === Number(params.id),
+          // Filter visits related to this elderly ID
+          const relevantVisits: VisitInfo[] = result.data.filter(
+            (visit: VisitInfo) => visit.elderly_id === Number(params.id)
           );
-          visits.reverse();
-          setVisits(visits);
+
+          // Sort visits by submission_time in descending order (most recent first)
+          const sortedVisits = relevantVisits.sort((a, b) =>
+            dayjs(b.submission_time).diff(dayjs(a.submission_time))
+          );
+
+          // Extract key concerns from sorted visits
+          const extractedKeyConcerns: LineItem[] = sortedVisits
+            .map((visit) => ({
+              date: dayjs(visit.submission_time).format('D MMM YYYY, h:mm A'), // Format the date
+              details: visit.key_concerns || 'None', // Use 'None' if key concerns are empty
+            }))
+            .filter((item) => item.details !== 'None'); // Optionally filter out empty concerns
+
+          setVisits(sortedVisits);
+          setKeyConcerns(extractedKeyConcerns);
         } else {
           message.error(result.message || 'Failed to fetch visits.');
         }
@@ -517,9 +532,9 @@ const ResidentProfilePage: React.FC = () => {
                 )}
 
                 <Text strong>{intl.formatMessage({ id: 'keyConcerns' })}</Text>
-                {data.keyConcerns.length > 0 ? (
+                {keyConcerns.length > 0 ? (
                   <ul style={{ margin: 0, marginLeft: 8, paddingLeft: '16px' }}>
-                    {data.keyConcerns.map((concern, index) => (
+                    {keyConcerns.map((concern, index) => (
                       <li key={index}>
                         {dayjs(concern.date).format('D MMM YYYY')} -{' '}
                         {concern.details}
@@ -661,10 +676,10 @@ const ResidentProfilePage: React.FC = () => {
                           </Space>
 
                           {/* Key Concern */}
-                          {visit.comments && (
+                          {visit.key_concerns && (
                             <Space align="center">
                               <BellOutlined />
-                              <Text>{visit.comments || 'None'}</Text>
+                              <Text>{visit.key_concerns || 'None'}</Text>
                             </Space>
                           )}
                         </Space.Compact>
