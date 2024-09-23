@@ -1,5 +1,5 @@
 import { CloseOutlined, CopyOutlined, RightOutlined } from '@ant-design/icons';
-import { PageContainer } from '@ant-design/pro-components';
+import { PageContainer, ProSkeleton } from '@ant-design/pro-components';
 import {
   Button,
   Card,
@@ -8,7 +8,6 @@ import {
   Input,
   List,
   Row,
-  Skeleton,
   Space,
   Typography,
   message,
@@ -302,7 +301,7 @@ const ResidentListPage: React.FC = () => {
         onChange={(e) => handleSearch(e.target.value)}
       />
       {loading ? (
-        <Skeleton.Node active style={{ width: '100vw' }} />
+        <ProSkeleton type='list' />
       ) : (
         <List
           itemLayout="vertical"

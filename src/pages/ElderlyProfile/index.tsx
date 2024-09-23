@@ -242,7 +242,7 @@ const ResidentProfilePage: React.FC = () => {
           <Card style={{ marginBottom: 8 }} bodyStyle={{ padding: '16px' }}>
             <Row style={{ alignItems: 'center' }}>
               <Title level={3} style={{ margin: 0 }}>
-                {data?.name}
+                {data.name}
               </Title>
             </Row>
 
@@ -280,7 +280,7 @@ const ResidentProfilePage: React.FC = () => {
 
             <Row
               style={{ marginTop: 4 }}
-              gutter={8}
+              gutter={16}
               align="middle"
               justify="space-between"
             >
@@ -289,7 +289,7 @@ const ResidentProfilePage: React.FC = () => {
                   style={{ cursor: 'pointer' }}
                   width="100%"
                   height="100%"
-                  src={data?.photoUrl || 'https://via.placeholder.com/128'}
+                  src={data.photoUrl || 'https://via.placeholder.com/128'}
                   alt="Elderly Profile Picture"
                 />
               </Col>
@@ -305,10 +305,10 @@ const ResidentProfilePage: React.FC = () => {
                   <Space direction="vertical" align="center">
                     <div>
                       <Text strong>Senior Code:</Text>{' '}
-                      <Text>{data?.elderlyCode}</Text>
+                      <Text>{data.elderlyCode}</Text>
                       <br />
                       <Text strong>Centre Code:</Text>{' '}
-                      <Text>{data?.centreCode}</Text>
+                      <Text>{data.centreCode}</Text>
                     </div>
                     <Button
                       type="primary"
@@ -338,7 +338,7 @@ const ResidentProfilePage: React.FC = () => {
                 <Space direction="horizontal">
                   <Text strong>Contact:</Text>
                   <Text style={{ display: 'block', fontSize: '14px' }}>
-                    {data?.contactDetails} <PhoneOutlined />
+                    {data.contactDetails} <PhoneOutlined />
                   </Text>
                 </Space>
                 <Space direction="horizontal">
@@ -348,10 +348,10 @@ const ResidentProfilePage: React.FC = () => {
                     style={{
                       display: 'block',
                       fontSize: '14px',
-                      color: data?.callResponse === 'Low' ? 'red' : 'gray',
+                      color: data.callResponse === 'Low' ? 'red' : 'gray',
                     }}
                   >
-                    {data?.callResponse ?? 'None'}
+                    {data.callResponse ?? 'None'}
                   </Text>
                 </Space>
               </Space>
@@ -361,7 +361,7 @@ const ResidentProfilePage: React.FC = () => {
             <Row style={{ marginTop: 4 }}>
               <Col>
                 <Text strong>Next-of-kin:</Text>
-                {data?.nok.map((nok, index) => (
+                {data.nok.map((nok, index) => (
                   <Text
                     key={index}
                     style={{ display: 'block', fontSize: '14px' }}
@@ -376,7 +376,7 @@ const ResidentProfilePage: React.FC = () => {
             <Row style={{ marginTop: 8 }}>
               <Col>
                 <Text strong>Languages: </Text>
-                {data && data?.languages.length > 0 ? (
+                {data.languages.length > 0 ? (
                   data.languages.map((lang, i) => (
                     <Tag key={i} color="" bordered={false}>
                       {lang}
@@ -399,10 +399,10 @@ const ResidentProfilePage: React.FC = () => {
                     <Text
                       strong
                       style={{ color: getDaysLivingAloneColor(
-                        data?.noOfDaysLivingAlone || 0,
+                        data.noOfDaysLivingAlone || 0,
                       )}}
                     >
-                      {data?.noOfDaysLivingAlone} days
+                      {data.noOfDaysLivingAlone === 1 ? `${data.noOfDaysLivingAlone} day` : `${data.noOfDaysLivingAlone} days`}
                     </Text>
                   </Col>
                 </Row>
@@ -413,9 +413,9 @@ const ResidentProfilePage: React.FC = () => {
                   <Col>
                     <Text
                       strong
-                      style={{ color: getTextColor(data?.socialInteraction || '')}}
+                      style={{ color: getTextColor(data.socialInteraction || '')}}
                     >
-                      {data?.socialInteraction}
+                      {data.socialInteraction}
                     </Text>
                   </Col>
                 </Row>
@@ -426,7 +426,7 @@ const ResidentProfilePage: React.FC = () => {
             <Row style={{ marginTop: 8 }}>
               <Col>
                 <Text strong>ADL Difficulty: </Text>
-                {data && data?.adlDifficulty.length > 0 ? (
+                {data.adlDifficulty.length > 0 ? (
                   data.adlDifficulty.map((adl, i) => (
                     <Tag key={i} color={'red'} bordered={false}>
                       {adl}
@@ -441,12 +441,12 @@ const ResidentProfilePage: React.FC = () => {
             <Row style={{ marginTop: 8 }}>
               <Col>
                 <Text strong>Fall Risk: </Text>
-                <Text strong style={{ color: getTextColor(data?.fallRisk || '') }}>
-                  {data?.fallRisk}
+                <Text strong style={{ color: getTextColor(data.fallRisk || '') }}>
+                  {data.fallRisk}
                 </Text>
                 <br />
                 <Text strong>Fall History:</Text>
-                {data && data.fallHistory.length > 0 ? (
+                {data.fallHistory.length > 0 ? (
                   <ul
                     style={{
                       margin: 0,
@@ -470,7 +470,7 @@ const ResidentProfilePage: React.FC = () => {
                 )}
 
                 <Text strong>Key Concerns (from visits):</Text>
-                {data && data.keyConcerns.length > 0 ? (
+                {data.keyConcerns.length > 0 ? (
                   <ul style={{ margin: 0, marginLeft: 8, paddingLeft: '16px' }}>
                     {data.keyConcerns.map((concern, index) => (
                       <li key={index}>
@@ -495,11 +495,11 @@ const ResidentProfilePage: React.FC = () => {
                 <Paragraph
                   ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}
                 >
-                  {data?.notes}
+                  {data.notes}
                 </Paragraph>
                 <Text strong>Key Attachments: </Text>
                 <Text type="secondary">
-                  {data && data.keyAttachments.length > 0
+                  {data.keyAttachments.length > 0
                     ? 'Available'
                     : 'None'}
                 </Text>
