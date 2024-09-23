@@ -39,8 +39,8 @@ export default defineConfig({
     },
     {
       name: 'Register Visit',
-      path: '/register-visit/:id',
-      component: './RegisterVisit',
+      path: '/record-visit/:id',
+      component: './RecordVisit',
       access: ['isVolunteer', 'isStaff'],
       hideInMenu: true,
     },

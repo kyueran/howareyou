@@ -73,7 +73,7 @@ const ResidentProfilePage: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const qrCodeRef = useRef<HTMLDivElement>(null);
   const params = useParams<{ id: string }>();
-  const navigate = useNavigate(); // To navigate to /register-visit/:id
+  const navigate = useNavigate();
   const { styles } = useGradientButtonStyle();
 
   useEffect(() => {
@@ -139,7 +139,7 @@ const ResidentProfilePage: React.FC = () => {
     }
   }, [params.id]);
 
-  const qrUrl = `${window.location.origin}/register-visit/${params.id}`;
+  const qrUrl = `${window.location.origin}/record-visit/${params.id}`;
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -162,7 +162,7 @@ const ResidentProfilePage: React.FC = () => {
 
   // Redirect to the submission page
   const handleSubmitInfo = () => {
-    navigate(`/register-visit/${params.id}`);
+    navigate(`/record-visit/${params.id}`);
   };
 
   // Function to get text color based on values
