@@ -14,7 +14,7 @@ export async function POST(request: Request): Promise<Response> {
     await client.connect();
 
     // Parse the request body
-    const { elderly_id, visitor_id, relationship, mode_of_interaction, duration_of_contact, status, comments, photoUrls, access_type } = await request.json();
+    const { elderly_id, visitor_id, relationship, key_concerns, mode_of_interaction, duration_of_contact, status, comments, photoUrls} = await request.json();
 
     // Check for required fields (elderly_id, visitor_id, status)
     if (!elderly_id || !visitor_id || !status) {
@@ -27,11 +27,6 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    // Set default values for fields that may be missing for volunteers
-    const defaultRelationship = access_type === 'staff' ? relationship : 'volunteer';
-    const defaultModeOfInteraction = access_type === 'staff' ? mode_of_interaction : '';
-    const defaultDurationOfContact = access_type === 'staff' ? duration_of_contact : null;
-
     // Insert the new visit into the 'visits' table with Singapore time for submission_time
     await client.sql`
       INSERT INTO visits (
@@ -39,18 +34,20 @@ export async function POST(request: Request): Promise<Response> {
         visitor_id, 
         relationship, 
         mode_of_interaction, 
-        duration_of_contact, 
+        duration_of_contact,
+        key_concerns,
         status, 
-        comments, 
+        comments,
         photo_urls, 
         submission_time
       )
       VALUES (
         ${elderly_id}, 
         ${visitor_id}, 
-        ${defaultRelationship}, 
-        ${defaultModeOfInteraction}, 
-        ${defaultDurationOfContact}, 
+        ${relationship}, 
+        ${mode_of_interaction}, 
+        ${duration_of_contact}, 
+        ${key_concerns},
         ${status}, 
         ${comments || null}, 
         ${photoUrls || null}, 

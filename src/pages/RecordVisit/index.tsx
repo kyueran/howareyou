@@ -4,6 +4,7 @@ import { Button, Col, Form, Input, message, Row, Space, Typography, Upload, Sele
 import { upload } from '@vercel/blob/client';
 import type { UploadProps } from 'antd/es/upload/interface';
 import React, { useEffect, useState } from 'react';
+import ButtonGroupInput from '../../components/ButtonGroupInput';
 
 const { TextArea } = Input;
 const { Text, Title } = Typography;
@@ -59,7 +60,7 @@ const RecordVisit: React.FC = () => {
     setSubmitting(true);
 
     const { id } = params;
-    const { status, comments, keyConcerns, modeOfInteraction, customModeOfInteraction, duration } = values;
+    const { comments, key_concerns, modeOfInteraction, customModeOfInteraction, duration } = values;
 
     const mode_of_interaction = modeOfInteraction === 'others' ? customModeOfInteraction : modeOfInteraction;
     const relationship = access.isStaff ? '$-staff-$' : values.relationship || '';
@@ -83,7 +84,6 @@ const RecordVisit: React.FC = () => {
           return;
         }
       }
-      console.log(duration);
       const requestBody: any = {
         elderly_id: parseInt(id, 10),
         visitor_id,
@@ -95,9 +95,11 @@ const RecordVisit: React.FC = () => {
 
       // Only add keyConcerns, mode_of_interaction, and duration if the user is a staff member
       if (access.isStaff) {
-        requestBody.keyConcerns = keyConcerns;
-        requestBody.mode_of_interaction = mode_of_interaction;
-        requestBody.duration_of_contact = duration;
+        Object.assign(requestBody, {
+          key_concerns: key_concerns,
+          mode_of_interaction: mode_of_interaction,
+          duration_of_contact: duration,
+        });
       }
 
       console.log('Request Body:', JSON.stringify(requestBody, null, 2));
@@ -186,8 +188,6 @@ const RecordVisit: React.FC = () => {
               </Text>
             </Space>
             </div>
-
-            {/* How is the Resident Doing */}
             <Form form={form} layout="vertical" onFinish={onFinish}>
               <Form.Item label={<Text strong>How is the Resident doing?</Text>} name="status" rules={[{ required: true, message: 'Please select an option' }]}>
                 <Space size={40}> {/* Increased space between buttons */}
@@ -281,22 +281,24 @@ const RecordVisit: React.FC = () => {
               </Form.Item>
 
               {/* Comments */}
-              <Form.Item
-                label={<Text strong>Comments</Text>}
-                name="comments"
-              >
-                <Text style={{ fontSize: '12px', color: 'gray' }}>Share your interactions and observations, if any.</Text>
+              <Text strong>Comments</Text>
+              <br/>
+              <Text style={{ fontSize: '12px', color: 'gray' }}>
+                Share your interactions and observations, if any.
+              </Text>
+              <Form.Item name="comments">
                 <TextArea rows={4} />
               </Form.Item>
 
 
               {/* Key Concerns for Staff only */}
+              <Text strong>Key Concerns</Text>
+              <br/>
+              <Text style={{ fontSize: '12px', color: 'gray' }}>
+                New needs or areas of concern.
+              </Text>
               {access.isStaff && (
-                <Form.Item
-                  label={<Text strong>Key Concerns</Text>}
-                  name="keyConcerns"
-                >
-                  <Text style={{ fontSize: '12px', color: 'gray' }}>New needs or areas of concern.</Text>
+                <Form.Item name="key_concerns">
                   <TextArea rows={3} />
                 </Form.Item>
               )}
@@ -341,13 +343,14 @@ const RecordVisit: React.FC = () => {
                   </div>
                 </Upload>
               </Form.Item>
-
+              
+              <Text strong>Relationship</Text>
+              <br/>
+              <Text style={{ fontSize: '12px', color: 'gray' }}>
+                Indicate especially if it is your first visit with the resident.
+              </Text>
               {access.isVolunteer && (
-                <Form.Item
-                  label={<Text strong>Relationship with resident</Text>}
-                  name="keyConcerns"
-                >
-                  <Text style={{ fontSize: '12px', color: 'gray' }}>Indicate especially if it is your first visit with the resident.</Text>
+                <Form.Item name="relationship">
                   <TextArea rows={1} />
                 </Form.Item>
               )}
@@ -365,6 +368,7 @@ const RecordVisit: React.FC = () => {
                 </Button>
               </Form.Item>
             </Form>
+            
           </Space>
         </Col>
       </Row>
