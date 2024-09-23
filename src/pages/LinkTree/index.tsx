@@ -29,10 +29,10 @@ const LinkTree: React.FC = () => {
           {routesArray.map((route) => {
             if (
               route.layout &&
-              route.name !== 'Home' &&
-              route.name !== 'menu.LinkTree' &&
-              route.name !== 'menu.Login' &&
-              checkAccess(route.access)
+              ((route.name && route.name == 'menu.ElderlyResidents') ||
+                route.name == 'menu.RecordVisit' ||
+                route.name == 'menu.DisplayVisits') &&
+              (!route.access || checkAccess(route.access))
             ) {
               return (
                 <Button

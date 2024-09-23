@@ -34,7 +34,7 @@ export default defineConfig({
     },
     {
       name: 'menu.ElderlyResidents',
-      path: '/elderly-residents',
+      path: '/elderly',
       access: ['isVolunteer', 'isStaff'],
       component: './ElderlyResidents',
       layout: true,
@@ -49,7 +49,7 @@ export default defineConfig({
     {
       path: '/record-visit/:id',
       component: './RecordVisit',
-      name: 'menu.RegisterVisit',
+      name: 'menu.RecordVisit',
       access: ['isVolunteer', 'isStaff'],
       layout: true,
     },
