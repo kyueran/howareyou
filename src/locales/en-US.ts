@@ -1,4 +1,5 @@
 export default {
+  // These translations are for the Login page
   login: 'Login',
   phoneNumber: 'Phone Number',
   enterPhoneNumber: 'Please enter your phone number!',
