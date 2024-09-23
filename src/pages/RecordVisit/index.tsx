@@ -256,9 +256,10 @@ const RecordVisit: React.FC = () => {
                 label={<Text strong>Comments</Text>}
                 name="comments"
               >
-                <Text style={{ fontSize: '12px', color: 'gray' }}>Share your interactions and observations, if any</Text>
+                <Text style={{ fontSize: '12px', color: 'gray' }}>Share your interactions and observations, if any.</Text>
                 <TextArea rows={4} />
               </Form.Item>
+
 
               {/* Key Concerns for Staff only */}
               {access.isStaff && (
@@ -266,7 +267,7 @@ const RecordVisit: React.FC = () => {
                   label={<Text strong>Key Concerns</Text>}
                   name="keyConcerns"
                 >
-                  <Text style={{ fontSize: '12px', color: 'gray' }}>New needs or areas of concern</Text>
+                  <Text style={{ fontSize: '12px', color: 'gray' }}>New needs or areas of concern.</Text>
                   <TextArea rows={3} />
                 </Form.Item>
               )}
@@ -308,6 +309,16 @@ const RecordVisit: React.FC = () => {
                   </div>
                 </Upload>
               </Form.Item>
+
+              {access.isVolunteer && (
+                <Form.Item
+                  label={<Text strong>Relationship with resident</Text>}
+                  name="keyConcerns"
+                >
+                  <Text style={{ fontSize: '12px', color: 'gray' }}>Indicate especially if it is your first visit with the resident.</Text>
+                  <TextArea rows={1} />
+                </Form.Item>
+              )}
 
               {/* Submit Button */}
               <Form.Item>
