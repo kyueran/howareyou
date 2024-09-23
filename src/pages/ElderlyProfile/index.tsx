@@ -21,7 +21,6 @@ import {
   Col,
   ConfigProvider,
   Image,
-  Layout,
   List,
   message,
   Modal,
@@ -29,7 +28,6 @@ import {
   Row,
   Skeleton,
   Space,
-  Tabs,
   Tag,
   Typography,
 } from 'antd';
@@ -40,6 +38,7 @@ import html2canvas from 'html2canvas';
 import React, { useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
 import { ElderlyInfo, VisitInfo } from '../Home'; // Ensure path is correct
+import VisitModal from '../../components/VisitModal';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -78,6 +77,8 @@ const ResidentProfilePage: React.FC = () => {
   const [data, setData] = useState<ElderlyInfo | null>(null);
   const [visits, setVisits] = useState<VisitInfo[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isVisitModalVisible, setIsVisitModalVisible] = useState(false);
+  const [selectedVisit, setSelectedVisit] = useState<VisitInfo | null>(null);
   const qrCodeRef = useRef<HTMLDivElement>(null);
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -133,11 +134,10 @@ const ResidentProfilePage: React.FC = () => {
         const response = await fetch(`/api/fetchVisits`);
         const result = await response.json();
         if (result.success) {
-          setVisits(
-            result.data.filter(
-              (visit: VisitInfo) => visit.elderly_id === Number(params.id),
-            ),
-          );
+          const visits: VisitInfo[] = result.data
+            .filter((visit: VisitInfo) => visit.elderly_id === Number(params.id))
+          visits.reverse()
+          setVisits(visits);
         } else {
           message.error(result.message || 'Failed to fetch visits.');
         }
@@ -540,7 +540,10 @@ const ResidentProfilePage: React.FC = () => {
                       overflow: 'hidden',
                     }}
                     bodyStyle={{ padding: '8px 16px' }}
-                    onClick={() => history.push(`/visit/${visit.id}`)}
+                    onClick={() => {
+                      setSelectedVisit(visit)
+                      setIsVisitModalVisible(true)
+                    }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'scale(1.03)'; // Slightly enlarge the card
                       e.currentTarget.style.boxShadow =
@@ -569,7 +572,7 @@ const ResidentProfilePage: React.FC = () => {
                       justify="space-between"
                     >
                       <Col>
-                        <Space.Compact direction="vertical" size={0}>
+                        <Space.Compact direction="vertical">
                           {/* User Info */}
                           <Space align="center">
                             <UserOutlined />
@@ -622,7 +625,7 @@ const ResidentProfilePage: React.FC = () => {
                               <BellOutlined />
                               <Text>
                                 {visit.comments ||
-                                  'Elderly does not want to be visited'}
+                                  'None'}
                               </Text>
                             </Space>
                           )}
@@ -676,6 +679,16 @@ const ResidentProfilePage: React.FC = () => {
               <QRCode value={qrUrl} size={180} style={{ margin: 'auto' }} />
             </div>
           </Modal>
+          {selectedVisit && (
+            <VisitModal
+              visit={selectedVisit}
+              isVisible={isVisitModalVisible}
+              onClose={() => {
+                setSelectedVisit(null)
+                setIsVisitModalVisible(false)
+              }}
+            />
+          )}
         </ConfigProvider>
       )}
     </PageContainer>

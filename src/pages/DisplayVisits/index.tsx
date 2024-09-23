@@ -3,11 +3,12 @@ import { Card, Col, Row, Space, Typography, message, Button, AutoComplete } from
 import { QuestionCircleOutlined, ExclamationCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useAccess } from '@umijs/max';
 import { useNavigate } from '@umijs/max';
+import VisitModal from '../../components/VisitModal';
+import { VisitInfo } from '../Home';
 
 const { Text, Title } = Typography;
 
 const DisplayVisitsPage: React.FC = () => {
-  const [visits, setVisits] = useState<any[]>([]);
   const [filteredVisits, setFilteredVisits] = useState<any[]>([]);
   const [seniors, setSeniors] = useState<any[]>([]); // Store seniors as an array
   const [options, setOptions] = useState<any[]>([]); // For AutoComplete options
@@ -17,6 +18,9 @@ const DisplayVisitsPage: React.FC = () => {
   const access = useAccess(); // To get access control info
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [visits, setVisits] = useState<VisitInfo[]>([]);
+  const [isVisitModalVisible, setIsVisitModalVisible] = useState(false);
+  const [selectedVisit, setSelectedVisit] = useState<VisitInfo | null>(null);
 
   // Determine the visitor's role and ID
   const visitorId = access.isStaff ? 2 : 1;
@@ -193,6 +197,7 @@ const DisplayVisitsPage: React.FC = () => {
   };
 
   return (
+    <>
     <Row justify="center" style={{ marginTop: '24px' }}>
       <Col xs={22} sm={20} md={16} lg={12}>
         <Space direction="vertical" size={24} style={{ width: '100%' }}>
@@ -232,11 +237,15 @@ const DisplayVisitsPage: React.FC = () => {
               const visitorInfo = getVisitorInfo(visit.visitor_id);
               return (
                 <Card
-                    key={visit.id}
+                  key={visit.id}
                     style={{ width: '100%', cursor: 'pointer', border: '1px solid #f0f0f0', borderRadius: '8px' }} // Adding slight border and border-radius for styling
                     bodyStyle={{ paddingBottom: 12, paddingTop: 12 }}
-                    onClick={() => navigate(`/visit/${visit.id}`)} // Navigate to VisitDetailPage on click
-                    >
+                  loading={loading}
+                  onClick={() => {
+                    setSelectedVisit(visit)
+                    setIsVisitModalVisible(true)
+                  }} // Navigate to VisitDetailPage on click
+                >
                     <Row gutter={16} align="middle">
                         <Col xs={24} sm={24} md={24} lg={24}>
                         <div>
@@ -288,6 +297,18 @@ const DisplayVisitsPage: React.FC = () => {
         </Space>
       </Col>
     </Row>
+
+    {selectedVisit && (
+      <VisitModal
+        visit={selectedVisit}
+        isVisible={isVisitModalVisible}
+        onClose={() => {
+          setSelectedVisit(null)
+          setIsVisitModalVisible(false)
+        }}
+      />
+    )}
+    </>
   );      
 };
 

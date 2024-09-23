@@ -58,6 +58,7 @@ export type VisitInfo = {
   comments: string;
   photo_urls: string[];
   submission_time: string;
+  key_concerns: string;
 };
 
 export type Language =
@@ -274,8 +275,8 @@ const ResidentListPage: React.FC = () => {
   };
 
   return (
-    <PageContainer style={{ margin: '0 8px' }}>
-      <Title level={3} style={{ marginTop: 16, marginBottom: 0 }}>Visit Details</Title>
+    <div style={{ margin: '0 8px' }}>
+      <Title level={3} style={{ marginTop: 16, marginBottom: 0 }}>Elderly Residents</Title>
       <Text>
         You are viewing residents in the <Text type="danger">Queenstown</Text>{' '}
         area!
@@ -472,7 +473,7 @@ const ResidentListPage: React.FC = () => {
           }}
         />
       )}
-    </PageContainer>
+    </div>
   );
 };
 
