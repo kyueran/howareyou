@@ -650,7 +650,7 @@ const ResidentProfilePage: React.FC = () => {
             ]}
           >
             <div ref={qrCodeRef} style={{ textAlign: 'center' }}>
-              <QRCode value={qrUrl} size={180} />
+              <QRCode value={qrUrl} size={180} style={{ margin: 'auto' }} />
             </div>
           </Modal>
         </ConfigProvider>
