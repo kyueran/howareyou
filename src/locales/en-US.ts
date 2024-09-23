@@ -57,4 +57,21 @@ export default {
   loading: 'Loading...',
   copy: 'Copy',
   visitedDaysAgo: 'visited {days} day(s) ago',
+
+  // These translations are for the Visit Detail page (individual visit details)
+  backBtn: 'Back',
+  visitDetails: 'Visit Details',
+  elderlyName: 'Elderly Name',
+  relationship: 'Relationship',
+  modeOfInteraction: 'Mode of Interaction',
+  durationOfContact: 'Duration of Contact',
+  minutes: '{mins} minutes',
+  status: 'Status',
+  comments: 'Comments',
+  visitor: 'Visitor',
+  dateOfVisit: 'Date of Visit',
+  photos: 'Photos',
+  visitPhotoCount: 'Visit Photo {index}',
+  noPhotos: 'No Photos',
+  noVisitDetails: 'No visit details available',
 };

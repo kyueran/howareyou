@@ -1,9 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Typography, Button, Carousel, Descriptions, Skeleton, message, Image, Space } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
-import { history } from 'umi'
+import {
+  Button,
+  Carousel,
+  Descriptions,
+  Image,
+  Skeleton,
+  Space,
+  Typography,
+  message,
+} from 'antd';
+import { default as React, default as React, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { history, useIntl } from 'umi';
 
 const { Title, Text } = Typography;
 
@@ -16,6 +25,7 @@ const VisitDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const [visit, setVisit] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const intl = useIntl();
 
   const fetchSeniorById = async (elderlyId: string) => {
     try {
@@ -67,9 +77,17 @@ const VisitDetailPage: React.FC = () => {
 
   return (
     <PageContainer style={{ padding: '8px' }}>
-      <Space direction='horizontal' style={{ width: '100%', justifyContent: 'flex-start' }}>
-        <Button style={{ marginBottom: '8px' }} type='text' icon={<LeftOutlined />} onClick={() => history.push(`/elderly/${visit.elderly_id}`)}>
-          Back
+      <Space
+        direction="horizontal"
+        style={{ width: '100%', justifyContent: 'flex-start' }}
+      >
+        <Button
+          style={{ marginBottom: '8px' }}
+          type="text"
+          icon={<LeftOutlined />}
+          onClick={() => history.push(`/elderly/${visit.elderly_id}`)}
+        >
+          {intl.formatMessage({ id: 'backBtn' })}
         </Button>
         <Title level={3}>Visit Details</Title>
       </Space>
@@ -79,39 +97,63 @@ const VisitDetailPage: React.FC = () => {
       ) : visit ? (
         <>
           <Descriptions bordered size="small" style={{ marginBottom: '24px' }}>
-            <Descriptions.Item label="Elderly Name">{visit.elderly_name}</Descriptions.Item>
-            <Descriptions.Item label="Relationship">{visit.relationship || 'N/A'}</Descriptions.Item>
-            <Descriptions.Item label="Mode of Interaction">{visit.mode_of_interaction || 'N/A'}</Descriptions.Item>
+            <Descriptions.Item label="Elderly Name">
+              {visit.elderly_name}
+            </Descriptions.Item>
+            <Descriptions.Item label="Relationship">
+              {visit.relationship || 'N/A'}
+            </Descriptions.Item>
+            <Descriptions.Item label="Mode of Interaction">
+              {visit.mode_of_interaction || 'N/A'}
+            </Descriptions.Item>
             <Descriptions.Item label="Duration of Contact">
-              {visit.duration_of_contact ? `${visit.duration_of_contact} minutes` : 'N/A'}
+              {visit.duration_of_contact
+                ? `${visit.duration_of_contact} minutes`
+                : 'N/A'}
             </Descriptions.Item>
-            <Descriptions.Item label="Status">{visit.status || 'N/A'}</Descriptions.Item>
-            <Descriptions.Item label="Comments">{visit.comments || 'No comments.'}</Descriptions.Item>
+            <Descriptions.Item label="Status">
+              {visit.status || 'N/A'}
+            </Descriptions.Item>
+            <Descriptions.Item label="Comments">
+              {visit.comments || 'No comments.'}
+            </Descriptions.Item>
             <Descriptions.Item label="Visitor">
-              {getVisitorInfo(Number(visit.visitor_id)).name} ({getVisitorInfo(Number(visit.visitor_id)).role})
+              {getVisitorInfo(Number(visit.visitor_id)).name} (
+              {getVisitorInfo(Number(visit.visitor_id)).role})
             </Descriptions.Item>
-            <Descriptions.Item label="Date of Visit">{formatDateTime(visit.submission_time)}</Descriptions.Item>
+            <Descriptions.Item label="Date of Visit">
+              {formatDateTime(visit.submission_time)}
+            </Descriptions.Item>
           </Descriptions>
 
-          <Title level={4}>Photos</Title>
+          <Title level={4}>{intl.formatMessage({ id: 'photos' })}</Title>
           {visit.photo_urls && visit.photo_urls.length > 0 ? (
             <Carousel arrows dotPosition="left" infinite={false}>
               {visit.photo_urls.map((url: string, index: number) => (
                 <div key={index}>
                   <Image
                     src={url}
-                    alt={`Visit Photo ${index + 1}`}
-                    style={{ maxHeight: '300px', objectFit: 'cover', width: '100%' }}
+                    alt={intl.formatMessage(
+                      { id: 'visitPhotoCount' },
+                      { index: index + 1 },
+                    )}
+                    style={{
+                      maxHeight: '300px',
+                      objectFit: 'cover',
+                      width: '100%',
+                    }}
                   />
                 </div>
               ))}
             </Carousel>
           ) : (
-            <Text type='secondary'>No Images</Text>
+            <Text type="secondary">
+              {intl.formatMessage({ id: 'noPhotos' })}
+            </Text>
           )}
         </>
       ) : (
-        <Text>No visit details available.</Text>
+        <Text>{intl.formatMessage({ id: 'noVisitDetails' })}</Text>
       )}
     </PageContainer>
   );
