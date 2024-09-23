@@ -1,4 +1,4 @@
-import { AntDesignOutlined } from '@ant-design/icons';
+import { HomeOutlined } from '@ant-design/icons';
 import { history, useAccess, useIntl } from '@umijs/max';
 import { Col, Layout, Row, Typography } from 'antd';
 import React from 'react';
@@ -30,7 +30,7 @@ const CustomNavbar: React.FC = () => {
       <Row align="middle" justify="space-between">
         <Col xs={4} sm={4}>
           <div onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
-            <AntDesignOutlined />
+            <HomeOutlined />
           </div>
         </Col>
         <Col xs={12} sm={16} style={{ textAlign: 'center' }}>

@@ -11,8 +11,8 @@ import {
   QrcodeOutlined,
   RightOutlined,
   SaveOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import { PageContainer } from '@ant-design/pro-components';
 import { useAccess, useIntl, useNavigate, useParams } from '@umijs/max';
 import {
   Button,
@@ -421,7 +421,7 @@ const ResidentProfilePage: React.FC = () => {
 
             {/* Social Information */}
             <Row style={{ marginTop: 8 }}>
-              <Col style={{ width: '100%', maxWidth: 240 }}>
+              <Col style={{ width: '100%', maxWidth: 260 }}>
                 <Row justify="space-between">
                   <Col>
                     <Text strong>
