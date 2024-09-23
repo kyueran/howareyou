@@ -1,6 +1,7 @@
 import {
   BellOutlined,
   ClockCircleOutlined,
+  CommentOutlined,
   EnvironmentOutlined,
   ExclamationCircleOutlined,
   InfoCircleOutlined,
@@ -96,7 +97,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
 
             {/* Key Concerns */}
             <Space align="center">
-              <InfoCircleOutlined />
+              <CommentOutlined />
               <Text strong>{visit.comments || 'None'}</Text>
             </Space>
           </Space>
