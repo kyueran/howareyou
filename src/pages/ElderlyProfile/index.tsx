@@ -4,6 +4,7 @@ import {
   CopyOutlined,
   EnvironmentOutlined,
   ExclamationCircleOutlined,
+  LeftOutlined,
   PhoneOutlined,
   PlusOutlined,
   PrinterOutlined,
@@ -20,6 +21,7 @@ import {
   Col,
   ConfigProvider,
   Image,
+  Layout,
   List,
   message,
   Modal,
@@ -27,6 +29,7 @@ import {
   Row,
   Skeleton,
   Space,
+  Tabs,
   Tag,
   Typography,
 } from 'antd';
@@ -234,12 +237,19 @@ const ResidentProfilePage: React.FC = () => {
 
   return (
     <PageContainer style={{ padding: '8px' }}>
+      <Space direction='horizontal' style={{ width: '100%', justifyContent: 'flex-start' }}>
+        <Button style={{ marginBottom: '8px' }} type='text' icon={<LeftOutlined />} onClick={() => history.push('/elderly')}>
+          Back
+        </Button>
+        <Title level={3}>Elderly Profile</Title>
+      </Space>
+
       {loading || !data ? (
-        <Skeleton active title paragraph={{ rows: 4 }} avatar />
+        <Skeleton active title paragraph={{ rows: 4 }} />
       ) : (
         <ConfigProvider button={{ className: styles.gradientButton }}>
           {/* Profile Information Section */}
-          <Card style={{ marginBottom: 8 }} bodyStyle={{ padding: '16px' }}>
+          <Card style={{ marginBottom: '8px' }} bodyStyle={{ padding: '16px' }}>
             <Row style={{ alignItems: 'center' }}>
               <Title level={3} style={{ margin: 0 }}>
                 {data.name}
@@ -284,9 +294,9 @@ const ResidentProfilePage: React.FC = () => {
               align="middle"
               justify="space-between"
             >
-              <Col xs={9} style={{ maxWidth: '128px', maxHeight: '128px' }}>
+              <Col xs={9}>
                 <Image
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', maxWidth: '128px', maxHeight: '128px' }}
                   width="100%"
                   height="100%"
                   src={data.photoUrl || 'https://via.placeholder.com/128'}

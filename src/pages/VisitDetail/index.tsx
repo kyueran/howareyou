@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // useNavigate replaces useHistory
-import { Typography, Button, Image, Space, message, Descriptions, Spin } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Typography, Button, Carousel, Descriptions, Skeleton, message, Image, Space } from 'antd';
+import { LeftOutlined } from '@ant-design/icons';
+import { PageContainer } from '@ant-design/pro-components';
+import { history } from 'umi'
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 interface VisitDetailParams {
   id: string;
@@ -11,16 +13,15 @@ interface VisitDetailParams {
 
 const VisitDetailPage: React.FC = () => {
   const { id } = useParams<VisitDetailParams>();
-  const navigate = useNavigate(); // Replaces useHistory
+  const navigate = useNavigate();
   const [visit, setVisit] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch visit data by ID
   const fetchSeniorById = async (elderlyId: string) => {
     try {
       const response = await fetch(`/api/senior/${elderlyId}`);
       const result = await response.json();
-      return result[0].name || 'Unknown';  // Assuming API returns { name: 'John Doe' }
+      return result[0].name || 'Unknown';
     } catch (error) {
       console.error('Error fetching senior details:', error);
       return 'Unknown';
@@ -32,7 +33,7 @@ const VisitDetailPage: React.FC = () => {
       const response = await fetch(`/api/visits/${visitId}`);
       const result = await response.json();
       if (result) {
-        const seniorName = await fetchSeniorById(result.elderly_id); // Fetch senior's name
+        const seniorName = await fetchSeniorById(result.elderly_id);
         setVisit({ ...result, elderly_name: seniorName });
       } else {
         message.error(result.message || 'Failed to fetch visit details.');
@@ -65,59 +66,54 @@ const VisitDetailPage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '24px' }}>
-      <Button type="link" onClick={() => navigate(-1)} style={{ marginBottom: '16px' }}>
-        <ArrowLeftOutlined /> Back
-      </Button>
+    <PageContainer style={{ padding: '8px' }}>
+      <Space direction='horizontal' style={{ width: '100%', justifyContent: 'flex-start' }}>
+        <Button style={{ marginBottom: '8px' }} type='text' icon={<LeftOutlined />} onClick={() => history.push(`/elderly/${visit.elderly_id}`)}>
+          Back
+        </Button>
+        <Title level={3}>Visit Details</Title>
+      </Space>
+
       {loading ? (
-        <Spin size="large" />
+        <Skeleton active title paragraph={{ rows: 4 }} />
       ) : visit ? (
         <>
-          <Title level={3}>Visit Details</Title>
-          <Descriptions bordered column={1} style={{ marginBottom: '24px' }}>
+          <Descriptions bordered size="small" style={{ marginBottom: '24px' }}>
             <Descriptions.Item label="Elderly Name">{visit.elderly_name}</Descriptions.Item>
-            <Descriptions.Item label="Relationship">
-              {visit.relationship || 'N/A'}
-            </Descriptions.Item>
-            <Descriptions.Item label="Mode of Interaction">
-              {visit.mode_of_interaction || 'N/A'}
-            </Descriptions.Item>
+            <Descriptions.Item label="Relationship">{visit.relationship || 'N/A'}</Descriptions.Item>
+            <Descriptions.Item label="Mode of Interaction">{visit.mode_of_interaction || 'N/A'}</Descriptions.Item>
             <Descriptions.Item label="Duration of Contact">
               {visit.duration_of_contact ? `${visit.duration_of_contact} minutes` : 'N/A'}
             </Descriptions.Item>
             <Descriptions.Item label="Status">{visit.status || 'N/A'}</Descriptions.Item>
             <Descriptions.Item label="Comments">{visit.comments || 'No comments.'}</Descriptions.Item>
             <Descriptions.Item label="Visitor">
-              {getVisitorInfo(Number(visit.visitor_id)).name} (
-              {getVisitorInfo(Number(visit.visitor_id)).role})
+              {getVisitorInfo(Number(visit.visitor_id)).name} ({getVisitorInfo(Number(visit.visitor_id)).role})
             </Descriptions.Item>
-            <Descriptions.Item label="Date of Visit">
-              {formatDateTime(visit.submission_time)}
-            </Descriptions.Item>
+            <Descriptions.Item label="Date of Visit">{formatDateTime(visit.submission_time)}</Descriptions.Item>
           </Descriptions>
 
           <Title level={4}>Photos</Title>
           {visit.photo_urls && visit.photo_urls.length > 0 ? (
-            <Image.PreviewGroup>
-              <Space size="middle" wrap>
-                {visit.photo_urls.map((url: string, index: number) => (
+            <Carousel arrows dotPosition="left" infinite={false}>
+              {visit.photo_urls.map((url: string, index: number) => (
+                <div key={index}>
                   <Image
-                    key={index}
                     src={url}
                     alt={`Visit Photo ${index + 1}`}
-                    style={{ maxWidth: '200px', maxHeight: '200px' }}
+                    style={{ maxHeight: '300px', objectFit: 'cover', width: '100%' }}
                   />
-                ))}
-              </Space>
-            </Image.PreviewGroup>
+                </div>
+              ))}
+            </Carousel>
           ) : (
-            <Typography.Text>No Images</Typography.Text>
+            <Text type='secondary'>No Images</Text>
           )}
         </>
       ) : (
-        <Typography.Text>No visit details available.</Typography.Text>
+        <Text>No visit details available.</Text>
       )}
-    </div>
+    </PageContainer>
   );
 };
 
