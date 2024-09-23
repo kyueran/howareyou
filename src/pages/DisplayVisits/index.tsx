@@ -1,8 +1,20 @@
+import {
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
+import { useAccess, useIntl, useNavigate } from '@umijs/max';
+import {
+  AutoComplete,
+  Button,
+  Card,
+  Col,
+  Row,
+  Space,
+  Typography,
+  message,
+} from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Row, Space, Typography, message, Button, AutoComplete } from 'antd';
-import { QuestionCircleOutlined, ExclamationCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import { useAccess } from '@umijs/max';
-import { useNavigate } from '@umijs/max';
 
 const { Text, Title } = Typography;
 
@@ -17,6 +29,7 @@ const DisplayVisitsPage: React.FC = () => {
   const access = useAccess(); // To get access control info
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const intl = useIntl();
 
   // Determine the visitor's role and ID
   const visitorId = access.isStaff ? 2 : 1;
@@ -85,28 +98,37 @@ const DisplayVisitsPage: React.FC = () => {
   // Function to apply the current active filter to the visits
   const applyFilters = (visitsData: any[]) => {
     let filtered = visitsData;
-  
+
     // Volunteers can only see their own visits
     if (visitorInfo.role === 'volunteer') {
-      filtered = filtered.filter((visit) => Number(visit.visitor_id) === visitorId);
+      filtered = filtered.filter(
+        (visit) => Number(visit.visitor_id) === visitorId,
+      );
     } else if (visitorInfo.role === 'staff') {
       // Staff can toggle between all visits and their own visits
       if (!showAllVisits) {
-        filtered = filtered.filter((visit) => Number(visit.visitor_id) === visitorId);
+        filtered = filtered.filter(
+          (visit) => Number(visit.visitor_id) === visitorId,
+        );
       }
     }
-  
+
     // If a search is active, filter by elderly_id
     if (searchElderlyId !== null) {
-      filtered = filtered.filter((visit) => Number(visit.elderly_id) === searchElderlyId);
+      filtered = filtered.filter(
+        (visit) => Number(visit.elderly_id) === searchElderlyId,
+      );
     }
-  
+
     // Sort by submission_time in descending order (most recent first)
-    filtered.sort((a, b) => new Date(b.submission_time).getTime() - new Date(a.submission_time).getTime());
-  
+    filtered.sort(
+      (a, b) =>
+        new Date(b.submission_time).getTime() -
+        new Date(a.submission_time).getTime(),
+    );
+
     setFilteredVisits(filtered);
   };
-  
 
   // Handle filtering visits based on search query
   const handleSearch = (value: string) => {
@@ -118,10 +140,12 @@ const DisplayVisitsPage: React.FC = () => {
       .filter(
         (senior) =>
           senior.name.toLowerCase().includes(searchQuery) ||
-          senior.elderly_code.toLowerCase().includes(searchQuery)
+          senior.elderly_code.toLowerCase().includes(searchQuery),
       )
       .map((senior) => {
-        const displayText = `[${senior.elderly_code}] - ${senior.name.toUpperCase()}`;
+        const displayText = `[${
+          senior.elderly_code
+        }] - ${senior.name.toUpperCase()}`;
         return {
           value: displayText, // This will be displayed in the input when selected
           label: displayText, // This will be displayed in the dropdown
@@ -158,7 +182,7 @@ const DisplayVisitsPage: React.FC = () => {
     const date = new Date(dateTime);
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
   };
-  
+
   const getVisitorInfo = (visitorId: number) => {
     if (visitorId === 1) {
       return { name: 'Mr Wong Ah Fook', role: 'volunteer' };
@@ -173,7 +197,7 @@ const DisplayVisitsPage: React.FC = () => {
     const now = new Date();
     const submissionDate = new Date(submissionTime);
     const diffInSeconds = Math.floor((now - submissionDate) / 1000); // Difference in seconds
-  
+
     if (diffInSeconds < 60) {
       // If less than 60 seconds, show seconds
       return `${diffInSeconds} seconds ago`;
@@ -196,13 +220,18 @@ const DisplayVisitsPage: React.FC = () => {
     <Row justify="center" style={{ marginTop: '24px' }}>
       <Col xs={22} sm={20} md={16} lg={12}>
         <Space direction="vertical" size={24} style={{ width: '100%' }}>
+          {/* Commenting out because page title is in the CustomNavbar
           <Title level={3} style={{ marginBottom: '0px' }}>
             Visit Logs
           </Title>
+           */}
           {/* Button to toggle between "My Visits" and "All Visits" for staff */}
           {visitorInfo.role === 'staff' && (
             <Button type="primary" onClick={toggleShowAllVisits}>
-              {showAllVisits ? 'Show My Visits' : 'Show All Visits'}
+              {intl.formatMessage(
+                { id: 'showXVisits' },
+                { whose: showAllVisits ? 'My' : 'All' },
+              )}
             </Button>
           )}
 
@@ -221,74 +250,97 @@ const DisplayVisitsPage: React.FC = () => {
               }}
               value={searchValue} // Display the selected value in the input
               allowClear
-              placeholder="Search by elderly name or code"
+              placeholder={intl.formatMessage({ id: 'searchPlaceholder' })}
               style={{ width: '100%', marginBottom: '20px' }}
             />
           )}
           {filteredVisits.length === 0 && !loading ? (
-            <Text>No visits found.</Text>
+            <Text>{intl.formatMessage({ id: 'noVisits' })}</Text>
           ) : (
             filteredVisits.map((visit) => {
               const visitorInfo = getVisitorInfo(visit.visitor_id);
               return (
                 <Card
-                    key={visit.id}
-                    style={{ width: '100%', cursor: 'pointer', border: '1px solid #f0f0f0', borderRadius: '8px' }} // Adding slight border and border-radius for styling
-                    bodyStyle={{ paddingBottom: 12, paddingTop: 12 }}
-                    onClick={() => navigate(`/visit/${visit.id}`)} // Navigate to VisitDetailPage on click
-                    >
-                    <Row gutter={16} align="middle">
-                        <Col xs={24} sm={24} md={24} lg={24}>
-                        <div>
-                            {/* Visitor Name and Role */}
-                            <Text strong style={{ fontSize: '16px' }}>
-                            👤 {visitorInfo.name} ({visitorInfo.role === 'staff' ? 'AAC Staff' : 'Volunteer'})
-                            </Text>
-                            <br />
+                  key={visit.id}
+                  style={{
+                    width: '100%',
+                    cursor: 'pointer',
+                    border: '1px solid #f0f0f0',
+                    borderRadius: '8px',
+                  }} // Adding slight border and border-radius for styling
+                  bodyStyle={{ paddingBottom: 12, paddingTop: 12 }}
+                  onClick={() => navigate(`/visit/${visit.id}`)} // Navigate to VisitDetailPage on click
+                >
+                  <Row gutter={16} align="middle">
+                    <Col xs={24} sm={24} md={24} lg={24}>
+                      <div>
+                        {/* Visitor Name and Role */}
+                        <Text strong style={{ fontSize: '16px' }}>
+                          👤 {visitorInfo.name} (
+                          {visitorInfo.role === 'staff'
+                            ? 'AAC Staff'
+                            : 'Volunteer'}
+                          )
+                        </Text>
+                        <br />
 
-                            {/* Location */}
-                            <Text>
-                            📍 {visit.mode_of_interaction || 'Location not available'}
-                            </Text>
-                            <br />
+                        {/* Location */}
+                        <Text>
+                          📍{' '}
+                          {visit.mode_of_interaction ||
+                            'Location not available'}
+                        </Text>
+                        <br />
 
-                            {/* Date and Time */}
-                            {visit.status === 'Good' && (
-                            <Text strong style={{ color: 'green', fontSize: '16px' }}>
-                                <CheckCircleOutlined style={{ color: 'green', marginRight: '8px' }} />
-                                Good
-                            </Text>
-                            )}
-                            {visit.status === 'Not Good' && (
-                            <Text strong style={{ color: 'red', fontSize: '16px' }}>
-                                <ExclamationCircleOutlined style={{ color: 'red', marginRight: '8px' }} />
-                                Not Good
-                            </Text>
-                            )}
-                            {visit.status === 'Not Around' && (
-                            <Text strong style={{ color: 'orange', fontSize: '16px' }}>
-                                <QuestionCircleOutlined style={{ color: 'orange', marginRight: '8px' }} />
-                                Not Around
-                            </Text>
-                            )}
-                            <br />
+                        {/* Date and Time */}
+                        {visit.status === 'Good' && (
+                          <Text
+                            strong
+                            style={{ color: 'green', fontSize: '16px' }}
+                          >
+                            <CheckCircleOutlined
+                              style={{ color: 'green', marginRight: '8px' }}
+                            />
+                            Good
+                          </Text>
+                        )}
+                        {visit.status === 'Not Good' && (
+                          <Text
+                            strong
+                            style={{ color: 'red', fontSize: '16px' }}
+                          >
+                            <ExclamationCircleOutlined
+                              style={{ color: 'red', marginRight: '8px' }}
+                            />
+                            Not Good
+                          </Text>
+                        )}
+                        {visit.status === 'Not Around' && (
+                          <Text
+                            strong
+                            style={{ color: 'orange', fontSize: '16px' }}
+                          >
+                            <QuestionCircleOutlined
+                              style={{ color: 'orange', marginRight: '8px' }}
+                            />
+                            Not Around
+                          </Text>
+                        )}
+                        <br />
 
-
-                            {/* Elderly Comments */}
-                            <Text>
-                            🔔 {visit.key_concerns || '-'}
-                            </Text>
-                        </div>
-                        </Col>
-                    </Row>
-                    </Card>
+                        {/* Elderly Comments */}
+                        <Text>🔔 {visit.key_concerns || '-'}</Text>
+                      </div>
+                    </Col>
+                  </Row>
+                </Card>
               );
             })
           )}
         </Space>
       </Col>
     </Row>
-  );      
+  );
 };
 
 export default DisplayVisitsPage;
