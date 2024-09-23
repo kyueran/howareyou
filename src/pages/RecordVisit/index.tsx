@@ -61,14 +61,14 @@ const RecordVisit: React.FC = () => {
     fetchSeniorData();
   }, [params.id]);
 
-  const getVisitorId = async (access: Access) => {
-    if (access.isVolunteer) {
-      return 1;
-    } else if (access.isStaff) {
-      return 2;
-    } else {
-      return 3;
+  const getVisitorId = async () => {
+    const user = localStorage.getItem('user');
+    let visitorId = 0;
+    if (user) {
+      const parsedUser = JSON.parse(user);
+      visitorId = parsedUser.id;
     }
+    return visitorId;
   };
 
   const onFinish = async (values: any) => {
@@ -92,7 +92,7 @@ const RecordVisit: React.FC = () => {
       : values.relationship || '';
 
     try {
-      const visitor_id = await getVisitorId(access);
+      const visitor_id = await getVisitorId();
 
       const uploadedPhotoUrls: string[] = [];
 
@@ -103,12 +103,12 @@ const RecordVisit: React.FC = () => {
             handleUploadUrl: '/api/uploadPhoto',
           });
           uploadedPhotoUrls.push(result.url);
-          message.success(
-            intl.formatMessage(
-              { id: 'photoUploadSuccess' },
-              { filename: file.name },
-            ),
-          );
+          // message.success(
+          //   intl.formatMessage(
+          //     { id: 'photoUploadSuccess' },
+          //     { filename: file.name },
+          //   ),
+          // );
         } catch (error: any) {
           setSubmitting(false);
           message.error(`Error uploading photo ${file.name}: ${error.message}`);
