@@ -288,7 +288,11 @@ const DisplayVisitsPage: React.FC = () => {
                         <Text>
                           📍{' '}
                           {visit.mode_of_interaction ||
+<<<<<<< HEAD
                             'Location not available'}
+=======
+                            intl.formatMessage({ id: 'NA' })}
+>>>>>>> 5ed3914 (translations for elderly profile page in english only)
                         </Text>
                         <br />
 

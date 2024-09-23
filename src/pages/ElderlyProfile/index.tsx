@@ -11,17 +11,15 @@ import {
   QrcodeOutlined,
   RightOutlined,
   SaveOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
-import { useAccess, useNavigate, useParams } from '@umijs/max';
+import { useAccess, useIntl, useNavigate, useParams } from '@umijs/max';
 import {
   Button,
   Card,
   Col,
   ConfigProvider,
   Image,
-  Layout,
   List,
   message,
   Modal,
@@ -29,7 +27,6 @@ import {
   Row,
   Skeleton,
   Space,
-  Tabs,
   Tag,
   Typography,
 } from 'antd';
@@ -83,6 +80,7 @@ const ResidentProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const { styles } = useGradientButtonStyle();
   const access = useAccess();
+  const intl = useIntl();
 
   useEffect(() => {
     const fetchResidentData = async () => {
@@ -227,18 +225,26 @@ const ResidentProfilePage: React.FC = () => {
   const getVisitStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'not good':
-        return 'red'
+        return 'red';
       case 'good':
         return 'green';
       default:
         return 'grey';
     }
-  }
+  };
 
   return (
     <PageContainer style={{ padding: '8px' }}>
-      <Space direction='horizontal' style={{ width: '100%', justifyContent: 'flex-start' }}>
-        <Button style={{ marginBottom: '8px' }} type='text' icon={<LeftOutlined />} onClick={() => history.push('/elderly')}>
+      <Space
+        direction="horizontal"
+        style={{ width: '100%', justifyContent: 'flex-start' }}
+      >
+        <Button
+          style={{ marginBottom: '8px' }}
+          type="text"
+          icon={<LeftOutlined />}
+          onClick={() => history.push('/elderly')}
+        >
           Back
         </Button>
         <Title level={3}>Elderly Profile</Title>
@@ -296,7 +302,11 @@ const ResidentProfilePage: React.FC = () => {
             >
               <Col xs={9}>
                 <Image
-                  style={{ cursor: 'pointer', maxWidth: '128px', maxHeight: '128px' }}
+                  style={{
+                    cursor: 'pointer',
+                    maxWidth: '128px',
+                    maxHeight: '128px',
+                  }}
                   width="100%"
                   height="100%"
                   src={data.photoUrl || 'https://via.placeholder.com/128'}
@@ -370,8 +380,8 @@ const ResidentProfilePage: React.FC = () => {
             {/* NOK Section */}
             <Row style={{ marginTop: 4 }}>
               <Col>
-                <Text strong>Next-of-kin:</Text>
-                {data.nok.map((nok, index) => (
+                <Text strong>{intl.formatMessage({ id: 'nok' })}</Text>
+                {data?.nok.map((nok, index) => (
                   <Text
                     key={index}
                     style={{ display: 'block', fontSize: '14px' }}
@@ -408,11 +418,15 @@ const ResidentProfilePage: React.FC = () => {
                   <Col>
                     <Text
                       strong
-                      style={{ color: getDaysLivingAloneColor(
-                        data.noOfDaysLivingAlone || 0,
-                      )}}
+                      style={{
+                        color: getDaysLivingAloneColor(
+                          data.noOfDaysLivingAlone || 0,
+                        ),
+                      }}
                     >
-                      {data.noOfDaysLivingAlone === 1 ? `${data.noOfDaysLivingAlone} day` : `${data.noOfDaysLivingAlone} days`}
+                      {data.noOfDaysLivingAlone === 1
+                        ? `${data.noOfDaysLivingAlone} day`
+                        : `${data.noOfDaysLivingAlone} days`}
                     </Text>
                   </Col>
                 </Row>
@@ -423,7 +437,9 @@ const ResidentProfilePage: React.FC = () => {
                   <Col>
                     <Text
                       strong
-                      style={{ color: getTextColor(data.socialInteraction || '')}}
+                      style={{
+                        color: getTextColor(data.socialInteraction || ''),
+                      }}
                     >
                       {data.socialInteraction}
                     </Text>
@@ -451,7 +467,10 @@ const ResidentProfilePage: React.FC = () => {
             <Row style={{ marginTop: 8 }}>
               <Col>
                 <Text strong>Fall Risk: </Text>
-                <Text strong style={{ color: getTextColor(data.fallRisk || '') }}>
+                <Text
+                  strong
+                  style={{ color: getTextColor(data.fallRisk || '') }}
+                >
                   {data.fallRisk}
                 </Text>
                 <br />
@@ -509,9 +528,7 @@ const ResidentProfilePage: React.FC = () => {
                 </Paragraph>
                 <Text strong>Key Attachments: </Text>
                 <Text type="secondary">
-                  {data.keyAttachments.length > 0
-                    ? 'Available'
-                    : 'None'}
+                  {data.keyAttachments.length > 0 ? 'Available' : 'None'}
                 </Text>
               </Col>
             </Row>
@@ -641,7 +658,7 @@ const ResidentProfilePage: React.FC = () => {
           />
 
           <Modal
-            title="QR Code"
+            title={intl.formatMessage({ id: 'QRCode' })}
             open={isModalVisible}
             onCancel={handleCancel}
             footer={[
@@ -660,7 +677,7 @@ const ResidentProfilePage: React.FC = () => {
                   })
                 }
               >
-                Print QR Code
+                {intl.formatMessage({ id: 'printQRCode' })}
               </Button>,
               <Button
                 key="save"
@@ -668,7 +685,7 @@ const ResidentProfilePage: React.FC = () => {
                 icon={<SaveOutlined />}
                 onClick={handleSaveAsImage}
               >
-                Save as Image
+                {intl.formatMessage({ id: 'saveAsImage' })}
               </Button>,
             ]}
           >
