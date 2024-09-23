@@ -36,7 +36,7 @@ import advancedFormat from 'dayjs/plugin/advancedFormat';
 import html2canvas from 'html2canvas';
 import React, { useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
-import { ElderlyInfo, VisitInfo } from '../Home'; // Ensure path is correct
+import { ElderlyInfo, VisitInfo } from '../ElderlyResidents'; // Ensure path is correct
 
 const { Title, Text, Paragraph } = Typography;
 

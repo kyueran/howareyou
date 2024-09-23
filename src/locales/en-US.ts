@@ -50,4 +50,11 @@ export default {
   QRCode: 'QR Code',
   printQRCode: 'Print QR Code',
   saveAsImage: 'Save as Image',
+
+  // These translations are for the Elderly Residents page
+  topWarningMsg: 'You are viewing residents in the {location} area!',
+  searchElderlyPlaceholder: 'Find elderly using their address, code...',
+  loading: 'Loading...',
+  copy: 'Copy',
+  visitedDaysAgo: 'visited {days} day(s) ago',
 };
