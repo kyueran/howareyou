@@ -237,10 +237,10 @@ const ResidentProfilePage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={{ padding: '8px' }}>
       <Space
         direction="horizontal"
-        style={{ width: '100%', justifyContent: 'flex-start' }}
+        style={{ width: '100%', marginTop: '8px', justifyContent: 'flex-start' }}
       >
         <Button
           style={{ marginBottom: '8px' }}

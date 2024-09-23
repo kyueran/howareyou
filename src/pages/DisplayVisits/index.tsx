@@ -162,7 +162,6 @@ const DisplayVisitsPage: React.FC = () => {
         (senior) =>
           senior.name.toLowerCase().includes(searchQuery) ||
           senior.elderly_code.toLowerCase().includes(searchQuery),
-          senior.elderly_code.toLowerCase().includes(searchQuery),
       )
       .map((senior) => {
         const displayText = `[${
@@ -299,97 +298,6 @@ const DisplayVisitsPage: React.FC = () => {
                   }} // Navigate to VisitDetailPage on click
                 >
                   <Row gutter={16} align="middle">
-                    <Col xs={24} sm={24} md={24} lg={24}>
-                      <div
-                        style={{
-                          position: 'relative',
-                          width: '100%',
-                          height: '180px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          paddingTop: '40px',
-                          paddingBottom: '30px',
-                          paddingLeft: '10px',
-                          overflow: 'visible', // Ensure borders are not cut off
-                        }}
-                      >
-                        {visit.photo_urls && visit.photo_urls.length > 0 ? (
-                          <div
-                            style={{
-                              position: 'relative',
-                              width: '100%',
-                              height: '100%',
-                            }}
-                          >
-                            {/* First visit photo */}
-                            <img
-                              src={visit.photo_urls[0]}
-                              alt={intl.formatMessage({
-                                id: 'imageThumbnailAlt',
-                              })}
-                              style={{
-                                width: '100%', // Ensure the image fits fully in the space
-                                height: '100%',
-                                objectFit: 'cover',
-                                objectPosition: 'center',
-                                borderRadius: '8px', // Rounded corners for the image
-                                zIndex: 3, // Ensure image is above the borders
-                                position: 'relative', // Required to position it above the borders
-                              }}
-                            />
-                            {/* Grey borders outside the image */}
-                            {visit.photo_urls.length > 1 && (
-                              <>
-                                <div
-                                  style={{
-                                    position: 'absolute',
-                                    top: '-3px',
-                                    left: '-3px',
-                                    width: '100%',
-                                    height: '100%',
-                                    zIndex: 1, // Behind the image
-                                    borderRadius: '8px', // Same radius as image
-                                    border: '2px solid rgba(0, 0, 0, 0.1)', // Light grey border
-                                  }}
-                                />
-                                <div
-                                  style={{
-                                    position: 'absolute',
-                                    top: '-6px',
-                                    left: '-6px',
-                                    width: '100%',
-                                    height: '100%',
-                                    zIndex: 0, // Further behind the image
-                                    borderRadius: '8px',
-                                    border: '2px solid rgba(0, 0, 0, 0.1)', // Another light grey border
-                                  }}
-                                />
-                              </>
-                            )}
-                            <div
-                              style={{
-                                textAlign: 'center',
-                                marginTop: '5px',
-                                fontSize: '12px',
-                                color: '#888',
-                              }}
-                            >
-                              {intl.formatMessage(
-                                { id: 'numberOfPhotos' },
-                                { count: visit.photo_urls.length },
-                              )}
-                            </div>
-                          </div>
-                        ) : (
-                          <div
-                            style={{ textAlign: 'center', paddingTop: '50%' }}
-                          >
-                            {intl.formatMessage({ id: 'noImages' })}
-                          </div>
-                        )}
-                      </div>
-                    </Col>
                     <Col xs={16} sm={18} md={18} lg={19}>
                       <div>
                         {/* Visitor Name and Role */}
