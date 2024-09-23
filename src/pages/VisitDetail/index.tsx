@@ -10,7 +10,7 @@ import {
   Typography,
   message,
 } from 'antd';
-import { default as React, default as React, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { history, useIntl } from 'umi';
 

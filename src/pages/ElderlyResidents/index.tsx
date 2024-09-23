@@ -110,37 +110,6 @@ const ResidentListPage: React.FC = () => {
           (row: any) => ({
             id: row.id,
             elderlyCode: row.elderly_code,
-            aacCode: row.aac_code,
-            name: row.name,
-            contactDetails: row.contact_details,
-            nok: [
-              {
-                name: row.nok_name,
-                relationship: row.relationship_with_nok,
-                contactDetails: row.nok_contact_details,
-              },
-            ],
-            block: row.block,
-            floor: row.floor,
-            unitNumber: row.unit_number,
-            address: row.address,
-            postalCode: row.postal_code,
-            notes: row.notes,
-            keyAttachments: JSON.parse(row.key_attachments || '[]'),
-            noOfDaysLivingAlone: row.no_of_days_living_alone,
-            adlDifficulty: row.adl_difficulty || [],
-            fallRisk: row.fall_risk,
-            fallHistory: row.fall_history || [],
-            socialInteraction: row.social_interaction,
-            photoUrl: row.photo_url,
-            languages: [row.languages as Language],
-            visits: [],
-          }),
-        );
-        const seniors: ElderlyInfo[] = (await seniorsResponse.json()).map(
-          (row: any) => ({
-            id: row.id,
-            elderlyCode: row.elderly_code,
             centreCode: row.aac_code,
             name: row.name,
             contactDetails: row.contact_details,
@@ -288,22 +257,6 @@ const ResidentListPage: React.FC = () => {
             .toLowerCase()
             .includes(searchText.toLowerCase()) ||
           elderly.postalCode.includes(searchText) ||
-          elderly.aacCode.toLowerCase().includes(searchText.toLowerCase()),
-      );
-      setFilteredData(filtered);
-    },
-    [data],
-  );
-      const filtered = data.filter(
-        (elderly) =>
-          elderly.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          elderly.block.toLowerCase().includes(searchText.toLowerCase()) ||
-          elderly.unitNumber.includes(searchText) ||
-          elderly.address.toLowerCase().includes(searchText.toLowerCase()) ||
-          elderly.elderlyCode
-            .toLowerCase()
-            .includes(searchText.toLowerCase()) ||
-          elderly.postalCode.includes(searchText) ||
           elderly.centreCode.toLowerCase().includes(searchText.toLowerCase()),
       );
       setFilteredData(filtered);
@@ -330,7 +283,9 @@ const ResidentListPage: React.FC = () => {
 
   return (
     <PageContainer style={{ margin: '0 8px' }}>
-      <Title level={3} style={{ marginTop: 16, marginBottom: 0 }}>Visit Details</Title>
+      <Title level={3} style={{ marginTop: 16, marginBottom: 0 }}>
+        Visit Details
+      </Title>
       <Text>
         You are viewing residents in the <Text type="danger">Queenstown</Text>{' '}
         area!
@@ -357,7 +312,7 @@ const ResidentListPage: React.FC = () => {
         onChange={(e) => handleSearch(e.target.value)}
       />
       {loading ? (
-        <ProSkeleton type='list' />
+        <ProSkeleton type="list" />
       ) : (
         <List
           itemLayout="vertical"
