@@ -516,7 +516,7 @@ const ResidentProfilePage: React.FC = () => {
                       overflow: 'hidden',
                     }}
                     bodyStyle={{ padding: '8px 16px' }}
-                    onClick={() => history.push(`/display-visit/${visit.id}`)}
+                    onClick={() => history.push(`/visit/${visit.id}`)}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'scale(1.03)'; // Slightly enlarge the card
                       e.currentTarget.style.boxShadow =
