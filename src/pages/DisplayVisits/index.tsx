@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Col, Row, Space, Typography, message, Button, AutoComplete } from 'antd';
+import { QuestionCircleOutlined, ExclamationCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useAccess } from '@umijs/max';
 import { useNavigate } from '@umijs/max';
 
@@ -84,7 +85,7 @@ const DisplayVisitsPage: React.FC = () => {
   // Function to apply the current active filter to the visits
   const applyFilters = (visitsData: any[]) => {
     let filtered = visitsData;
-
+  
     // Volunteers can only see their own visits
     if (visitorInfo.role === 'volunteer') {
       filtered = filtered.filter((visit) => Number(visit.visitor_id) === visitorId);
@@ -94,14 +95,18 @@ const DisplayVisitsPage: React.FC = () => {
         filtered = filtered.filter((visit) => Number(visit.visitor_id) === visitorId);
       }
     }
-
+  
     // If a search is active, filter by elderly_id
     if (searchElderlyId !== null) {
       filtered = filtered.filter((visit) => Number(visit.elderly_id) === searchElderlyId);
     }
-
+  
+    // Sort by submission_time in descending order (most recent first)
+    filtered.sort((a, b) => new Date(b.submission_time).getTime() - new Date(a.submission_time).getTime());
+  
     setFilteredVisits(filtered);
   };
+  
 
   // Handle filtering visits based on search query
   const handleSearch = (value: string) => {
@@ -164,6 +169,29 @@ const DisplayVisitsPage: React.FC = () => {
     }
   };
 
+  const formatTimeDifference = (submissionTime) => {
+    const now = new Date();
+    const submissionDate = new Date(submissionTime);
+    const diffInSeconds = Math.floor((now - submissionDate) / 1000); // Difference in seconds
+  
+    if (diffInSeconds < 60) {
+      // If less than 60 seconds, show seconds
+      return `${diffInSeconds} seconds ago`;
+    } else if (diffInSeconds < 60 * 60) {
+      // If less than 60 minutes (1 hour), show minutes
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    } else if (diffInSeconds < 24 * 60 * 60) {
+      // If less than 24 hours, show hours
+      const hours = Math.floor(diffInSeconds / (60 * 60));
+      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else {
+      // If more than 24 hours, show days
+      const days = Math.floor(diffInSeconds / (60 * 60 * 24));
+      return `${days} day${days > 1 ? 's' : ''} ago`;
+    }
+  };
+
   return (
     <Row justify="center" style={{ marginTop: '24px' }}>
       <Col xs={22} sm={20} md={16} lg={12}>
@@ -204,112 +232,51 @@ const DisplayVisitsPage: React.FC = () => {
               const visitorInfo = getVisitorInfo(visit.visitor_id);
               return (
                 <Card
-                  key={visit.id}
-                  style={{ width: '100%', cursor: 'pointer' }} // Make the card look clickable
-                  bodyStyle={{ paddingBottom: 0, paddingTop: 0 }}
-                  loading={loading}
-                  onClick={() => navigate(`/visit/${visit.id}`)} // Navigate to VisitDetailPage on click
-                >
+                    key={visit.id}
+                    style={{ width: '100%', cursor: 'pointer', border: '1px solid #f0f0f0', borderRadius: '8px' }} // Adding slight border and border-radius for styling
+                    bodyStyle={{ paddingBottom: 12, paddingTop: 12 }}
+                    onClick={() => navigate(`/visit/${visit.id}`)} // Navigate to VisitDetailPage on click
+                    >
                     <Row gutter={16} align="middle">
-                        <Col xs={8} sm={6} md={6} lg={5}>
-                        <div
-                            style={{
-                            position: 'relative',
-                            width: '100%',
-                            height: '180px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            paddingTop: '40px',
-                            paddingBottom: '30px',
-                            paddingLeft: '10px',
-                            overflow: 'visible', // Ensure borders are not cut off
-                            }}
-                        >
-                            {visit.photo_urls && visit.photo_urls.length > 0 ? (
-                            <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                                {/* First visit photo */}
-                                <img
-                                src={visit.photo_urls[0]}
-                                alt="First Visit Photo"
-                                style={{
-                                    width: '100%', // Ensure the image fits fully in the space
-                                    height: '100%', 
-                                    objectFit: 'cover',
-                                    objectPosition: 'center',
-                                    borderRadius: '8px', // Rounded corners for the image
-                                    zIndex: 3, // Ensure image is above the borders
-                                    position: 'relative', // Required to position it above the borders
-                                }}
-                                />
-                                {/* Grey borders outside the image */}
-                                {visit.photo_urls.length > 1 && (
-                                <>
-                                    <div
-                                    style={{
-                                        position: 'absolute',
-                                        top: '-3px',
-                                        left: '-3px',
-                                        width: '100%',
-                                        height: '100%',
-                                        zIndex: 1, // Behind the image
-                                        borderRadius: '8px', // Same radius as image
-                                        border: '2px solid rgba(0, 0, 0, 0.1)', // Light grey border
-                                    }}
-                                    />
-                                    <div
-                                    style={{
-                                        position: 'absolute',
-                                        top: '-6px',
-                                        left: '-6px',
-                                        width: '100%',
-                                        height: '100%',
-                                        zIndex: 0, // Further behind the image
-                                        borderRadius: '8px',
-                                        border: '2px solid rgba(0, 0, 0, 0.1)', // Another light grey border
-                                    }}
-                                    />
-                                </>
-                                )}
-                                <div style={{ textAlign: 'center', marginTop: '5px', fontSize: '12px', color: '#888' }}>
-                                    {visit.photo_urls.length > 1 ? `${visit.photo_urls.length} photos` : '1 photo'}
-                                </div>
-                            </div>
-                            ) : (
-                            <div style={{ textAlign: 'center', paddingTop: '50%' }}>No Images</div>
-                            )}
-                        </div>
-                        </Col>
-                        <Col xs={16} sm={18} md={18} lg={19}>
+                        <Col xs={24} sm={24} md={24} lg={24}>
                         <div>
+                            {/* Visitor Name and Role */}
                             <Text strong style={{ fontSize: '16px' }}>
-                            {visit.comments || 'No comments.'}
+                            👤 {visitorInfo.name} ({visitorInfo.role === 'staff' ? 'AAC Staff' : 'Volunteer'})
                             </Text>
                             <br />
-                            <Text type="secondary">
-                            <span role="img" aria-label="visitor">
-                                👤
-                            </span>{' '}
-                            {visitorInfo.name},{' '}
-                            <span style={{ color: visitorInfo.role === 'staff' ? 'red' : 'blue', textTransform: 'uppercase' }}>
-                                {visitorInfo.role}
-                            </span>
+
+                            {/* Location */}
+                            <Text>
+                            📍 {visit.mode_of_interaction || 'Location not available'}
                             </Text>
                             <br />
-                            <Text type="secondary">
-                            <span role="img" aria-label="date">
-                                📅
-                            </span>{' '}
-                            {formatDateTime(visit.submission_time)} (
-                            {Math.floor((Date.now() + (8 * 60 * 60 * 1000) - new Date(visit.submission_time).getTime()) / (1000 * 60 * 60 * 24))}{' '}
-                            days ago)
+
+                            {/* Date and Time */}
+                            {visit.status === 'Good' && (
+                            <Text strong style={{ color: 'green', fontSize: '16px' }}>
+                                <CheckCircleOutlined style={{ color: 'green', marginRight: '8px' }} />
+                                Good
                             </Text>
+                            )}
+                            {visit.status === 'Not Good' && (
+                            <Text strong style={{ color: 'red', fontSize: '16px' }}>
+                                <ExclamationCircleOutlined style={{ color: 'red', marginRight: '8px' }} />
+                                Not Good
+                            </Text>
+                            )}
+                            {visit.status === 'Not Around' && (
+                            <Text strong style={{ color: 'orange', fontSize: '16px' }}>
+                                <QuestionCircleOutlined style={{ color: 'orange', marginRight: '8px' }} />
+                                Not Around
+                            </Text>
+                            )}
                             <br />
-                            <Text type="secondary">
-                            <span role="img" aria-label="location">
-                                📍
-                            </span>{' '}
-                            {visit.mode_of_interaction || 'Location not available'}
+
+
+                            {/* Elderly Comments */}
+                            <Text>
+                            🔔 {visit.key_concerns || '-'}
                             </Text>
                         </div>
                         </Col>
