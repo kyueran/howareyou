@@ -390,7 +390,7 @@ const DisplayVisitsPage: React.FC = () => {
                             <CheckCircleOutlined
                               style={{ color: 'green', marginRight: '8px' }}
                             />
-                            Good
+                            {intl.formatMessage({ id: 'good' })}
                           </Text>
                         )}
                         {visit.status === 'Not Good' && (
@@ -401,7 +401,7 @@ const DisplayVisitsPage: React.FC = () => {
                             <ExclamationCircleOutlined
                               style={{ color: 'red', marginRight: '8px' }}
                             />
-                            Not Good
+                            {intl.formatMessage({ id: 'notGood' })}
                           </Text>
                         )}
                         {visit.status === 'Not Around' && (
@@ -412,7 +412,7 @@ const DisplayVisitsPage: React.FC = () => {
                             <QuestionCircleOutlined
                               style={{ color: 'orange', marginRight: '8px' }}
                             />
-                            Not Around
+                            {intl.formatMessage({ id: 'notAround' })}
                           </Text>
                         )}
                         <br />
