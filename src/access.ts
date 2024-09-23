@@ -1,5 +1,3 @@
-import { history } from 'umi';
-
 export default (initialState: API.UserInfo) => {
   // Determine whether the current user is a volunteer or staff
   const isVolunteer = !!(initialState && initialState.role === 'volunteer');

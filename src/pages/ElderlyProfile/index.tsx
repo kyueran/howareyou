@@ -37,8 +37,8 @@ import advancedFormat from 'dayjs/plugin/advancedFormat';
 import html2canvas from 'html2canvas';
 import React, { useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
-import { ElderlyInfo, VisitInfo } from '../Home'; // Ensure path is correct
 import VisitModal from '../../components/VisitModal';
+import { ElderlyInfo, VisitInfo } from '../Home'; // Ensure path is correct
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -134,9 +134,10 @@ const ResidentProfilePage: React.FC = () => {
         const response = await fetch(`/api/fetchVisits`);
         const result = await response.json();
         if (result.success) {
-          const visits: VisitInfo[] = result.data
-            .filter((visit: VisitInfo) => visit.elderly_id === Number(params.id))
-          visits.reverse()
+          const visits: VisitInfo[] = result.data.filter(
+            (visit: VisitInfo) => visit.elderly_id === Number(params.id),
+          );
+          visits.reverse();
           setVisits(visits);
         } else {
           message.error(result.message || 'Failed to fetch visits.');
@@ -227,18 +228,26 @@ const ResidentProfilePage: React.FC = () => {
   const getVisitStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'not good':
-        return 'red'
+        return 'red';
       case 'good':
         return 'green';
       default:
         return 'grey';
     }
-  }
+  };
 
   return (
     <PageContainer style={{ padding: '8px' }}>
-      <Space direction='horizontal' style={{ width: '100%', justifyContent: 'flex-start' }}>
-        <Button style={{ marginBottom: '8px' }} type='text' icon={<LeftOutlined />} onClick={() => history.push('/elderly')}>
+      <Space
+        direction="horizontal"
+        style={{ width: '100%', justifyContent: 'flex-start' }}
+      >
+        <Button
+          style={{ marginBottom: '8px' }}
+          type="text"
+          icon={<LeftOutlined />}
+          onClick={() => history.push('/elderly')}
+        >
           Back
         </Button>
         <Title level={3}>Elderly Profile</Title>
@@ -296,7 +305,11 @@ const ResidentProfilePage: React.FC = () => {
             >
               <Col xs={9}>
                 <Image
-                  style={{ cursor: 'pointer', maxWidth: '128px', maxHeight: '128px' }}
+                  style={{
+                    cursor: 'pointer',
+                    maxWidth: '128px',
+                    maxHeight: '128px',
+                  }}
                   width="100%"
                   height="100%"
                   src={data.photoUrl || 'https://via.placeholder.com/128'}
@@ -408,11 +421,15 @@ const ResidentProfilePage: React.FC = () => {
                   <Col>
                     <Text
                       strong
-                      style={{ color: getDaysLivingAloneColor(
-                        data.noOfDaysLivingAlone || 0,
-                      )}}
+                      style={{
+                        color: getDaysLivingAloneColor(
+                          data.noOfDaysLivingAlone || 0,
+                        ),
+                      }}
                     >
-                      {data.noOfDaysLivingAlone === 1 ? `${data.noOfDaysLivingAlone} day` : `${data.noOfDaysLivingAlone} days`}
+                      {data.noOfDaysLivingAlone === 1
+                        ? `${data.noOfDaysLivingAlone} day`
+                        : `${data.noOfDaysLivingAlone} days`}
                     </Text>
                   </Col>
                 </Row>
@@ -423,7 +440,9 @@ const ResidentProfilePage: React.FC = () => {
                   <Col>
                     <Text
                       strong
-                      style={{ color: getTextColor(data.socialInteraction || '')}}
+                      style={{
+                        color: getTextColor(data.socialInteraction || ''),
+                      }}
                     >
                       {data.socialInteraction}
                     </Text>
@@ -451,7 +470,10 @@ const ResidentProfilePage: React.FC = () => {
             <Row style={{ marginTop: 8 }}>
               <Col>
                 <Text strong>Fall Risk: </Text>
-                <Text strong style={{ color: getTextColor(data.fallRisk || '') }}>
+                <Text
+                  strong
+                  style={{ color: getTextColor(data.fallRisk || '') }}
+                >
                   {data.fallRisk}
                 </Text>
                 <br />
@@ -509,9 +531,7 @@ const ResidentProfilePage: React.FC = () => {
                 </Paragraph>
                 <Text strong>Key Attachments: </Text>
                 <Text type="secondary">
-                  {data.keyAttachments.length > 0
-                    ? 'Available'
-                    : 'None'}
+                  {data.keyAttachments.length > 0 ? 'Available' : 'None'}
                 </Text>
               </Col>
             </Row>
@@ -541,8 +561,8 @@ const ResidentProfilePage: React.FC = () => {
                     }}
                     bodyStyle={{ padding: '8px 16px' }}
                     onClick={() => {
-                      setSelectedVisit(visit)
-                      setIsVisitModalVisible(true)
+                      setSelectedVisit(visit);
+                      setIsVisitModalVisible(true);
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'scale(1.03)'; // Slightly enlarge the card
@@ -623,10 +643,7 @@ const ResidentProfilePage: React.FC = () => {
                           {visit.comments && (
                             <Space align="center">
                               <BellOutlined />
-                              <Text>
-                                {visit.comments ||
-                                  'None'}
-                              </Text>
+                              <Text>{visit.comments || 'None'}</Text>
                             </Space>
                           )}
                         </Space.Compact>
@@ -684,8 +701,8 @@ const ResidentProfilePage: React.FC = () => {
               visit={selectedVisit}
               isVisible={isVisitModalVisible}
               onClose={() => {
-                setSelectedVisit(null)
-                setIsVisitModalVisible(false)
+                setSelectedVisit(null);
+                setIsVisitModalVisible(false);
               }}
             />
           )}

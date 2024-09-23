@@ -28,7 +28,7 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
       currentPath = currentPath.slice(basePath.length);
     if (currentPath !== '/login')
       history.push(`/login?redirect=${currentPath}`);
-  } 
+  }
 
   return {
     title: '',
@@ -39,7 +39,7 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
     logout: (initialState: any) => {
       localStorage.removeItem('userRole');
       localStorage.removeItem('user');
-      history.push('/login')
+      history.push('/login');
     },
     locale: 'en-US',
     token: {

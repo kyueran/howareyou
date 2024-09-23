@@ -7,7 +7,10 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config({ path: '.env.local' });
 }
 
-export default async function handler(req: IncomingMessage, res: ServerResponse): Promise<void> {
+export default async function handler(
+  req: IncomingMessage,
+  res: ServerResponse,
+): Promise<void> {
   // Create the PostgreSQL client
   const client = createClient();
 
@@ -28,11 +31,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     // Handle errors
     res.statusCode = 500;
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({
-      success: false,
-      message: 'Failed to fetch visits',
-      error: (error as Error).message // Type assertion for the error object
-    }));
+    res.end(
+      JSON.stringify({
+        success: false,
+        message: 'Failed to fetch visits',
+        error: (error as Error).message, // Type assertion for the error object
+      }),
+    );
   } finally {
     // Ensure the database connection is closed
     await client.end();

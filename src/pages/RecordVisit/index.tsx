@@ -1,10 +1,25 @@
-import { PlusOutlined, QuestionCircleFilled, ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
+import {
+  CheckCircleFilled,
+  ExclamationCircleFilled,
+  PlusOutlined,
+  QuestionCircleFilled,
+} from '@ant-design/icons';
 import { Access, history, useAccess, useParams } from '@umijs/max';
-import { Button, Col, Form, Input, message, Row, Space, Typography, Upload, Select } from 'antd';
 import { upload } from '@vercel/blob/client';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  message,
+  Row,
+  Select,
+  Space,
+  Typography,
+  Upload,
+} from 'antd';
 import type { UploadProps } from 'antd/es/upload/interface';
 import React, { useEffect, useState } from 'react';
-import ButtonGroupInput from '../../components/ButtonGroupInput';
 
 const { TextArea } = Input;
 const { Text, Title } = Typography;
@@ -60,10 +75,21 @@ const RecordVisit: React.FC = () => {
     setSubmitting(true);
 
     const { id } = params;
-    const { comments, key_concerns, modeOfInteraction, customModeOfInteraction, duration } = values;
+    const {
+      comments,
+      key_concerns,
+      modeOfInteraction,
+      customModeOfInteraction,
+      duration,
+    } = values;
 
-    const mode_of_interaction = modeOfInteraction === 'others' ? customModeOfInteraction : modeOfInteraction;
-    const relationship = access.isStaff ? '$-staff-$' : values.relationship || '';
+    const mode_of_interaction =
+      modeOfInteraction === 'others'
+        ? customModeOfInteraction
+        : modeOfInteraction;
+    const relationship = access.isStaff
+      ? '$-staff-$'
+      : values.relationship || '';
 
     try {
       const visitor_id = await getVisitorId(access);
@@ -77,7 +103,9 @@ const RecordVisit: React.FC = () => {
             handleUploadUrl: '/api/uploadPhoto',
           });
           uploadedPhotoUrls.push(result.url);
-          message.success(`Photo ${file.name} uploaded successfully to Blob Storage.`);
+          message.success(
+            `Photo ${file.name} uploaded successfully to Blob Storage.`,
+          );
         } catch (error: any) {
           setSubmitting(false);
           message.error(`Error uploading photo ${file.name}: ${error.message}`);
@@ -90,7 +118,7 @@ const RecordVisit: React.FC = () => {
         status: selectedStatus,
         comments,
         photoUrls: uploadedPhotoUrls,
-        relationship,       
+        relationship,
       };
 
       // Only add keyConcerns, mode_of_interaction, and duration if the user is a staff member
@@ -118,7 +146,9 @@ const RecordVisit: React.FC = () => {
         message.success('Form submitted and logged successfully!');
         history.push(`/display-visits`);
       } else {
-        message.error(result.message || 'Failed to log the form. Please try again.');
+        message.error(
+          result.message || 'Failed to log the form. Please try again.',
+        );
       }
     } catch (error: any) {
       console.error('Submission error:', error);
@@ -143,7 +173,9 @@ const RecordVisit: React.FC = () => {
   const uploadProps: UploadProps = {
     beforeUpload: (file) => {
       const isCorrectFormat =
-        file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/heic';
+        file.type === 'image/jpeg' ||
+        file.type === 'image/png' ||
+        file.type === 'image/heic';
       if (!isCorrectFormat) {
         message.error('You can only upload JPG/PNG/HEIC files!');
         return Upload.LIST_IGNORE;
@@ -153,7 +185,9 @@ const RecordVisit: React.FC = () => {
       return false;
     },
     onRemove: (file) => {
-      setSelectedFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
+      setSelectedFiles((prevFiles) =>
+        prevFiles.filter((f) => f.name !== file.name),
+      );
     },
     listType: 'picture-card',
     fileList: selectedFiles.map((file, index) => ({
@@ -172,28 +206,42 @@ const RecordVisit: React.FC = () => {
               Record New Visit
             </Title>
             <div>
-            <Space direction="vertical" size="small">
-              <Text strong style={{ fontSize: '16px' }}>Resident's Address</Text> {/* Bold and slightly larger label */}
-              <Text
-                style={{
-                  fontSize: '14px',
-                  color: '#595959',
-                  backgroundColor: '#d6eaf8',  // Light gray background
-                  padding: '10px 15px',         // Padding around the text
-                  borderRadius: '8px',          // Rounded corners
-                  display: 'inline-block',      // Ensures the background wraps tightly around the text
-                }}
-              >
-                {`${seniorData?.block} ${seniorData?.floor}-${seniorData?.unit_number}, ${seniorData?.address}, ${seniorData?.postal_code}` || 'Loading address...'}
-              </Text>
-            </Space>
+              <Space direction="vertical" size="small">
+                <Text strong style={{ fontSize: '16px' }}>
+                  Resident's Address
+                </Text>{' '}
+                {/* Bold and slightly larger label */}
+                <Text
+                  style={{
+                    fontSize: '14px',
+                    color: '#595959',
+                    backgroundColor: '#d6eaf8', // Light gray background
+                    padding: '10px 15px', // Padding around the text
+                    borderRadius: '8px', // Rounded corners
+                    display: 'inline-block', // Ensures the background wraps tightly around the text
+                  }}
+                >
+                  {`${seniorData?.block} ${seniorData?.floor}-${seniorData?.unit_number}, ${seniorData?.address}, ${seniorData?.postal_code}` ||
+                    'Loading address...'}
+                </Text>
+              </Space>
             </div>
             <Form form={form} layout="vertical" onFinish={onFinish}>
-              <Form.Item label={<Text strong>How is the Resident doing?</Text>} name="status" rules={[{ required: true, message: 'Please select an option' }]}>
-                <Space size={40}> {/* Increased space between buttons */}
+              <Form.Item
+                label={<Text strong>How is the Resident doing?</Text>}
+                name="status"
+                rules={[{ required: true, message: 'Please select an option' }]}
+              >
+                <Space size={40}>
+                  {' '}
+                  {/* Increased space between buttons */}
                   <Button
                     type="default"
-                    icon={<CheckCircleFilled style={{ fontSize: '18px', color: 'green' }}/>}
+                    icon={
+                      <CheckCircleFilled
+                        style={{ fontSize: '18px', color: 'green' }}
+                      />
+                    }
                     size="large"
                     style={{
                       borderWidth: '2px',
@@ -203,7 +251,8 @@ const RecordVisit: React.FC = () => {
                       justifyContent: 'center',
                       alignItems: 'center',
                       transition: 'transform 0.2s ease-in-out',
-                      backgroundColor: selectedStatus === 'Good' ? '#1890ff' : '', // Highlight if selected
+                      backgroundColor:
+                        selectedStatus === 'Good' ? '#1890ff' : '', // Highlight if selected
                       color: selectedStatus === 'Good' ? 'white' : '', // Change text color when highlighted
                     }}
                     onClick={() => {
@@ -219,10 +268,14 @@ const RecordVisit: React.FC = () => {
                   >
                     Good
                   </Button>
-                  
                   <Button
                     type="default"
-                    icon={<QuestionCircleFilled style={{ fontSize: '18px', color: 'blue' }} twoToneColor="blue"/>}
+                    icon={
+                      <QuestionCircleFilled
+                        style={{ fontSize: '18px', color: 'blue' }}
+                        twoToneColor="blue"
+                      />
+                    }
                     size="large"
                     style={{
                       borderWidth: '2px',
@@ -232,7 +285,8 @@ const RecordVisit: React.FC = () => {
                       justifyContent: 'center',
                       alignItems: 'center',
                       transition: 'transform 0.2s ease-in-out',
-                      backgroundColor: selectedStatus === 'Not Around' ? '#1890ff' : '', // Highlight if selected
+                      backgroundColor:
+                        selectedStatus === 'Not Around' ? '#1890ff' : '', // Highlight if selected
                       color: selectedStatus === 'Not Around' ? 'white' : '', // Change text color when highlighted
                     }}
                     onClick={() => {
@@ -248,10 +302,14 @@ const RecordVisit: React.FC = () => {
                   >
                     Not Around
                   </Button>
-
                   <Button
                     type="default"
-                    icon={<ExclamationCircleFilled style={{ fontSize: '18px', color: 'red' }} twoToneColor="red"/>}
+                    icon={
+                      <ExclamationCircleFilled
+                        style={{ fontSize: '18px', color: 'red' }}
+                        twoToneColor="red"
+                      />
+                    }
                     size="large"
                     style={{
                       borderWidth: '2px',
@@ -261,7 +319,8 @@ const RecordVisit: React.FC = () => {
                       justifyContent: 'center',
                       alignItems: 'center',
                       transition: 'transform 0.2s ease-in-out',
-                      backgroundColor: selectedStatus === 'Not Good' ? '#1890ff' : '', // Highlight if selected
+                      backgroundColor:
+                        selectedStatus === 'Not Good' ? '#1890ff' : '', // Highlight if selected
                       color: selectedStatus === 'Not Good' ? 'white' : '', // Change text color when highlighted
                     }}
                     onClick={() => {
@@ -282,7 +341,7 @@ const RecordVisit: React.FC = () => {
 
               {/* Comments */}
               <Text strong>Comments</Text>
-              <br/>
+              <br />
               <Text style={{ fontSize: '12px', color: 'gray' }}>
                 Share your interactions and observations, if any.
               </Text>
@@ -290,10 +349,9 @@ const RecordVisit: React.FC = () => {
                 <TextArea rows={4} />
               </Form.Item>
 
-
               {/* Key Concerns for Staff only */}
               <Text strong>Key Concerns</Text>
-              <br/>
+              <br />
               <Text style={{ fontSize: '12px', color: 'gray' }}>
                 New needs or areas of concern.
               </Text>
@@ -306,27 +364,33 @@ const RecordVisit: React.FC = () => {
               {/* Duration for Staff only */}
               {access.isStaff && (
                 <Form.Item
-                label={<Text strong>Duration</Text>}
-                name="duration"
-                rules={[{ required: true, message: 'Please select a duration' }]}
-              >
-                <Text style={{ fontSize: '12px', color: 'gray' }}>Interaction period (in minutes)</Text>
-                <Select
-                  placeholder="Select Duration"
-                  onChange={(value) => form.setFieldsValue({ duration: value })} // Set the form value
+                  label={<Text strong>Duration</Text>}
+                  name="duration"
+                  rules={[
+                    { required: true, message: 'Please select a duration' },
+                  ]}
                 >
-                  <Option value="5">5 minutes</Option>
-                  <Option value="10">10 minutes</Option>
-                  <Option value="15">15 minutes</Option>
-                  <Option value="20">20 minutes</Option>
-                  <Option value="25">25 minutes</Option>
-                  <Option value="30">30 minutes</Option>
-                  <Option value="45">45 minutes</Option>
-                  <Option value="60">1 hour</Option>
-                  <Option value="120">2 hours</Option>
-                  <Option value="180">3 hours</Option>
-                </Select>
-              </Form.Item>
+                  <Text style={{ fontSize: '12px', color: 'gray' }}>
+                    Interaction period (in minutes)
+                  </Text>
+                  <Select
+                    placeholder="Select Duration"
+                    onChange={(value) =>
+                      form.setFieldsValue({ duration: value })
+                    } // Set the form value
+                  >
+                    <Option value="5">5 minutes</Option>
+                    <Option value="10">10 minutes</Option>
+                    <Option value="15">15 minutes</Option>
+                    <Option value="20">20 minutes</Option>
+                    <Option value="25">25 minutes</Option>
+                    <Option value="30">30 minutes</Option>
+                    <Option value="45">45 minutes</Option>
+                    <Option value="60">1 hour</Option>
+                    <Option value="120">2 hours</Option>
+                    <Option value="180">3 hours</Option>
+                  </Select>
+                </Form.Item>
               )}
 
               {/* Upload Photos */}
@@ -343,9 +407,9 @@ const RecordVisit: React.FC = () => {
                   </div>
                 </Upload>
               </Form.Item>
-              
+
               <Text strong>Relationship</Text>
-              <br/>
+              <br />
               <Text style={{ fontSize: '12px', color: 'gray' }}>
                 Indicate especially if it is your first visit with the resident.
               </Text>
@@ -368,7 +432,6 @@ const RecordVisit: React.FC = () => {
                 </Button>
               </Form.Item>
             </Form>
-            
           </Space>
         </Col>
       </Row>

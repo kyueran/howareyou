@@ -51,7 +51,7 @@ const verifyOTP = async (otp: string) => {
     console.log(data);
 
     // Put all information into localStorage
-    localStorage.setItem('userRole', data.role)
+    localStorage.setItem('userRole', data.role);
     localStorage.setItem('user', JSON.stringify(data));
 
     return {
@@ -65,8 +65,6 @@ const verifyOTP = async (otp: string) => {
     };
   }
 };
-
-
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -182,11 +180,7 @@ const Login: React.FC = () => {
               onChange={onPhoneNumberChange}
             />
           </Form.Item>
-          <Form.Item
-            label=""
-            required
-            style={{ marginBottom: 24 }}
-          >
+          <Form.Item label="" required style={{ marginBottom: 24 }}>
             <Row gutter={8}>
               <Col span={16}>
                 <Form.Item

@@ -1,14 +1,14 @@
-import React from 'react';
-import { Modal, Row, Col, Space, Typography, Carousel, Image } from 'antd';
 import {
-  UserOutlined,
-  EnvironmentOutlined,
-  ClockCircleOutlined,
-  ExclamationCircleOutlined,
   BellOutlined,
+  ClockCircleOutlined,
+  EnvironmentOutlined,
+  ExclamationCircleOutlined,
   InfoCircleOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
+import { Carousel, Col, Image, Modal, Row, Space, Typography } from 'antd';
 import dayjs from 'dayjs';
+import React from 'react';
 import { VisitInfo } from '../../pages/Home';
 
 const { Text, Title } = Typography;
@@ -19,7 +19,11 @@ interface VisitModalProps {
   onClose: () => void;
 }
 
-const VisitModal: React.FC<VisitModalProps> = ({ visit, isVisible, onClose }) => {
+const VisitModal: React.FC<VisitModalProps> = ({
+  visit,
+  isVisible,
+  onClose,
+}) => {
   return (
     <Modal
       title="Visit Details"
@@ -55,7 +59,10 @@ const VisitModal: React.FC<VisitModalProps> = ({ visit, isVisible, onClose }) =>
                 (
                 <Text strong>
                   {visit.submission_time
-                    ? `${dayjs().diff(dayjs(visit.submission_time).startOf('day'), 'day')} days ago`
+                    ? `${dayjs().diff(
+                        dayjs(visit.submission_time).startOf('day'),
+                        'day',
+                      )} days ago`
                     : 'None'}
                 </Text>
                 )
@@ -80,7 +87,10 @@ const VisitModal: React.FC<VisitModalProps> = ({ visit, isVisible, onClose }) =>
             <Space align="center">
               <ClockCircleOutlined />
               <Text>
-                Duration: {visit.duration_of_contact ? `${visit.duration_of_contact} minutes` : 'None'}
+                Duration:{' '}
+                {visit.duration_of_contact
+                  ? `${visit.duration_of_contact} minutes`
+                  : 'None'}
               </Text>
             </Space>
 
@@ -100,10 +110,7 @@ const VisitModal: React.FC<VisitModalProps> = ({ visit, isVisible, onClose }) =>
           <Carousel autoplay>
             {visit.photo_urls.map((url, index) => (
               <div key={index}>
-                <Image
-                  src={url}
-                  alt={`Photo ${index + 1}`}
-                />
+                <Image src={url} alt={`Photo ${index + 1}`} />
               </div>
             ))}
           </Carousel>

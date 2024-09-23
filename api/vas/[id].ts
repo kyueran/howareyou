@@ -14,7 +14,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // Execute the query to fetch the specific visit by ID
-    const result = await sql`SELECT * FROM volunteer_and_staff WHERE id = ${vasId};`;
+    const result =
+      await sql`SELECT * FROM volunteer_and_staff WHERE id = ${vasId};`;
 
     // If no rows are returned, send a 404 response
     if (result.rows.length === 0) {

@@ -1,5 +1,5 @@
 import { CloseOutlined, CopyOutlined, RightOutlined } from '@ant-design/icons';
-import { PageContainer, ProSkeleton } from '@ant-design/pro-components';
+import { ProSkeleton } from '@ant-design/pro-components';
 import {
   Button,
   Card,
@@ -276,7 +276,9 @@ const ResidentListPage: React.FC = () => {
 
   return (
     <div style={{ margin: '0 8px' }}>
-      <Title level={3} style={{ marginTop: 16, marginBottom: 0 }}>Elderly Residents</Title>
+      <Title level={3} style={{ marginTop: 16, marginBottom: 0 }}>
+        Elderly Residents
+      </Title>
       <Text>
         You are viewing residents in the <Text type="danger">Queenstown</Text>{' '}
         area!
@@ -303,7 +305,7 @@ const ResidentListPage: React.FC = () => {
         onChange={(e) => handleSearch(e.target.value)}
       />
       {loading ? (
-        <ProSkeleton type='list' />
+        <ProSkeleton type="list" />
       ) : (
         <List
           itemLayout="vertical"

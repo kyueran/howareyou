@@ -2,14 +2,19 @@ import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import { IncomingMessage, ServerResponse } from 'http';
 
 // POST function to handle the file upload with UmiJS
-export default async function handler(req: IncomingMessage, res: ServerResponse): Promise<void> {
+export default async function handler(
+  req: IncomingMessage,
+  res: ServerResponse,
+): Promise<void> {
   if (req.method === 'POST') {
     try {
       // Parse the request body as JSON
       const chunks: Buffer[] = [];
-      req.on('data', chunk => chunks.push(chunk));
+      req.on('data', (chunk) => chunks.push(chunk));
       req.on('end', async () => {
-        const body: HandleUploadBody = JSON.parse(Buffer.concat(chunks).toString());
+        const body: HandleUploadBody = JSON.parse(
+          Buffer.concat(chunks).toString(),
+        );
 
         // Use handleUpload from '@vercel/blob/client' to generate the token and manage the upload flow
         const jsonResponse = await handleUpload({

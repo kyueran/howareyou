@@ -14,7 +14,17 @@ export async function POST(request: Request): Promise<Response> {
     await client.connect();
 
     // Parse the request body
-    const { elderly_id, visitor_id, relationship, key_concerns, mode_of_interaction, duration_of_contact, status, comments, photoUrls} = await request.json();
+    const {
+      elderly_id,
+      visitor_id,
+      relationship,
+      key_concerns,
+      mode_of_interaction,
+      duration_of_contact,
+      status,
+      comments,
+      photoUrls,
+    } = await request.json();
 
     // Check for required fields (elderly_id, visitor_id, status)
     if (!elderly_id || !visitor_id || !status) {
@@ -23,7 +33,7 @@ export async function POST(request: Request): Promise<Response> {
         {
           status: 400,
           headers: { 'Content-Type': 'application/json' },
-        }
+        },
       );
     }
 
@@ -60,7 +70,7 @@ export async function POST(request: Request): Promise<Response> {
       {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
   } catch (error) {
     console.error('Error logging visit:', error);
@@ -73,7 +83,7 @@ export async function POST(request: Request): Promise<Response> {
       {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
   } finally {
     await client.end();
