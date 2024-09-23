@@ -26,7 +26,6 @@ export default defineConfig({
       layout: false,
     },
     {
-      name: 'Elderly Residents',
       path: '/elderly',
       access: 'isStaff',
       component: './Home',
@@ -49,10 +48,8 @@ export default defineConfig({
       path: '/display-visits',
       component: './DisplayVisits',
       access: ['isVolunteer', 'isStaff'],
-      hideInMenu: true,
     },
     {
-      name: 'Visit Detail',
       path: '/visit/:id',
       component: './VisitDetail',
       access: ['isVolunteer', 'isStaff'],

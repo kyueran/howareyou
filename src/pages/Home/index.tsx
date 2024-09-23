@@ -275,6 +275,7 @@ const ResidentListPage: React.FC = () => {
 
   return (
     <PageContainer style={{ margin: '0 8px' }}>
+      <Title level={3} style={{ marginTop: 16, marginBottom: 0 }}>Visit Details</Title>
       <Text>
         You are viewing residents in the <Text type="danger">Queenstown</Text>{' '}
         area!
