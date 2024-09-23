@@ -244,7 +244,7 @@ const ResidentListPage: React.FC = () => {
             const daysSinceLastVisit = mostRecentVisit ? dayjs().diff(mostRecentVisit, 'days') : 'No visits';
             const distance = currentPosition
               ? `${(calculateDistance(1.3521, 103.8198, currentPosition.lat, currentPosition.lon) / 1000).toFixed(1)} km away`
-              : 'Fetching distance...';
+              : 'loading...';
 
             return (
               <List.Item style={{ padding: 0, paddingBottom: 8 }}>
