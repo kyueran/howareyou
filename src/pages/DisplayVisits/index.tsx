@@ -27,18 +27,21 @@ const DisplayVisitsPage: React.FC = () => {
   const [showAllVisits, setShowAllVisits] = useState(false); // Toggle for staff to see all visits or my visits only
   const [searchElderlyId, setSearchElderlyId] = useState<number | null>(null); // Elderly ID to filter by
   const [searchValue, setSearchValue] = useState<string>(''); // Current value of the AutoComplete input
-  const access = useAccess(); // To get access control info
-  const [loading, setLoading] = useState(true);
+  const [visitorInfos, setVisitorInfos] = useState<{ [key: number]: any }>({});  const [loading, setLoading] = useState(true);
   const intl = useIntl();
   const [visits, setVisits] = useState<VisitInfo[]>([]);
   const [isVisitModalVisible, setIsVisitModalVisible] = useState(false);
   const [selectedVisit, setSelectedVisit] = useState<VisitInfo | null>(null);
 
   // Determine the visitor's role and ID
-  const visitorId = access.isStaff ? 2 : 1;
-  const visitorInfo = access.isStaff
-    ? { name: 'Ms Josephine Lam', role: 'staff' }
-    : { name: 'Mr Wong Ah Fook', role: 'volunteer' };
+
+  const user = localStorage.getItem('user');
+  let visitorInfo = { id: 0, name: "Josephine Lam", role: 'staff', display_role: 'Test Staff'}
+  if (user) {
+    const parsedUser = JSON.parse(user);
+    const display_role = parsedUser.role === 'staff' ? parsedUser.volunteer_service_role_and_organisation : 'Volunteer';
+    visitorInfo = { id: parsedUser.id, name: parsedUser.full_name, role: parsedUser.role, display_role: display_role };
+  }
 
   // Fetch seniors data once and store in state
   const fetchSeniors = async () => {
@@ -82,6 +85,25 @@ const DisplayVisitsPage: React.FC = () => {
     }
   };
 
+  const fetchVisitorInfo = async (visitorId: number, visitId: number) => {
+    try {
+      const response = await fetch(`/api/vas/${visitorId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch visitor info');
+      }
+      const data = await response.json();
+      const visitorInfo = {
+        id: data.id,
+        name: data.full_name,
+        role: data.role,
+        display_role: data.role === 'staff' ? data.volunteer_service_role_and_organisation : 'Volunteer',
+      };
+      setVisitorInfos((prev) => ({ ...prev, [visitId]: visitorInfo }));
+    } catch (error) {
+      console.error('Error fetching visitor info:', error);
+    }
+  };
+
   // Polling visits every 5 seconds
   useEffect(() => {
     fetchSeniors(); // Fetch seniors data once
@@ -93,6 +115,14 @@ const DisplayVisitsPage: React.FC = () => {
     return () => clearInterval(interval); // Clear the interval when the component is unmounted
   }, []);
 
+  useEffect(() => {
+    visits.forEach((visit) => {
+      if (!visitorInfos[visit.id]) {
+        fetchVisitorInfo(visit.visitor_id, visit.id);
+      }
+    });
+  }, [visits]);
+
   // Apply filters whenever visits, showAllVisits, or searchElderlyId change
   useEffect(() => {
     applyFilters(visits);
@@ -102,51 +132,20 @@ const DisplayVisitsPage: React.FC = () => {
   const applyFilters = (visitsData: any[]) => {
     let filtered = visitsData;
 
-
     // Volunteers can only see their own visits
     if (visitorInfo.role === 'volunteer') {
-      filtered = filtered.filter(
-        (visit) => Number(visit.visitor_id) === visitorId,
-      );
-      filtered = filtered.filter(
-        (visit) => Number(visit.visitor_id) === visitorId,
-      );
+      filtered = filtered.filter((visit) => Number(visit.visitor_id) === visitorInfo.id);
     } else if (visitorInfo.role === 'staff') {
       // Staff can toggle between all visits and their own visits
       if (!showAllVisits) {
-        filtered = filtered.filter(
-          (visit) => Number(visit.visitor_id) === visitorId,
-        );
-        filtered = filtered.filter(
-          (visit) => Number(visit.visitor_id) === visitorId,
-        );
+        filtered = filtered.filter((visit) => Number(visit.visitor_id) === visitorInfo.id);
       }
     }
 
-
     // If a search is active, filter by elderly_id
     if (searchElderlyId !== null) {
-      filtered = filtered.filter(
-        (visit) => Number(visit.elderly_id) === searchElderlyId,
-      );
-      filtered = filtered.filter(
-        (visit) => Number(visit.elderly_id) === searchElderlyId,
-      );
+      filtered = filtered.filter((visit) => Number(visit.elderly_id) === searchElderlyId);
     }
-
-
-    // Sort by submission_time in descending order (most recent first)
-    filtered.sort(
-      (a, b) =>
-        new Date(b.submission_time).getTime() -
-        new Date(a.submission_time).getTime(),
-    );
-
-    filtered.sort(
-      (a, b) =>
-        new Date(b.submission_time).getTime() -
-        new Date(a.submission_time).getTime(),
-    );
 
     setFilteredVisits(filtered);
   };
@@ -199,27 +198,10 @@ const DisplayVisitsPage: React.FC = () => {
     setShowAllVisits(!showAllVisits); // Toggle the state
   };
 
-  const formatDateTime = (dateTime: string) => {
-    const date = new Date(dateTime);
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-  };
-
-
-  const getVisitorInfo = (visitorId: number) => {
-    if (visitorId === 1) {
-      return { name: 'Mr Wong Ah Fook', role: 'volunteer' };
-    } else if (visitorId === 2) {
-      return { name: 'Ms Josephine Lam', role: 'staff' };
-    } else {
-      return { name: 'Unknown', role: 'unknown' };
-    }
-  };
-
   const formatTimeDifference = (submissionTime) => {
     const now = new Date();
     const submissionDate = new Date(submissionTime);
-    const diffInSeconds = Math.floor((now - submissionDate) / 1000); // Difference in seconds
-
+    const diffInSeconds = Math.floor((now.getTime() - submissionDate.getTime()) / 1000); // Difference in seconds
 
     if (diffInSeconds < 60) {
       // If less than 60 seconds, show seconds
@@ -280,7 +262,10 @@ const DisplayVisitsPage: React.FC = () => {
             <Text>{intl.formatMessage({ id: 'noVisits' })}</Text>
           ) : (
             filteredVisits.map((visit) => {
-              const visitorInfo = getVisitorInfo(visit.visitor_id);
+                const visitorInfo = visitorInfos[visit.id];
+                if (!visitorInfo) {
+                  return null; // Wait until visitorInfo is loaded
+                }
               return (
                 <Card
                   key={visit.id}
@@ -317,33 +302,37 @@ const DisplayVisitsPage: React.FC = () => {
                             intl.formatMessage({ id: 'NA' })}
                         </Text>
                         <br />
+                        
+                        <Text>
+                        🕒 {new Date(visit.submission_time).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}, {new Date(visit.submission_time).toLocaleTimeString([], { hour: 'numeric', minute: 'numeric', hour12: true })} 
+                        {' '} <Text type="secondary" strong>({formatTimeDifference(visit.submission_time)})</Text>
+                        </Text>
+                        <br />
 
-                            {/* Date and Time */}
-                            {visit.status === 'Good' && (
-                            <Text strong style={{ color: 'green', fontSize: '16px' }}>
-                                <CheckCircleOutlined style={{ color: 'green', marginRight: '8px' }} />
-                                Good
-                            </Text>
-                            )}
-                            {visit.status === 'Not Good' && (
-                            <Text strong style={{ color: 'red', fontSize: '16px' }}>
-                                <ExclamationCircleOutlined style={{ color: 'red', marginRight: '8px' }} />
-                                Not Good
-                            </Text>
-                            )}
-                            {visit.status === 'Not Around' && (
-                            <Text strong style={{ color: 'orange', fontSize: '16px' }}>
-                                <QuestionCircleOutlined style={{ color: 'orange', marginRight: '8px' }} />
-                                Not Around
-                            </Text>
-                            )}
-                            <br />
+                        {visit.status === 'Good' && (
+                        <Text strong style={{ color: 'green', fontSize: '16px' }}>
+                            <CheckCircleOutlined style={{ color: 'green', marginRight: '8px' }} />
+                            Good
+                        </Text>
+                        )}
+                        {visit.status === 'Not Good' && (
+                        <Text strong style={{ color: 'red', fontSize: '16px' }}>
+                            <ExclamationCircleOutlined style={{ color: 'red', marginRight: '8px' }} />
+                            Not Good
+                        </Text>
+                        )}
+                        {visit.status === 'Not Around' && (
+                        <Text strong style={{ color: 'orange', fontSize: '16px' }}>
+                            <QuestionCircleOutlined style={{ color: 'orange', marginRight: '8px' }} />
+                            Not Around
+                        </Text>
+                        )}
+                        <br />
 
-
-                            {/* Elderly Comments */}
-                            <Text>
-                            🔔 {visit.key_concerns || '-'}
-                            </Text>
+                        {/* Elderly Comments */}
+                        <Text>
+                        🔔 {visit.key_concerns || '-'}
+                        </Text>
                         </div>
                         </Col>
                     </Row>
