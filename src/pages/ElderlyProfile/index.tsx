@@ -187,22 +187,25 @@ const ResidentProfilePage: React.FC = () => {
       case 'feeding':
       case 'mobility':
       case 'transferring':
-        return { color: 'red' };
+        return 'red';
       case 'mild': // fall risk
       case 'limited': // social
-        return { color: 'orange' };
+        return 'orange';
+      case 'healthy':
+      case 'low':
+        return 'green';
       default:
-        return { color: 'gray' }; // Default gray
+        return 'gray'; // Default gray
     }
   };
 
   const getDaysLivingAloneColor = (days: number) => {
     if (days <= 1) {
-      return { color: 'gray' };
+      return 'green';
     } else if (days <= 4) {
-      return { color: 'orange' };
+      return 'orange';
     } else {
-      return { color: 'red' };
+      return 'red';
     }
   };
 
@@ -217,6 +220,17 @@ const ResidentProfilePage: React.FC = () => {
         message.error('Failed to copy address');
       });
   };
+
+  const getVisitStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'not good':
+        return 'red'
+      case 'good':
+        return 'green';
+      default:
+        return 'grey';
+    }
+  }
 
   return (
     <PageContainer style={{ padding: '8px' }}>
@@ -384,9 +398,9 @@ const ResidentProfilePage: React.FC = () => {
                   <Col>
                     <Text
                       strong
-                      style={getDaysLivingAloneColor(
+                      style={{ color: getDaysLivingAloneColor(
                         data?.noOfDaysLivingAlone || 0,
-                      )}
+                      )}}
                     >
                       {data?.noOfDaysLivingAlone} days
                     </Text>
@@ -399,7 +413,7 @@ const ResidentProfilePage: React.FC = () => {
                   <Col>
                     <Text
                       strong
-                      style={getTextColor(data?.socialInteraction || '')}
+                      style={{ color: getTextColor(data?.socialInteraction || '')}}
                     >
                       {data?.socialInteraction}
                     </Text>
@@ -427,7 +441,7 @@ const ResidentProfilePage: React.FC = () => {
             <Row style={{ marginTop: 8 }}>
               <Col>
                 <Text strong>Fall Risk: </Text>
-                <Text strong style={getTextColor(data?.fallRisk || '')}>
+                <Text strong style={{ color: getTextColor(data?.fallRisk || '') }}>
                   {data?.fallRisk}
                 </Text>
                 <br />
@@ -585,8 +599,7 @@ const ResidentProfilePage: React.FC = () => {
                             <Text
                               strong
                               style={{
-                                color:
-                                  visit.status === 'Not Good' ? 'red' : 'grey',
+                                color: getVisitStatusColor(visit.status),
                               }}
                             >
                               {visit.status || 'None'}
