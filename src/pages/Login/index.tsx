@@ -29,31 +29,44 @@ const verifyOTP = async (otp: string) => {
   await new Promise((res) => {
     setTimeout(res, 1000);
   });
-  if (otp === '0000') {
+
+  // Convert OTP string to integer
+  const id = parseInt(otp, 10);
+
+  // Check if OTP conversion resulted in a valid number
+  if (isNaN(id)) {
     return {
-      status: 'ok',
-      data: {
-        id: 2,
-        role: 'volunteer',
-        name: 'Mr Wong Ah Fook',
-      },
+      status: 'error',
+      message: 'Invalid OTP',
     };
   }
-  if (otp === '0001') {
+
+  try {
+    // Fetch information from the /api/vas/:id endpoint
+    const response = await fetch(`/api/vas/${id}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch data');
+    }
+    const data = await response.json();
+    console.log(data);
+
+    // Put all information into localStorage
+    localStorage.setItem('userRole', data.role)
+    localStorage.setItem('user', JSON.stringify(data));
+
     return {
       status: 'ok',
-      data: {
-        id: 1,
-        role: 'staff',
-        name: 'Ms Josephine Lam',
-      },
+      data: data,
+    };
+  } catch (error) {
+    return {
+      status: 'error',
+      message: error.message || 'Failed to verify OTP',
     };
   }
-  return {
-    status: 'error',
-    message: 'Invalid OTP',
-  };
 };
+
+
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);

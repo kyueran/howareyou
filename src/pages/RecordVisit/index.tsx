@@ -21,6 +21,7 @@ const RecordVisit: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [customMode, setCustomMode] = useState(false);
   const [seniorData, setSeniorData] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -61,6 +62,7 @@ const RecordVisit: React.FC = () => {
     const { status, comments, keyConcerns, modeOfInteraction, customModeOfInteraction, duration } = values;
 
     const mode_of_interaction = modeOfInteraction === 'others' ? customModeOfInteraction : modeOfInteraction;
+    const relationship = access.isStaff ? '$-staff-$' : values.relationship || '';
 
     try {
       const visitor_id = await getVisitorId(access);
@@ -81,17 +83,22 @@ const RecordVisit: React.FC = () => {
           return;
         }
       }
-
-      const requestBody = {
+      console.log(duration);
+      const requestBody: any = {
         elderly_id: parseInt(id, 10),
         visitor_id,
-        mode_of_interaction,
-        duration_of_contact: duration,
-        status,
+        status: selectedStatus,
         comments,
-        keyConcerns,
         photoUrls: uploadedPhotoUrls,
+        relationship,       
       };
+
+      // Only add keyConcerns, mode_of_interaction, and duration if the user is a staff member
+      if (access.isStaff) {
+        requestBody.keyConcerns = keyConcerns;
+        requestBody.mode_of_interaction = mode_of_interaction;
+        requestBody.duration_of_contact = duration;
+      }
 
       console.log('Request Body:', JSON.stringify(requestBody, null, 2));
 
@@ -125,6 +132,10 @@ const RecordVisit: React.FC = () => {
     } else {
       setCustomMode(false);
     }
+  };
+
+  const handleStatusChange = (status: string) => {
+    setSelectedStatus(status);
   };
 
   const uploadProps: UploadProps = {
@@ -192,6 +203,12 @@ const RecordVisit: React.FC = () => {
                       justifyContent: 'center',
                       alignItems: 'center',
                       transition: 'transform 0.2s ease-in-out',
+                      backgroundColor: selectedStatus === 'Good' ? '#1890ff' : '', // Highlight if selected
+                      color: selectedStatus === 'Good' ? 'white' : '', // Change text color when highlighted
+                    }}
+                    onClick={() => {
+                      handleStatusChange('Good'); // Call your handleStatusChange function
+                      form.setFieldsValue({ status: 'Good' }); // Set the form value
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'scale(1.1)';
@@ -215,6 +232,12 @@ const RecordVisit: React.FC = () => {
                       justifyContent: 'center',
                       alignItems: 'center',
                       transition: 'transform 0.2s ease-in-out',
+                      backgroundColor: selectedStatus === 'Not Around' ? '#1890ff' : '', // Highlight if selected
+                      color: selectedStatus === 'Not Around' ? 'white' : '', // Change text color when highlighted
+                    }}
+                    onClick={() => {
+                      handleStatusChange('Not Around'); // Call your handleStatusChange function
+                      form.setFieldsValue({ status: 'Not Around' }); // Set the form value
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'scale(1.1)';
@@ -238,6 +261,12 @@ const RecordVisit: React.FC = () => {
                       justifyContent: 'center',
                       alignItems: 'center',
                       transition: 'transform 0.2s ease-in-out',
+                      backgroundColor: selectedStatus === 'Not Good' ? '#1890ff' : '', // Highlight if selected
+                      color: selectedStatus === 'Not Good' ? 'white' : '', // Change text color when highlighted
+                    }}
+                    onClick={() => {
+                      handleStatusChange('Not Good'); // Call your handleStatusChange function
+                      form.setFieldsValue({ status: 'Not Good' }); // Set the form value
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'scale(1.1)';
@@ -275,24 +304,27 @@ const RecordVisit: React.FC = () => {
               {/* Duration for Staff only */}
               {access.isStaff && (
                 <Form.Item
-                  label={<Text strong>Duration</Text>}
-                  name="duration"
-                  rules={[{ required: true, message: 'Please select a duration' }]}
+                label={<Text strong>Duration</Text>}
+                name="duration"
+                rules={[{ required: true, message: 'Please select a duration' }]}
+              >
+                <Text style={{ fontSize: '12px', color: 'gray' }}>Interaction period (in minutes)</Text>
+                <Select
+                  placeholder="Select Duration"
+                  onChange={(value) => form.setFieldsValue({ duration: value })} // Set the form value
                 >
-                  <Text style={{ fontSize: '12px', color: 'gray' }}>Interaction period (in minutes)</Text>
-                  <Select placeholder="Select Duration">
-                    <Option value="5">5 minutes</Option>
-                    <Option value="10">10 minutes</Option>
-                    <Option value="15">15 minutes</Option>
-                    <Option value="20">20 minutes</Option>
-                    <Option value="25">25 minutes</Option>
-                    <Option value="30">30 minutes</Option>
-                    <Option value="45">45 minutes</Option>
-                    <Option value="60">1 hour</Option>
-                    <Option value="120">2 hours</Option>
-                    <Option value="180">3 hours</Option>
-                  </Select>
-                </Form.Item>
+                  <Option value="5">5 minutes</Option>
+                  <Option value="10">10 minutes</Option>
+                  <Option value="15">15 minutes</Option>
+                  <Option value="20">20 minutes</Option>
+                  <Option value="25">25 minutes</Option>
+                  <Option value="30">30 minutes</Option>
+                  <Option value="45">45 minutes</Option>
+                  <Option value="60">1 hour</Option>
+                  <Option value="120">2 hours</Option>
+                  <Option value="180">3 hours</Option>
+                </Select>
+              </Form.Item>
               )}
 
               {/* Upload Photos */}

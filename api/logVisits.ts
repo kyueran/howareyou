@@ -13,8 +13,10 @@ export async function POST(request: Request): Promise<Response> {
   try {
     await client.connect();
 
-    const { elderly_id, visitor_id, relationship, mode_of_interaction, duration_of_contact, status, comments, photoUrls } = await request.json();
+    // Parse the request body
+    const { elderly_id, visitor_id, relationship, mode_of_interaction, duration_of_contact, status, comments, photoUrls, access_type } = await request.json();
 
+    // Check for required fields (elderly_id, visitor_id, status)
     if (!elderly_id || !visitor_id || !status) {
       return new Response(
         JSON.stringify({ success: false, message: 'Missing required fields.' }),
@@ -24,6 +26,11 @@ export async function POST(request: Request): Promise<Response> {
         }
       );
     }
+
+    // Set default values for fields that may be missing for volunteers
+    const defaultRelationship = access_type === 'staff' ? relationship : 'volunteer';
+    const defaultModeOfInteraction = access_type === 'staff' ? mode_of_interaction : '';
+    const defaultDurationOfContact = access_type === 'staff' ? duration_of_contact : null;
 
     // Insert the new visit into the 'visits' table with Singapore time for submission_time
     await client.sql`
@@ -41,9 +48,9 @@ export async function POST(request: Request): Promise<Response> {
       VALUES (
         ${elderly_id}, 
         ${visitor_id}, 
-        ${relationship}, 
-        ${mode_of_interaction}, 
-        ${duration_of_contact}, 
+        ${defaultRelationship}, 
+        ${defaultModeOfInteraction}, 
+        ${defaultDurationOfContact}, 
         ${status}, 
         ${comments || null}, 
         ${photoUrls || null}, 

@@ -28,10 +28,7 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
       currentPath = currentPath.slice(basePath.length);
     if (currentPath !== '/login')
       history.push(`/login?redirect=${currentPath}`);
-  } else {
-    // Save the role to localStorage when the user is logged in
-    localStorage.setItem('userRole', initialState.initialState.role);
-  }
+  } 
 
   return {
     title: '',
@@ -41,7 +38,8 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
     },
     logout: (initialState: any) => {
       localStorage.removeItem('userRole');
-      history.push('/login');
+      localStorage.removeItem('user');
+      history.push('/login')
     },
     locale: 'en-US',
     token: {
