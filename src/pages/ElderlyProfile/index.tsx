@@ -1,20 +1,25 @@
 import {
-  CalendarOutlined,
+  BellOutlined,
+  ClockCircleOutlined,
+  CopyOutlined,
   EnvironmentOutlined,
+  ExclamationCircleOutlined,
   PhoneOutlined,
   PlusOutlined,
   PrinterOutlined,
   QrcodeOutlined,
+  RightOutlined,
   SaveOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
-import { useParams, useNavigate } from '@umijs/max';
+import { useAccess, useNavigate, useParams } from '@umijs/max';
 import {
   Button,
   Card,
   Col,
   ConfigProvider,
+  Image,
   List,
   message,
   Modal,
@@ -22,21 +27,20 @@ import {
   Row,
   Skeleton,
   Space,
+  Tag,
   Typography,
-  Image,
 } from 'antd';
 import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
-import React, { useEffect, useRef, useState } from 'react';
-import { ElderlyInfo, VisitInfo } from '../Home'; // Ensure path is correct
 import html2canvas from 'html2canvas';
+import React, { useEffect, useRef, useState } from 'react';
+import { history } from 'umi';
+import { ElderlyInfo, VisitInfo } from '../Home'; // Ensure path is correct
 
 const { Title, Text, Paragraph } = Typography;
 
 dayjs.extend(advancedFormat);
-
-const dateformat = 'D MMM YYYY, hA';
 
 const useGradientButtonStyle = createStyles(({ prefixCls, css }) => ({
   gradientButton: css`
@@ -75,6 +79,7 @@ const ResidentProfilePage: React.FC = () => {
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { styles } = useGradientButtonStyle();
+  const access = useAccess();
 
   useEffect(() => {
     const fetchResidentData = async () => {
@@ -85,9 +90,10 @@ const ResidentProfilePage: React.FC = () => {
         const seniors: ElderlyInfo[] = result.map((row: any) => ({
           id: row.id,
           elderlyCode: row.elderly_code,
-          aacCode: row.aac_code,
+          centreCode: row.aac_code,
           name: row.name,
           contactDetails: row.contact_details,
+          callResponse: row.call_response,
           nok: [
             {
               name: row.nok_name,
@@ -109,7 +115,7 @@ const ResidentProfilePage: React.FC = () => {
           socialInteraction: row.social_interaction,
           photoUrl: row.photo_url,
           languages: [row.languages],
-          visits: [],
+          keyConcerns: row.key_concerns || [],
         }));
         setData(seniors[0]);
       } catch (error) {
@@ -124,7 +130,11 @@ const ResidentProfilePage: React.FC = () => {
         const response = await fetch(`/api/fetchVisits`);
         const result = await response.json();
         if (result.success) {
-          setVisits(result.data.filter((visit: VisitInfo) => visit.elderly_id === Number(params.id)));
+          setVisits(
+            result.data.filter(
+              (visit: VisitInfo) => visit.elderly_id === Number(params.id),
+            ),
+          );
         } else {
           message.error(result.message || 'Failed to fetch visits.');
         }
@@ -169,180 +179,476 @@ const ResidentProfilePage: React.FC = () => {
   const getTextColor = (value: string) => {
     const valueLower = value.toLowerCase();
     switch (valueLower) {
-      case 'low':
-      case 'mild':
-      case 'isolated':
-      case 'washing':
+      case 'high': // fall risk
+      case 'isolated': // social
+      case 'washing': // ADL
       case 'toileting':
       case 'dressing':
       case 'feeding':
       case 'mobility':
       case 'transferring':
-        return { color: 'red' }; // Use Ant Design built-in red color for warnings
-      case 'high':
-        return { color: '#fa8c16' }; // Orange
+        return { color: 'red' };
+      case 'mild': // fall risk
+      case 'limited': // social
+        return { color: 'orange' };
       default:
-        return { color: '#595959' }; // Default gray
+        return { color: 'gray' }; // Default gray
     }
   };
 
   const getDaysLivingAloneColor = (days: number) => {
-    if (days <= 3) {
-      return { color: 'red' };
-    } else if (days <= 5) {
-      return { color: '#fa8c16' }; // Orange
+    if (days <= 1) {
+      return { color: 'gray' };
+    } else if (days <= 4) {
+      return { color: 'orange' };
     } else {
-      return { color: '#52c41a' }; // Green
+      return { color: 'red' };
     }
+  };
+
+  const handleCopy = (e: React.MouseEvent, text: string) => {
+    e.stopPropagation(); // Prevent triggering the card onClick event
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        message.success('Address copied to clipboard!'); // Show success message
+      })
+      .catch((err) => {
+        message.error('Failed to copy address');
+      });
   };
 
   return (
     <PageContainer style={{ padding: '8px' }}>
-      {loading ? (
+      {loading || !data ? (
         <Skeleton active title paragraph={{ rows: 4 }} avatar />
       ) : (
         <ConfigProvider button={{ className: styles.gradientButton }}>
           {/* Profile Information Section */}
           <Card style={{ marginBottom: 8 }} bodyStyle={{ padding: '16px' }}>
-            <Row>
-              <Col>
-                <Title level={4} style={{ margin: 0 }}>{data?.name}</Title>
-                <Text style={{ color: '#7b7b7b' }}>{`${data?.block} ${data?.floor}-${data?.unitNumber}, ${data?.address}, ${data?.postalCode}`}</Text>
-              </Col>
+            <Row style={{ alignItems: 'center' }}>
+              <Title level={3} style={{ margin: 0 }}>
+                {data?.name}
+              </Title>
             </Row>
 
-            <Row style={{ marginTop: 4 }} gutter={0} align='middle' justify='space-between'>
-              <Col xs={10}>
-                <Image
-                  style={{ maxWidth: '120px', maxHeight: '120px', cursor: 'pointer' }} 
-                  width='100%'
-                  height='100%'
-                  src={data?.photoUrl || 'https://via.placeholder.com/128'}
-                  alt="Elderly Profile Picture"
-                />
-              </Col>
-              <Col xs={14}>
-                <Space direction='horizontal' style={{ width: '100%', maxWidth: 240, justifyContent: 'space-between' }}>
-                  <Space direction='vertical' style={{ paddingLeft: 12 }}>
-                    <div>
-                      <Text strong>Senior Code:</Text> <Text>{data?.elderlyCode}</Text>
-                      <br />
-                      <Text strong>Centre Code:</Text> <Text>{data?.aacCode}</Text>
-                    </div>
-                    <Button style={{ marginTop: 8 }} type="primary" icon={<PlusOutlined />} onClick={handleSubmitInfo}>
-                      Add Visit
-                    </Button>
-                  </Space>
-                  <Button onClick={showModal} icon={<QrcodeOutlined style={{ fontSize: '24px', alignItems: 'center' }} />} />
+            <Row style={{ width: '100%' }}>
+              <Col>
+                <Space direction="horizontal">
+                  <Space.Compact direction="vertical">
+                    <Text
+                      style={{
+                        whiteSpace: 'normal',
+                        overflowWrap: 'break-word',
+                      }}
+                    >
+                      {`${data.block} ${data.floor}-${data.unitNumber}, ${data.address}, Singapore ${data.postalCode}`}
+                    </Text>
+                  </Space.Compact>
+                  <div style={{ alignItems: 'center', alignContent: 'center' }}>
+                    <Button
+                      type="default"
+                      size="small"
+                      style={{ marginLeft: 8, borderRadius: 4 }} // Center the button vertically
+                      icon={
+                        <CopyOutlined
+                          style={{ color: 'rgba(0, 0, 0, 0.45)' }}
+                        />
+                      } // Secondary-colored icon
+                      onClick={(e) => {
+                        handleCopy(e, `${data.address}, ${data.postalCode}`); // Handle copy action
+                      }}
+                    />
+                  </div>
                 </Space>
               </Col>
             </Row>
 
+            <Row
+              style={{ marginTop: 4 }}
+              gutter={8}
+              align="middle"
+              justify="space-between"
+            >
+              <Col xs={9} style={{ maxWidth: '128px', maxHeight: '128px' }}>
+                <Image
+                  style={{ cursor: 'pointer' }}
+                  width="100%"
+                  height="100%"
+                  src={data?.photoUrl || 'https://via.placeholder.com/128'}
+                  alt="Elderly Profile Picture"
+                />
+              </Col>
+              <Col xs={15}>
+                <Space
+                  direction="horizontal"
+                  style={{
+                    width: '100%',
+                    maxWidth: 240,
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Space direction="vertical" align="center">
+                    <div>
+                      <Text strong>Senior Code:</Text>{' '}
+                      <Text>{data?.elderlyCode}</Text>
+                      <br />
+                      <Text strong>Centre Code:</Text>{' '}
+                      <Text>{data?.centreCode}</Text>
+                    </div>
+                    <Button
+                      type="primary"
+                      icon={<PlusOutlined />}
+                      onClick={handleSubmitInfo}
+                    >
+                      Add Visit
+                    </Button>
+                  </Space>
+                  <Button
+                    onClick={showModal}
+                    icon={
+                      <QrcodeOutlined
+                        style={{ fontSize: '24px', alignItems: 'center' }}
+                      />
+                    }
+                  />
+                </Space>
+              </Col>
+            </Row>
+
+            <Row style={{ marginTop: 12 }}>
+              <Space
+                direction="horizontal"
+                style={{ width: '100%', justifyContent: 'space-between' }}
+              >
+                <Space direction="horizontal">
+                  <Text strong>Contact:</Text>
+                  <Text style={{ display: 'block', fontSize: '14px' }}>
+                    {data?.contactDetails} <PhoneOutlined />
+                  </Text>
+                </Space>
+                <Space direction="horizontal">
+                  <Text strong>Call Response:</Text>
+                  <Text
+                    strong
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      color: data?.callResponse === 'Low' ? 'red' : 'gray',
+                    }}
+                  >
+                    {data?.callResponse ?? 'None'}
+                  </Text>
+                </Space>
+              </Space>
+            </Row>
+
             {/* NOK Section */}
-            <Row style={{ marginTop: '12px' }}>
+            <Row style={{ marginTop: 4 }}>
               <Col>
-                <Text strong>NOK:</Text> 
+                <Text strong>Next-of-kin:</Text>
                 {data?.nok.map((nok, index) => (
-                  <Text key={index} style={{ display: 'block', fontSize: '14px' }}>
-                    {nok.name} ({nok.relationship}) - {nok.contactDetails} <PhoneOutlined />
+                  <Text
+                    key={index}
+                    style={{ display: 'block', fontSize: '14px' }}
+                  >
+                    {nok.name} ({nok.relationship}) - {nok.contactDetails}{' '}
+                    <PhoneOutlined />
                   </Text>
                 ))}
               </Col>
             </Row>
 
-            {/* Social Information */}
-            <Row style={{ marginTop: '12px' }}>
+            <Row style={{ marginTop: 8 }}>
               <Col>
-                <Text strong>Days Living Alone: </Text> 
-                <Text style={getDaysLivingAloneColor(data?.noOfDaysLivingAlone || 0)}>{data?.noOfDaysLivingAlone} days</Text>
-                <br />
-                <Text strong>Social Interaction Level: </Text> 
-                <Text style={getTextColor(data?.socialInteraction || '')}>{data?.socialInteraction}</Text>
+                <Text strong>Languages: </Text>
+                {data && data?.languages.length > 0 ? (
+                  data.languages.map((lang, i) => (
+                    <Tag key={i} color="" bordered={false}>
+                      {lang}
+                    </Tag>
+                  ))
+                ) : (
+                  <Text color="gray">None</Text>
+                )}
+              </Col>
+            </Row>
+
+            {/* Social Information */}
+            <Row style={{ marginTop: 8 }}>
+              <Col style={{ width: '100%', maxWidth: 240 }}>
+                <Row justify="space-between">
+                  <Col>
+                    <Text strong>Days Living Alone (a week): </Text>
+                  </Col>
+                  <Col>
+                    <Text
+                      strong
+                      style={getDaysLivingAloneColor(
+                        data?.noOfDaysLivingAlone || 0,
+                      )}
+                    >
+                      {data?.noOfDaysLivingAlone} days
+                    </Text>
+                  </Col>
+                </Row>
+                <Row justify="space-between">
+                  <Col>
+                    <Text strong>Social Interaction Level: </Text>
+                  </Col>
+                  <Col>
+                    <Text
+                      strong
+                      style={getTextColor(data?.socialInteraction || '')}
+                    >
+                      {data?.socialInteraction}
+                    </Text>
+                  </Col>
+                </Row>
               </Col>
             </Row>
 
             {/* Health Information */}
-            <Row style={{ marginTop: '12px' }}>
+            <Row style={{ marginTop: 8 }}>
               <Col>
-                <Text strong>ADL Difficulty: </Text> 
-                <Text style={getTextColor(data?.adlDifficulty.join(', ') || '')}>
-                  {data?.adlDifficulty.join(', ') || 'None'}
+                <Text strong>ADL Difficulty: </Text>
+                {data && data?.adlDifficulty.length > 0 ? (
+                  data.adlDifficulty.map((adl, i) => (
+                    <Tag key={i} color={'red'} bordered={false}>
+                      {adl}
+                    </Tag>
+                  ))
+                ) : (
+                  <Text color="gray">None</Text>
+                )}
+              </Col>
+            </Row>
+
+            <Row style={{ marginTop: 8 }}>
+              <Col>
+                <Text strong>Fall Risk: </Text>
+                <Text strong style={getTextColor(data?.fallRisk || '')}>
+                  {data?.fallRisk}
                 </Text>
                 <br />
-                <Text strong>Fall Risk: </Text> 
-                <Text style={getTextColor(data?.fallRisk || '')}>{data?.fallRisk}</Text>
-                <br />
                 <Text strong>Fall History:</Text>
-                <ul style={{ margin: 0, marginLeft: 8, paddingLeft: '16px' }}>
-                  {data?.fallHistory
-                    ? data.fallHistory.map((fall, index) => (
-                        <li key={index}>
-                          {dayjs(fall.date).format('D MMM YYYY')} - {fall.details}
-                        </li>
-                      ))
-                    : 'None'}
-                </ul>
+                {data && data.fallHistory.length > 0 ? (
+                  <ul
+                    style={{
+                      margin: 0,
+                      marginLeft: 8,
+                      marginBottom: 8,
+                      paddingLeft: '16px',
+                    }}
+                  >
+                    {data.fallHistory.map((fall, index) => (
+                      <li key={index}>
+                        {dayjs(fall.date).format('D MMM YYYY')} - {fall.details}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <>
+                    <br />
+                    <Text type="secondary">None</Text>
+                    <br />
+                  </>
+                )}
+
+                <Text strong>Key Concerns (from visits):</Text>
+                {data && data.keyConcerns.length > 0 ? (
+                  <ul style={{ margin: 0, marginLeft: 8, paddingLeft: '16px' }}>
+                    {data.keyConcerns.map((concern, index) => (
+                      <li key={index}>
+                        {dayjs(concern.date).format('D MMM YYYY')} -{' '}
+                        {concern.details}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <>
+                    <br />
+                    <Text type="secondary">None</Text>
+                  </>
+                )}
               </Col>
             </Row>
 
             {/* Other Information */}
-            <Row style={{ marginTop: '12px' }}>
+            <Row style={{ marginTop: 8 }}>
               <Col>
                 <Text strong>Notes:</Text>
-                <Paragraph ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}>{data?.notes}</Paragraph>
-                <Text strong>Key Attachments: </Text> 
-                <Text>{data?.keyAttachments.length > 0 ? 'Available' : 'None'}</Text>
+                <Paragraph
+                  ellipsis={{ rows: 2, expandable: true, symbol: 'more' }}
+                >
+                  {data?.notes}
+                </Paragraph>
+                <Text strong>Key Attachments: </Text>
+                <Text type="secondary">
+                  {data && data.keyAttachments.length > 0
+                    ? 'Available'
+                    : 'None'}
+                </Text>
               </Col>
             </Row>
           </Card>
 
           {/* Recent Visits Section */}
-          <Card style={{ marginTop: 8 }} bodyStyle={{ padding: '16px' }}>
-            <Title level={4} style={{ marginBottom: 8 }}>Recent Visits</Title>
-            <List
-              itemLayout="vertical"
-              dataSource={visits}
-              renderItem={(visit) => (
-                <List.Item>
-                  <Card bordered={false} style={{ backgroundColor: '#f9f9f9' }} bodyStyle={{ padding: '8px' }}>
-                    <Row gutter={[0, 0]}>
-                      <Col xs={8}>
-                        {visit.photo_urls?.[0] ? (
-                          <Image
-                            src={visit.photo_urls[0]}
-                            width={96}
-                            height={96}
-                            style={{ maxWidth: '200px', maxHeight: '200px', cursor: 'pointer' }}
-                          />
-                        ) : (
-                          <Image src="https://via.placeholder.com/64x48?text=No+Image" width={64} height={48} />
-                        )}
+          <Title level={4} style={{ marginTop: 16 }}>
+            Recent Visits
+          </Title>
+          <List
+            itemLayout="vertical"
+            dataSource={visits}
+            renderItem={(visit) => {
+              const daysSinceLastVisit = dayjs().diff(
+                dayjs(visit.submission_time).startOf('day'),
+                'days',
+              );
+              return (
+                <List.Item style={{ padding: 0, paddingBottom: 8 }}>
+                  <Card
+                    style={{
+                      cursor: 'pointer',
+                      transition:
+                        'transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Initial light shadow
+                      overflow: 'hidden',
+                    }}
+                    bodyStyle={{ padding: '8px 16px' }}
+                    onClick={() => history.push(`/display-visit/${visit.id}`)}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.03)'; // Slightly enlarge the card
+                      e.currentTarget.style.boxShadow =
+                        '0 6px 16px rgba(0, 0, 0, 0.15)'; // Darker shadow
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)'; // Reset scale
+                      e.currentTarget.style.boxShadow =
+                        '0 2px 8px rgba(0, 0, 0, 0.1)'; // Reset shadow
+                    }}
+                    onTouchStart={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.03)'; // Enlarge slightly on touch
+                      e.currentTarget.style.boxShadow =
+                        '0 6px 16px rgba(0, 0, 0, 0.15)'; // Darker shadow
+                    }}
+                    onTouchEnd={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)'; // Reset scale
+                      e.currentTarget.style.boxShadow =
+                        '0 2px 8px rgba(0, 0, 0, 0.1)'; // Reset shadow
+                    }}
+                    bordered={false}
+                  >
+                    <Row
+                      gutter={[16, 16]}
+                      align="middle"
+                      justify="space-between"
+                    >
+                      <Col>
+                        <Space.Compact direction="vertical" size={0}>
+                          {/* User Info */}
+                          <Space align="center">
+                            <UserOutlined />
+                            <Text strong>
+                              {access.isStaff
+                                ? 'Ms Josephine Lam (AAC Staff)'
+                                : 'Mr Wong Ah Fook (Volunteer)'}
+                            </Text>
+                          </Space>
+
+                          {/* Contact Mode */}
+                          <Space align="center">
+                            <EnvironmentOutlined />
+                            <Text>
+                              {visit.mode_of_interaction || 'Unknown'}
+                            </Text>
+                          </Space>
+
+                          {/* Submission Time */}
+                          <Space align="center">
+                            <ClockCircleOutlined />
+                            <Text>
+                              {dayjs(visit.submission_time).format(
+                                'D MMM YYYY, h:mmA',
+                              )}{' '}
+                              (
+                              <Text
+                                strong
+                              >{`${daysSinceLastVisit} days ago`}</Text>
+                              )
+                            </Text>
+                          </Space>
+
+                          {/* Status Indicator */}
+                          <Space align="center">
+                            <ExclamationCircleOutlined />
+                            <Text
+                              strong
+                              style={{
+                                color:
+                                  visit.status === 'Not Good' ? 'red' : 'grey',
+                              }}
+                            >
+                              {visit.status || 'None'}
+                            </Text>
+                          </Space>
+
+                          {/* Key Concern */}
+                          {visit.comments && (
+                            <Space align="center">
+                              <BellOutlined />
+                              <Text>
+                                {visit.comments ||
+                                  'Elderly does not want to be visited'}
+                              </Text>
+                            </Space>
+                          )}
+                        </Space.Compact>
                       </Col>
-                      <Col xs={16}>
-                        <Space size={0} direction="vertical">
-                          <Text>{visit.comments || 'No comments available.'}</Text>
-                          <Text>👤 {visit.visitor_id}</Text>
-                          <Text>📅 {dayjs(visit.submission_time).format(dateformat)}</Text>
-                          <Text>📍 {visit.mode_of_interaction || 'N/A'}</Text>
-                        </Space>
+
+                      {/* Right Arrow */}
+                      <Col flex="none">
+                        <RightOutlined style={{ fontSize: '20px' }} />
                       </Col>
                     </Row>
                   </Card>
                 </List.Item>
-              )}
-            />
-          </Card>
+              );
+            }}
+          />
 
-          <Modal title="QR Code" open={isModalVisible} onCancel={handleCancel} footer={[
-              <Button key="print" icon={<PrinterOutlined />} onClick={() => html2canvas(qrCodeRef.current!).then((canvas) => {
-                const imgData = canvas.toDataURL('image/png');
-                const printWindow = window.open('', '_blank');
-                printWindow?.document.write(`<img src='${imgData}' style='width: 100%' />`);
-                printWindow?.document.close();
-                printWindow?.print();
-              })}>Print QR Code</Button>,
-              <Button key="save" type="primary" icon={<SaveOutlined />} onClick={handleSaveAsImage}>Save as Image</Button>,
-            ]}>
+          <Modal
+            title="QR Code"
+            open={isModalVisible}
+            onCancel={handleCancel}
+            footer={[
+              <Button
+                key="print"
+                icon={<PrinterOutlined />}
+                onClick={() =>
+                  html2canvas(qrCodeRef.current!).then((canvas) => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const printWindow = window.open('', '_blank');
+                    printWindow?.document.write(
+                      `<img src='${imgData}' style='width: 100%' />`,
+                    );
+                    printWindow?.document.close();
+                    printWindow?.print();
+                  })
+                }
+              >
+                Print QR Code
+              </Button>,
+              <Button
+                key="save"
+                type="primary"
+                icon={<SaveOutlined />}
+                onClick={handleSaveAsImage}
+              >
+                Save as Image
+              </Button>,
+            ]}
+          >
             <div ref={qrCodeRef} style={{ textAlign: 'center' }}>
               <QRCode value={qrUrl} size={180} />
             </div>

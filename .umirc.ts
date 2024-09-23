@@ -17,7 +17,7 @@ export default defineConfig({
   routes: [
     {
       path: '/',
-      redirect: '/home',
+      redirect: '/elderly',
     },
     {
       name: 'Login',
@@ -27,8 +27,8 @@ export default defineConfig({
     },
     {
       name: 'Elderly Residents',
-      path: '/home',
-      access: ['isVolunteer', 'isStaff'],
+      path: '/elderly',
+      access: 'isStaff',
       component: './Home',
     },
     {

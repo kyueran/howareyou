@@ -1,6 +1,6 @@
 import { RunTimeLayoutConfig } from '@umijs/max';
 import { history } from 'umi';
-import './global.css'
+import './global.css';
 
 type UserRole = 'volunteer' | 'staff';
 
@@ -41,7 +41,7 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
     },
     logout: (initialState: any) => {
       localStorage.removeItem('userRole');
-      history.push('/login')
+      history.push('/login');
     },
     locale: 'en-US',
     token: {
