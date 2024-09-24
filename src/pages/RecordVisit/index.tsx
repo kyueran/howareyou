@@ -336,12 +336,6 @@ const RecordVisit: React.FC = () => {
                           setIsScannerOpen(false);
                           history.push(decodedText);
                         }}
-                        qrCodeErrorCallback={(errorMessage) => {
-                          message.error(errorMessage);
-                        }}
-                        videoConstraints={{
-                          facingMode: { exact: 'environment' },
-                        }}
                       />
                     </Modal>
                   </TabPane>
