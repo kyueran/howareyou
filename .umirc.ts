@@ -47,7 +47,14 @@ export default defineConfig({
       layout: true,
     },
     {
-      path: '/record-visit/:id?',
+      path: '/record-visit/:id',
+      component: './RecordVisit',
+      name: 'menu.RecordVisit',
+      access: ['isVolunteer', 'isStaff'],
+      layout: true,
+    },
+    {
+      path: '/record-visit',
       component: './RecordVisit',
       name: 'menu.RecordVisit',
       access: ['isVolunteer', 'isStaff'],
