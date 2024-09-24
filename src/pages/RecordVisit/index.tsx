@@ -28,7 +28,7 @@ import {
 import TabPane from 'antd/es/tabs/TabPane';
 import type { UploadProps } from 'antd/es/upload/interface';
 import React, { useCallback, useEffect, useState } from 'react';
-import QrScanner from 'react-qr-scanner';
+import QRScanner from '../../components/QRScanner';
 
 const { TextArea } = Input;
 const { Text, Title } = Typography;
@@ -328,22 +328,20 @@ const RecordVisit: React.FC = () => {
                       onCancel={() => setIsScannerOpen(false)}
                       footer={null}
                     >
-                      <QrScanner
-                        delay={300}
-                        onScan={(data: any) => {
-                          if (data) {
-                            console.log(data.text);
-                            setIsScannerOpen(false);
-                            history.push(data.text);
-                          }
+                      <QRScanner
+                        fps={10}
+                        qrbox={250}
+                        disableFlip={false}
+                        qrCodeSuccessCallback={(decodedText, decodedResult) => {
+                          setIsScannerOpen(false);
+                          history.push(decodedText);
                         }}
-                        onError={(err: any) => {
-                          console.error(err);
+                        qrCodeErrorCallback={(errorMessage) => {
+                          message.error(errorMessage);
                         }}
-                        constraints={{
-                          video: { deviceId: rearCameraId },
+                        videoConstraints={{
+                          facingMode: { exact: 'environment' },
                         }}
-                        style={{ width: '100%' }}
                       />
                     </Modal>
                   </TabPane>

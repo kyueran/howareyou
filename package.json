@@ -25,11 +25,11 @@
     "dotenv": "^16.4.5",
     "heic2any": "^0.0.4",
     "html2canvas": "^1.4.1",
+    "html5-qrcode": "^2.3.8",
     "http": "0.0.1-security",
     "mime-types": "^2.1.35",
     "next": "^14.2.13",
     "pg": "^8.13.0",
-    "react-qr-scanner": "^1.0.0-alpha.11",
     "vercel": "^37.5.2"
   },
   "devDependencies": {
