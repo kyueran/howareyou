@@ -58,6 +58,7 @@ const RecordVisit: React.FC = () => {
   const params = useParams<{ id: string }>();
   const [id, setId] = useState<string | undefined>(params.id);
   const [isScannerOpen, setIsScannerOpen] = useState<boolean>(false);
+  const [rearCameraId, setRearCameraId] = useState<string>();
 
   useEffect(() => {
     const fetchSeniorData = async () => {
@@ -250,6 +251,39 @@ const RecordVisit: React.FC = () => {
     })),
   };
 
+  useEffect(() => {
+    if (isScannerOpen) {
+      // Get the deviceId of the rear camera when the scanner is opened
+      getRearCameraDeviceId().then((deviceId) => {
+        setRearCameraId(deviceId);
+      });
+    }
+  }, [isScannerOpen]);
+
+  async function getRearCameraDeviceId() {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(
+        (device) => device.kind === 'videoinput',
+      );
+
+      // Try to find a device labeled 'back' or 'rear'
+      const rearCamera = videoDevices.find(
+        (device) =>
+          device.label.toLowerCase().includes('back') ||
+          device.label.toLowerCase().includes('rear'),
+      );
+
+      // If not found, default to the last video device
+      return (
+        rearCamera?.deviceId || videoDevices[videoDevices.length - 1]?.deviceId
+      );
+    } catch (error) {
+      console.error('Error enumerating devices:', error);
+      return undefined;
+    }
+  }
+
   return (
     <Access accessible={access.isVolunteer || access.isStaff}>
       <Row justify="center" style={{ marginTop: '24px' }}>
@@ -306,7 +340,9 @@ const RecordVisit: React.FC = () => {
                         onError={(err: any) => {
                           console.error(err);
                         }}
-                        constraints={{ facingMode: 'environment' }}
+                        constraints={{
+                          video: { deviceId: rearCameraId },
+                        }}
                         style={{ width: '100%' }}
                       />
                     </Modal>
