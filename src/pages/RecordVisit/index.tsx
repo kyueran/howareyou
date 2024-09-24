@@ -28,7 +28,7 @@ import {
 import TabPane from 'antd/es/tabs/TabPane';
 import type { UploadProps } from 'antd/es/upload/interface';
 import React, { useCallback, useEffect, useState } from 'react';
-import { QrReader } from 'react-qr-reader';
+import QrScanner from 'react-qr-scanner';
 
 const { TextArea } = Input;
 const { Text, Title } = Typography;
@@ -289,24 +289,24 @@ const RecordVisit: React.FC = () => {
 
                     {/* Modal for QR scanner */}
                     <Modal
-                      visible={isScannerOpen}
-                      footer={null}
+                      title={intl.formatMessage({ id: 'scanQRCode' })}
+                      open={isScannerOpen}
                       onCancel={() => setIsScannerOpen(false)}
-                      bodyStyle={{ padding: 0 }}
-                      width="100%"
+                      footer={null}
                     >
-                      <QrReader
-                        onResult={(result, error) => {
-                          if (!!result) {
-                            const scannedURL = result?.getText(); // Adjust based on QR content
-                            history.push(scannedURL);
-                          }
-
-                          if (!!error) {
-                            console.error(error);
+                      <QrScanner
+                        delay={300}
+                        onScan={(data: any) => {
+                          if (data) {
+                            console.log(data.text);
+                            setIsScannerOpen(false);
+                            history.push(data.text);
                           }
                         }}
-                        constraints={{ facingMode: 'environment' }}
+                        onError={(err: any) => {
+                          console.error(err);
+                        }}
+                        facingMode="environment"
                         style={{ width: '100%' }}
                       />
                     </Modal>
