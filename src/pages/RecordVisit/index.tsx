@@ -694,17 +694,19 @@ const RecordVisit: React.FC = () => {
                     </Upload>
                   </Form.Item>
 
-                  <Text strong>
-                    {intl.formatMessage({ id: 'relationship' })}
-                  </Text>
-                  <br />
-                  <Text style={{ fontSize: '12px', color: 'gray' }}>
-                    {intl.formatMessage({ id: 'indicateRelationship' })}
-                  </Text>
                   {access.isVolunteer && (
-                    <Form.Item name="relationship">
-                      <TextArea rows={1} />
-                    </Form.Item>
+                    <>
+                      <Text strong>
+                        {intl.formatMessage({ id: 'relationship' })}
+                      </Text>
+                      <br />
+                      <Text style={{ fontSize: '12px', color: 'gray' }}>
+                        {intl.formatMessage({ id: 'indicateRelationship' })}
+                      </Text>
+                      <Form.Item name="relationship">
+                        <TextArea rows={1} />
+                      </Form.Item>
+                    </>
                   )}
 
                   {/* Submit Button */}
