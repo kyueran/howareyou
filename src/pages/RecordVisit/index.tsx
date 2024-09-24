@@ -228,127 +228,86 @@ const RecordVisit: React.FC = () => {
               </Space>
             </div>
             <Form form={form} layout="vertical" onFinish={onFinish}>
-              <Form.Item
-                label={
-                  <Text strong>
-                    {intl.formatMessage({ id: 'howIsTheResidentDoing' })}
-                  </Text>
-                }
-                name="status"
-                rules={[
-                  {
-                    required: true,
-                    message: intl.formatMessage({ id: 'pleaseSelect' }),
-                  },
-                ]}
+            <Form.Item
+              label={
+                <Text strong>
+                  {intl.formatMessage({ id: 'howIsTheResidentDoing' })}
+                </Text>
+              }
+              name="status"
+              rules={[
+                {
+                  required: true,
+                  message: intl.formatMessage({ id: 'pleaseSelect' }),
+                },
+              ]}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap', // Allows wrapping on smaller screens
+                  gap: '10px', // Space between buttons
+                  justifyContent: 'space-around', // Distributes buttons evenly
+                }}
               >
-                <Space size={40}>
-                  {' '}
-                  {/* Increased space between buttons */}
-                  <Button
-                    type="default"
-                    icon={
-                      <CheckCircleFilled
-                        style={{ fontSize: '18px', color: 'green' }}
-                      />
-                    }
-                    size="large"
-                    style={{
-                      borderWidth: '2px',
-                      padding: '30px 40px', // Increase padding
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      transition: 'transform 0.2s ease-in-out',
-                      backgroundColor:
-                        selectedStatus === 'Good' ? '#1890ff' : '', // Highlight if selected
-                      color: selectedStatus === 'Good' ? 'white' : '', // Change text color when highlighted
-                    }}
-                    onClick={() => {
-                      handleStatusChange('Good'); // Call your handleStatusChange function
-                      form.setFieldsValue({ status: 'Good' }); // Set the form value
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'scale(1.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'scale(1)';
-                    }}
-                  >
-                    {intl.formatMessage({ id: 'good' })}
-                  </Button>
-                  <Button
-                    type="default"
-                    icon={
-                      <QuestionCircleFilled
-                        style={{ fontSize: '18px', color: 'blue' }}
-                        twoToneColor="blue"
-                      />
-                    }
-                    size="large"
-                    style={{
-                      borderWidth: '2px',
-                      padding: '30px 30px', // Increase padding
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      transition: 'transform 0.2s ease-in-out',
-                      backgroundColor:
-                        selectedStatus === 'Not Around' ? '#1890ff' : '', // Highlight if selected
-                      color: selectedStatus === 'Not Around' ? 'white' : '', // Change text color when highlighted
-                    }}
-                    onClick={() => {
-                      handleStatusChange('Not Around'); // Call your handleStatusChange function
-                      form.setFieldsValue({ status: 'Not Around' }); // Set the form value
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'scale(1.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'scale(1)';
-                    }}
-                  >
-                    {intl.formatMessage({ id: 'notAround' })}
-                  </Button>
-                  <Button
-                    type="default"
-                    icon={
-                      <ExclamationCircleFilled
-                        style={{ fontSize: '18px', color: 'red' }}
-                        twoToneColor="red"
-                      />
-                    }
-                    size="large"
-                    style={{
-                      borderWidth: '2px',
-                      padding: '30px 30px', // Increase padding
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      transition: 'transform 0.2s ease-in-out',
-                      backgroundColor:
-                        selectedStatus === 'Not Good' ? '#1890ff' : '', // Highlight if selected
-                      color: selectedStatus === 'Not Good' ? 'white' : '', // Change text color when highlighted
-                    }}
-                    onClick={() => {
-                      handleStatusChange('Not Good'); // Call your handleStatusChange function
-                      form.setFieldsValue({ status: 'Not Good' }); // Set the form value
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'scale(1.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'scale(1)';
-                    }}
-                  >
-                    {intl.formatMessage({ id: 'notGood' })}
-                  </Button>
-                </Space>
-              </Form.Item>
+                <Button
+                  type="default"
+                  icon={<CheckCircleFilled style={{ fontSize: '18px', color: 'green' }} />}
+                  size="large"
+                  style={{
+                    borderWidth: '2px',
+                    padding: '15px 20px', // Reduced padding for mobile
+                    flex: '1 1 100px', // Flex basis ensures the buttons resize properly
+                    backgroundColor: selectedStatus === 'Good' ? '#1890ff' : '',
+                    color: selectedStatus === 'Good' ? 'white' : '',
+                  }}
+                  onClick={() => {
+                    handleStatusChange('Good');
+                    form.setFieldsValue({ status: 'Good' });
+                  }}
+                >
+                  {intl.formatMessage({ id: 'good' })}
+                </Button>
 
+                <Button
+                  type="default"
+                  icon={<QuestionCircleFilled style={{ fontSize: '18px', color: 'blue' }} />}
+                  size="large"
+                  style={{
+                    borderWidth: '2px',
+                    padding: '15px 20px',
+                    flex: '1 1 100px',
+                    backgroundColor: selectedStatus === 'Not Around' ? '#1890ff' : '',
+                    color: selectedStatus === 'Not Around' ? 'white' : '',
+                  }}
+                  onClick={() => {
+                    handleStatusChange('Not Around');
+                    form.setFieldsValue({ status: 'Not Around' });
+                  }}
+                >
+                  {intl.formatMessage({ id: 'notAround' })}
+                </Button>
+
+                <Button
+                  type="default"
+                  icon={<ExclamationCircleFilled style={{ fontSize: '18px', color: 'red' }} />}
+                  size="large"
+                  style={{
+                    borderWidth: '2px',
+                    padding: '15px 20px',
+                    flex: '1 1 100px',
+                    backgroundColor: selectedStatus === 'Not Good' ? '#1890ff' : '',
+                    color: selectedStatus === 'Not Good' ? 'white' : '',
+                  }}
+                  onClick={() => {
+                    handleStatusChange('Not Good');
+                    form.setFieldsValue({ status: 'Not Good' });
+                  }}
+                >
+                  {intl.formatMessage({ id: 'notGood' })}
+                </Button>
+              </div>
+            </Form.Item>
               {/* Comments */}
               <Text strong>{intl.formatMessage({ id: 'comments' })}</Text>
               <br />
