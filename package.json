@@ -29,6 +29,7 @@
     "mime-types": "^2.1.35",
     "next": "^14.2.13",
     "pg": "^8.13.0",
+    "react-qr-reader": "3.0.0-beta-1",
     "vercel": "^37.5.2"
   },
   "devDependencies": {

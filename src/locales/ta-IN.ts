@@ -18,6 +18,7 @@ export default {
   'menu.ElderlyResidents': 'மூத்த குடியிருப்பாளர்கள்',
   'menu.ElderlyProfile': 'மூத்தவர் சுயவிவரம்',
   'menu.RecordVisit': 'புதிய வருகையை பதிவு செய்க',
+  'menu.RecordVisitNoId': 'புதிய வருகையை பதிவு செய்க',
   'menu.DisplayVisits': 'வருகை பதிவுகள்',
   welcome: 'வரவேற்பு, {name}!',
 

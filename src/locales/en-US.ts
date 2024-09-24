@@ -18,6 +18,7 @@ export default {
   'menu.ElderlyResidents': 'Elderly Residents',
   'menu.ElderlyProfile': 'Elderly Profile',
   'menu.RecordVisit': 'Record New Visit',
+  'menu.RecordVisitNoId': 'Record New Visit',
   'menu.DisplayVisits': 'Visit Logs',
   welcome: 'Welcome, {name}!',
 

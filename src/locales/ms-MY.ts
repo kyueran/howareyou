@@ -18,6 +18,7 @@ export default {
   'menu.ElderlyResidents': 'Penduduk Warga Emas',
   'menu.ElderlyProfile': 'Profil Warga Emas',
   'menu.RecordVisit': 'Catat Lawatan Baru',
+  'menu.RecordVisitNoId': 'Catat Lawatan Baru',
   'menu.DisplayVisits': 'Log Lawatan',
   welcome: 'Selamat datang, {name}!',
 

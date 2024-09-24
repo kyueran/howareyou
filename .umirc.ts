@@ -56,7 +56,7 @@ export default defineConfig({
     {
       path: '/record-visit',
       component: './RecordVisit',
-      name: 'menu.RecordVisit',
+      name: 'menu.RecordVisitNoId',
       access: ['isVolunteer', 'isStaff'],
       layout: true,
     },

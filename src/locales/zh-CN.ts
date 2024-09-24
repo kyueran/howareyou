@@ -18,6 +18,7 @@ export default {
   'menu.ElderlyResidents': '老年居民',
   'menu.ElderlyProfile': '老年人档案',
   'menu.RecordVisit': '记录新访问',
+  'menu.RecordVisitNoId': '记录新访问',
   'menu.DisplayVisits': '访问日志',
   welcome: '欢迎，{name}！',
 
