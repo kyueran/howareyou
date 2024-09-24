@@ -15,11 +15,11 @@ export default {
   'menu.LinkTree.Volunteer': '志愿者',
   'menu.LinkTree.Staff': '员工',
   'menu.Login': '登录',
-  'menu.ElderlyResidents': '老年居民',
+  'menu.ElderlyResidents': '老年人数据库',
   'menu.ElderlyProfile': '老年人档案',
   'menu.RecordVisit': '记录新访问',
   'menu.RecordVisitNoId': '记录新访问',
-  'menu.DisplayVisits': '访问日志',
+  'menu.DisplayVisits': '访问数据库',
   welcome: '欢迎，{name}！',
 
   // These translations are for the Display Visits (Visit Logs) page

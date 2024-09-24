@@ -15,11 +15,11 @@ export default {
   'menu.LinkTree.Volunteer': 'Sukarelawan',
   'menu.LinkTree.Staff': 'Staf',
   'menu.Login': 'Log Masuk',
-  'menu.ElderlyResidents': 'Penduduk Warga Emas',
+  'menu.ElderlyResidents': 'Pangkalan Data Warga Emas',
   'menu.ElderlyProfile': 'Profil Warga Emas',
   'menu.RecordVisit': 'Catat Lawatan Baru',
   'menu.RecordVisitNoId': 'Catat Lawatan Baru',
-  'menu.DisplayVisits': 'Log Lawatan',
+  'menu.DisplayVisits': 'Pangkalan Data Lawatan',
   welcome: 'Selamat datang, {name}!',
 
   // These translations are for the Display Visits (Visit Logs) page

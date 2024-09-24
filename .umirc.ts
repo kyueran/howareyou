@@ -35,7 +35,7 @@ export default defineConfig({
     {
       name: 'menu.ElderlyResidents',
       path: '/elderly',
-      access: ['isVolunteer', 'isStaff'],
+      access: 'isStaff',
       component: './ElderlyResidents',
       layout: true,
     },

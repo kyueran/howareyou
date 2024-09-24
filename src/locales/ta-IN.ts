@@ -15,11 +15,11 @@ export default {
   'menu.LinkTree.Volunteer': 'தன்னார்வலர்',
   'menu.LinkTree.Staff': 'பணியாளர்',
   'menu.Login': 'உள்நுழைய',
-  'menu.ElderlyResidents': 'மூத்த குடியிருப்பாளர்கள்',
+  'menu.ElderlyResidents': 'முதியோர் தரவுத்தளம்',
   'menu.ElderlyProfile': 'மூத்தவர் சுயவிவரம்',
   'menu.RecordVisit': 'புதிய வருகையை பதிவு செய்க',
   'menu.RecordVisitNoId': 'புதிய வருகையை பதிவு செய்க',
-  'menu.DisplayVisits': 'வருகை பதிவுகள்',
+  'menu.DisplayVisits': 'வருகை தரவுத்தளம்',
   welcome: 'வரவேற்பு, {name}!',
 
   // These translations are for the Display Visits (Visit Logs) page

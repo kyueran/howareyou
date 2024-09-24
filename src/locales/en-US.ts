@@ -15,11 +15,11 @@ export default {
   'menu.LinkTree.Volunteer': 'Volunteer',
   'menu.LinkTree.Staff': 'Staff',
   'menu.Login': 'Login',
-  'menu.ElderlyResidents': 'Elderly Residents',
+  'menu.ElderlyResidents': 'Elderly Database',
   'menu.ElderlyProfile': 'Elderly Profile',
   'menu.RecordVisit': 'Record New Visit',
   'menu.RecordVisitNoId': 'Record New Visit',
-  'menu.DisplayVisits': 'Visit Logs',
+  'menu.DisplayVisits': 'Visitation Database',
   welcome: 'Welcome, {name}!',
 
   // These translations are for the Display Visits (Visit Logs) page
