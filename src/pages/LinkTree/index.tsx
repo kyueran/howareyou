@@ -30,7 +30,7 @@ const LinkTree: React.FC = () => {
             if (
               route.layout &&
               ((route.name && route.name == 'menu.ElderlyResidents') ||
-                route.name == 'menu.RecordVisit' ||
+                route.name == 'menu.RecordVisitNoId' ||
                 route.name == 'menu.DisplayVisits') &&
               (!route.access || checkAccess(route.access))
             ) {

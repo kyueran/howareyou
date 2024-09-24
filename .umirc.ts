@@ -35,7 +35,7 @@ export default defineConfig({
     {
       name: 'menu.ElderlyResidents',
       path: '/elderly',
-      access: ['isVolunteer', 'isStaff'],
+      access: 'isStaff',
       component: './ElderlyResidents',
       layout: true,
     },
@@ -50,6 +50,13 @@ export default defineConfig({
       path: '/record-visit/:id',
       component: './RecordVisit',
       name: 'menu.RecordVisit',
+      access: ['isVolunteer', 'isStaff'],
+      layout: true,
+    },
+    {
+      path: '/record-visit',
+      component: './RecordVisit',
+      name: 'menu.RecordVisitNoId',
       access: ['isVolunteer', 'isStaff'],
       layout: true,
     },

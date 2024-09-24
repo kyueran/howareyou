@@ -15,10 +15,11 @@ export default {
   'menu.LinkTree.Volunteer': 'Sukarelawan',
   'menu.LinkTree.Staff': 'Staf',
   'menu.Login': 'Log Masuk',
-  'menu.ElderlyResidents': 'Penduduk Warga Emas',
+  'menu.ElderlyResidents': 'Pangkalan Data Warga Emas',
   'menu.ElderlyProfile': 'Profil Warga Emas',
   'menu.RecordVisit': 'Catat Lawatan Baru',
-  'menu.DisplayVisits': 'Log Lawatan',
+  'menu.RecordVisitNoId': 'Catat Lawatan Baru',
+  'menu.DisplayVisits': 'Pangkalan Data Lawatan',
   welcome: 'Selamat datang, {name}!',
 
   // These translations are for the Display Visits (Visit Logs) page
@@ -84,6 +85,21 @@ export default {
   relationship: 'Hubungan',
   indicateRelationship:
     'Nyatakan terutamanya jika ini adalah lawatan pertama anda dengan penduduk.',
+  qrCodeTab: 'IMBAS QR',
+  areYouAtResidence: 'Adakah anda di kediaman warga emas?',
+  scanQRCode: 'Imbas Kod QR',
+  note: 'Nota:',
+  permissionsNote: 'Sila benarkan kebenaran Kamera dalam pelayar anda.',
+  reloadPageReminder:
+    'Halaman mungkin perlu dimuat semula untuk tetapan baru berkuat kuasa.',
+  fillUpFormTab: 'ISI BORANG',
+  indicateLocation: 'Nyatakan lokasi di mana anda bertemu warga emas',
+  aacPaCentre: 'Pusat AAC / PA',
+  neighbourhoodArea: 'Kawasan Kejiranan',
+  phoneCall: 'Panggilan Telefon',
+  others: 'Lain-lain',
+  ifOthers: 'Jika Lain-lain, sila nyatakan',
+  searchElderly: 'Cari warga emas',
 
   // These translations are for the Visit Detail page (individual visit details)
   backBtn: 'Kembali',
