@@ -90,6 +90,21 @@ export default {
   relationship: 'உறவு',
   indicateRelationship:
     'இது உங்கள் முதல் வருகையாக இருந்தால் குறிப்பாக குறிப்பிடவும்.',
+  qrCodeTab: 'QR ஸ்கேன்',
+  areYouAtResidence: 'நீங்கள் மூத்தவரின் வீட்டில் உள்ளீர்களா?',
+  scanQRCode: 'QR குறியீட்டை ஸ்கேன் செய்க',
+  note: 'குறிப்பு:',
+  permissionsNote: 'உங்கள் உலாவியில் கேமரா அனுமதிகளை வழங்கவும்.',
+  reloadPageReminder:
+    'புதிய அமைப்புகள் செயல்பட பக்கத்தை மீளேற்ற வேண்டியிருக்கும்.',
+  fillUpFormTab: 'படிவத்தை நிரப்பவும்',
+  indicateLocation: 'நீங்கள் மூத்தவரை சந்தித்த இடத்தை குறிப்பிடவும்',
+  aacPaCentre: 'AAC / PA மையம்',
+  neighbourhoodArea: 'அருகாமை பகுதி',
+  phoneCall: 'தொலைபேசி அழைப்பு',
+  others: 'மற்றவை',
+  ifOthers: 'மற்றவை என்றால், தயவுசெய்து குறிப்பிடவும்',
+  searchElderly: 'மூத்தவரை தேடவும்',
 
   // These translations are for the Visit Detail page (individual visit details)
   backBtn: 'திரும்பிச் செல்',

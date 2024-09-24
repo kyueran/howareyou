@@ -85,6 +85,21 @@ export default {
   relationship: 'Hubungan',
   indicateRelationship:
     'Nyatakan terutamanya jika ini adalah lawatan pertama anda dengan penduduk.',
+  qrCodeTab: 'IMBAS QR',
+  areYouAtResidence: 'Adakah anda di kediaman warga emas?',
+  scanQRCode: 'Imbas Kod QR',
+  note: 'Nota:',
+  permissionsNote: 'Sila benarkan kebenaran Kamera dalam pelayar anda.',
+  reloadPageReminder:
+    'Halaman mungkin perlu dimuat semula untuk tetapan baru berkuat kuasa.',
+  fillUpFormTab: 'ISI BORANG',
+  indicateLocation: 'Nyatakan lokasi di mana anda bertemu warga emas',
+  aacPaCentre: 'Pusat AAC / PA',
+  neighbourhoodArea: 'Kawasan Kejiranan',
+  phoneCall: 'Panggilan Telefon',
+  others: 'Lain-lain',
+  ifOthers: 'Jika Lain-lain, sila nyatakan',
+  searchElderly: 'Cari warga emas',
 
   // These translations are for the Visit Detail page (individual visit details)
   backBtn: 'Kembali',

@@ -85,6 +85,21 @@ export default {
   relationship: 'Relationship',
   indicateRelationship:
     'Indicate especially if it is your first visit with the resident.',
+  qrCodeTab: 'SCAN QR',
+  areYouAtResidence: "Are you at the elderly's residence?",
+  scanQRCode: 'Scan QR Code',
+  note: 'Note:',
+  permissionsNote: 'Please allow Camera permissions in your browser.',
+  reloadPageReminder:
+    'The page may need to be reloaded for the new settings to take effect.',
+  fillUpFormTab: 'FILL UP FORM',
+  indicateLocation: 'Indicate location where you met the elderly',
+  aacPaCentre: 'AAC / PA Centre',
+  neighbourhoodArea: 'Neighbourhood Area',
+  phoneCall: 'Phone Call',
+  others: 'Others',
+  ifOthers: 'If Others, please specify',
+  searchElderly: 'Search for an elderly',
 
   // These translations are for the Visit Detail page (individual visit details)
   backBtn: 'Back',

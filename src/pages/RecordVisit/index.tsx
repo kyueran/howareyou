@@ -258,10 +258,13 @@ const RecordVisit: React.FC = () => {
             {id === undefined ? (
               <>
                 <Tabs defaultActiveKey="1" centered>
-                  <TabPane tab="SCAN QR" key="1">
+                  <TabPane
+                    tab={intl.formatMessage({ id: 'qrCodeTab' })}
+                    key="1"
+                  >
                     {/* Button to open QR scanner */}
                     <Text type="primary">
-                      Are you at the elderly's residence?
+                      {intl.formatMessage({ id: 'areYouAtResidence' })}
                     </Text>
 
                     <Button
@@ -270,12 +273,18 @@ const RecordVisit: React.FC = () => {
                       onClick={() => setIsScannerOpen(true)}
                       style={{ margin: '16px 0px' }}
                     >
-                      Scan QR code
+                      {intl.formatMessage({ id: 'scanQRCode' })}
                     </Button>
                     <Text type="secondary">
-                      Note: <br /> Please allow Camera permissions in your
-                      browser. <br /> The page may need to be reloaded for the
-                      new settings to take effect.
+                      {intl.formatMessage({ id: 'note' })}
+                    </Text>
+                    <br />
+                    <Text type="secondary">
+                      {intl.formatMessage({ id: 'permissionsNote' })}
+                    </Text>
+                    <br />
+                    <Text type="secondary">
+                      {intl.formatMessage({ id: 'reloadPageReminder' })}
                     </Text>
 
                     {/* Modal for QR scanner */}
@@ -303,11 +312,14 @@ const RecordVisit: React.FC = () => {
                     </Modal>
                   </TabPane>
                   {access.isStaff && (
-                    <TabPane tab="FILL UP FORM" key="2">
+                    <TabPane
+                      tab={intl.formatMessage({ id: 'fillUpFormTab' })}
+                      key="2"
+                    >
                       <Form form={form}>
                         <Form.Item
                           name="modeOfInteraction"
-                          label="Indicate location where you met the elderly"
+                          label={intl.formatMessage({ id: 'indicateLocation' })}
                         >
                           <Select
                             onChange={(value) => {
@@ -316,19 +328,23 @@ const RecordVisit: React.FC = () => {
                             }}
                           >
                             <Option value="AAC / PA Centre">
-                              AAC / PA Centre
+                              {intl.formatMessage({ id: 'aacPaCentre' })}
                             </Option>
                             <Option value="Neighbourhood Area">
-                              Neighbourhood Area
+                              {intl.formatMessage({ id: 'neighbourhoodArea' })}
                             </Option>
-                            <Option value="Phone Call">Phone Call</Option>
-                            <Option value="Others">Others</Option>
+                            <Option value="Phone Call">
+                              {intl.formatMessage({ id: 'phoneCall' })}
+                            </Option>
+                            <Option value="Others">
+                              {intl.formatMessage({ id: 'others' })}
+                            </Option>
                           </Select>
                         </Form.Item>
                         {customMode && (
                           <Form.Item
                             name="customModeOfInteraction"
-                            label="If Others, please specify"
+                            label={intl.formatMessage({ id: 'ifOthers' })}
                           >
                             <Input.TextArea
                               onChange={(e) =>
@@ -347,7 +363,9 @@ const RecordVisit: React.FC = () => {
                         size={20}
                         style={{ width: '100%' }}
                       >
-                        <Text>Search for an elderly</Text>
+                        <Text>
+                          {intl.formatMessage({ id: 'searchElderly' })}
+                        </Text>
                         <Input
                           style={{ width: '100%', margin: '8px 0' }}
                           size="large"
