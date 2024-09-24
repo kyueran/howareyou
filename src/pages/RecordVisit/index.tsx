@@ -7,6 +7,7 @@ import {
   RightOutlined,
 } from '@ant-design/icons';
 import { ProSkeleton } from '@ant-design/pro-components';
+import { QrReader } from '@blackbox-vision/react-qr-reader';
 import { Access, history, useAccess, useIntl, useParams } from '@umijs/max';
 import { upload } from '@vercel/blob/client';
 import {
@@ -28,7 +29,6 @@ import {
 import TabPane from 'antd/es/tabs/TabPane';
 import type { UploadProps } from 'antd/es/upload/interface';
 import React, { useCallback, useEffect, useState } from 'react';
-import { QrReader } from 'react-qr-reader';
 
 const { TextArea } = Input;
 const { Text, Title } = Typography;
