@@ -306,7 +306,7 @@ const RecordVisit: React.FC = () => {
                         onError={(err: any) => {
                           console.error(err);
                         }}
-                        facingMode="environment"
+                        facingMode="rear"
                         style={{ width: '100%' }}
                       />
                     </Modal>
