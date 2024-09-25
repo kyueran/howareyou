@@ -291,7 +291,7 @@ const RecordVisit: React.FC = () => {
           <Space direction="vertical" size={20} style={{ width: '100%' }}>
             {id === undefined ? (
               <>
-                <Tabs defaultActiveKey="1" centered>
+                <Tabs defaultActiveKey="1" centered type="card">
                   <TabPane
                     tab={intl.formatMessage({ id: 'qrCodeTab' })}
                     key="1"
@@ -354,6 +354,9 @@ const RecordVisit: React.FC = () => {
                               form.setFieldValue('modeOfInteraction', value);
                               setCustomMode(value === 'Others');
                             }}
+                            placeholder={intl.formatMessage({
+                              id: 'pleaseSelect',
+                            })}
                           >
                             <Option value="AAC / PA Centre">
                               {intl.formatMessage({ id: 'aacPaCentre' })}
@@ -381,6 +384,10 @@ const RecordVisit: React.FC = () => {
                                   e.target.value,
                                 )
                               }
+                              autoSize={{ maxRows: 1 }}
+                              placeholder={intl.formatMessage({
+                                id: 'ifOthersPlaceHolder',
+                              })}
                             />
                           </Form.Item>
                         )}
@@ -391,32 +398,34 @@ const RecordVisit: React.FC = () => {
                         size={20}
                         style={{ width: '100%' }}
                       >
-                        <Text>
-                          {intl.formatMessage({ id: 'searchElderly' })}
-                        </Text>
-                        <Input
-                          style={{ width: '100%', margin: '8px 0' }}
-                          size="large"
-                          placeholder={intl.formatMessage({
-                            id: 'searchElderlyPlaceholder',
-                          })}
-                          suffix={
-                            searchValue.length > 0 ? (
-                              <CloseOutlined
-                                style={{
-                                  fontSize: '20px',
-                                  color: 'rgba(0, 0, 0, 0.45)',
-                                  cursor: 'pointer',
-                                }}
-                                onClick={handleClear}
-                              />
-                            ) : (
-                              <span />
-                            )
-                          }
-                          value={searchValue}
-                          onChange={(e) => handleSearch(e.target.value)}
-                        />
+                        <span>
+                          <Text>
+                            {intl.formatMessage({ id: 'searchElderly' })}
+                          </Text>
+                          <Input
+                            style={{ width: '100%', margin: '8px 0' }}
+                            size="large"
+                            placeholder={intl.formatMessage({
+                              id: 'searchElderlyPlaceholder',
+                            })}
+                            suffix={
+                              searchValue.length > 0 ? (
+                                <CloseOutlined
+                                  style={{
+                                    fontSize: '20px',
+                                    color: 'rgba(0, 0, 0, 0.45)',
+                                    cursor: 'pointer',
+                                  }}
+                                  onClick={handleClear}
+                                />
+                              ) : (
+                                <span />
+                              )
+                            }
+                            value={searchValue}
+                            onChange={(e) => handleSearch(e.target.value)}
+                          />
+                        </span>
                         {loading ? (
                           <ProSkeleton type="list" />
                         ) : (

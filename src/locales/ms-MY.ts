@@ -68,7 +68,7 @@ export default {
 
   // These translations are for the Elderly Residents page
   topWarningMsg: 'Anda sedang melihat penduduk di kawasan {location}!',
-  searchElderlyPlaceholder: 'Cari warga emas menggunakan alamat, kod...',
+  searchElderlyPlaceholder: 'Masukkan nama, kod atau alamat warga emas',
   loading: 'Memuat...',
   copy: 'Salin',
 
@@ -105,7 +105,8 @@ export default {
   neighbourhoodArea: 'Kawasan Kejiranan',
   phoneCall: 'Panggilan Telefon',
   others: 'Lain-lain',
-  ifOthers: 'Jika Lain-lain, sila nyatakan',
+  ifOthers: 'Jika lain-lain, nyatakan di mana anda bertemu warga emas',
+  ifOthersPlaceHolder: 'Masukkan lokasi',
   searchElderly: 'Cari warga emas',
 
   // These translations are for the Visit Detail page (individual visit details)

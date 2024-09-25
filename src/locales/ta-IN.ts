@@ -70,7 +70,7 @@ export default {
   topWarningMsg:
     'நீங்கள் {location} பகுதியில் உள்ள குடியிருப்பாளர்களைக் காண்கிறீர்கள்!',
   searchElderlyPlaceholder:
-    'முகவரி, குறியீடு மூலம் மூத்தவரை கண்டுபிடிக்கவும்...',
+    'முதியவர் பெயர், குறியீடு அல்லது முகவரியை உள்ளிடவும்',
   loading: 'ஏற்றப்படுகிறது...',
   copy: 'நகலெடு',
 
@@ -110,7 +110,9 @@ export default {
   neighbourhoodArea: 'அருகாமை பகுதி',
   phoneCall: 'தொலைபேசி அழைப்பு',
   others: 'மற்றவை',
-  ifOthers: 'மற்றவை என்றால், தயவுசெய்து குறிப்பிடவும்',
+  ifOthers:
+    'மற்றவை என்றால், நீங்கள் முதியவர்களை எங்கே சந்தித்தீர்கள் என்பதை குறிப்பிடவும்',
+  ifOthersPlaceHolder: 'இடத்தை உள்ளிடவும்',
   searchElderly: 'மூத்தவரை தேடவும்',
 
   // These translations are for the Visit Detail page (individual visit details)

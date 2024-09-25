@@ -68,7 +68,7 @@ export default {
 
   // These translations are for the Elderly Residents page
   topWarningMsg: '您正在查看{location}区域的居民！',
-  searchElderlyPlaceholder: '使用地址、代码查找老人...',
+  searchElderlyPlaceholder: '输入老人姓名、编码或地址',
   loading: '加载中...',
   copy: '复制',
 
@@ -103,7 +103,8 @@ export default {
   neighbourhoodArea: '社区区域',
   phoneCall: '电话联系',
   others: '其他',
-  ifOthers: '如果是其他，请具体说明',
+  ifOthers: '如果是其他，请说明您在哪里遇到老人',
+  ifOthersPlaceHolder: '输入地点',
   searchElderly: '搜索老人',
 
   // These translations are for the Visit Detail page (individual visit details)
