@@ -1,6 +1,7 @@
 import { Access, history, useAccess, useIntl } from '@umijs/max';
 import { Button, Col, Row, Space, Typography } from 'antd';
 import React from 'react';
+import LanguageSelector from '../../components/LanguageSelector';
 
 const LinkTree: React.FC = () => {
   const intl = useIntl();
@@ -51,6 +52,7 @@ const LinkTree: React.FC = () => {
                 {intl.formatMessage({ id: 'menu.DisplayVisits' })}
               </Button>
             )}
+            <LanguageSelector />
           </Space>
         </Col>
       </Row>
