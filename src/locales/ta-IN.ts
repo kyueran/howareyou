@@ -20,7 +20,14 @@ export default {
   'menu.RecordVisit': 'புதிய வருகையை பதிவு செய்க',
   'menu.RecordVisitNoId': 'புதிய வருகையை பதிவு செய்க',
   'menu.DisplayVisits': 'வருகை தரவுத்தளம்',
-  welcome: 'வரவேற்பு, {name}!',
+  'menu.MyProfile': 'என் சுயவிவரம்',
+
+  // These translations are for the My Profile Page
+  fullName: 'பெயர்',
+  homeAddress: 'வீட்டு முகவரி',
+  postalCode: 'அஞ்சல் குறியீடு',
+  volOrStaffCode: '{role} குறியீடு',
+  roleAndOrg: 'பங்கு மற்றும் அமைப்பு',
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: '{whose} வருகைகளை காட்டு',
@@ -63,7 +70,7 @@ export default {
   topWarningMsg:
     'நீங்கள் {location} பகுதியில் உள்ள குடியிருப்பாளர்களைக் காண்கிறீர்கள்!',
   searchElderlyPlaceholder:
-    'முகவரி, குறியீடு மூலம் மூத்தவரை கண்டுபிடிக்கவும்...',
+    'முதியவர் பெயர், குறியீடு அல்லது முகவரியை உள்ளிடவும்',
   loading: 'ஏற்றப்படுகிறது...',
   copy: 'நகலெடு',
 
@@ -103,7 +110,9 @@ export default {
   neighbourhoodArea: 'அருகாமை பகுதி',
   phoneCall: 'தொலைபேசி அழைப்பு',
   others: 'மற்றவை',
-  ifOthers: 'மற்றவை என்றால், தயவுசெய்து குறிப்பிடவும்',
+  ifOthers:
+    'மற்றவை என்றால், நீங்கள் முதியவர்களை எங்கே சந்தித்தீர்கள் என்பதை குறிப்பிடவும்',
+  ifOthersPlaceHolder: 'இடத்தை உள்ளிடவும்',
   searchElderly: 'மூத்தவரை தேடவும்',
 
   // These translations are for the Visit Detail page (individual visit details)

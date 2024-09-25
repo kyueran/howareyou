@@ -73,6 +73,13 @@ export default defineConfig({
       access: ['isVolunteer', 'isStaff'],
       layout: true,
     },
+    {
+      path: '/my-profile',
+      component: './MyProfile',
+      access: ['isVolunteer', 'isStaff'],
+      layout: true,
+      name: 'menu.MyProfile',
+    },
   ],
   npmClient: 'pnpm',
 });

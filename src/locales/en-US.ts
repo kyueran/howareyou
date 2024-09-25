@@ -20,7 +20,14 @@ export default {
   'menu.RecordVisit': 'Record New Visit',
   'menu.RecordVisitNoId': 'Record New Visit',
   'menu.DisplayVisits': 'Visitation Database',
-  welcome: 'Welcome, {name}!',
+  'menu.MyProfile': 'My Profile',
+
+  // These translations are for the My Profile Page
+  fullName: 'Name',
+  homeAddress: 'Home Address',
+  postalCode: 'PostalCode',
+  volOrStaffCode: '{role} Code',
+  roleAndOrg: 'Role and Organisation',
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: 'Show {whose} Visits',
@@ -61,7 +68,7 @@ export default {
 
   // These translations are for the Elderly Residents page
   topWarningMsg: 'You are viewing residents in the {location} area!',
-  searchElderlyPlaceholder: 'Find elderly using their address, code...',
+  searchElderlyPlaceholder: 'Enter elderly name, code or address',
   loading: 'Loading...',
   copy: 'Copy',
 
@@ -98,7 +105,8 @@ export default {
   neighbourhoodArea: 'Neighbourhood Area',
   phoneCall: 'Phone Call',
   others: 'Others',
-  ifOthers: 'If Others, please specify',
+  ifOthers: 'If Others, specify where you met the elderly',
+  ifOthersPlaceHolder: 'Enter location',
   searchElderly: 'Search for an elderly',
 
   // These translations are for the Visit Detail page (individual visit details)

@@ -2,10 +2,10 @@ import { HomeOutlined } from '@ant-design/icons';
 import { history, useAccess, useIntl } from '@umijs/max';
 import { Col, Layout, Row, Typography } from 'antd';
 import React from 'react';
-import LanguageSelector from '../LanguageSelector';
+import ProfileNavigation from '../ProfileNavigation';
 
 const { Header } = Layout;
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const CustomNavbar: React.FC = () => {
   const intl = useIntl();
@@ -39,7 +39,7 @@ const CustomNavbar: React.FC = () => {
           </Title>
         </Col>
         <Col xs={8} sm={4} style={{ textAlign: 'right' }}>
-          <LanguageSelector />
+          <ProfileNavigation />
         </Col>
       </Row>
     </Header>
