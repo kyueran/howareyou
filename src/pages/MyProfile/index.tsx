@@ -13,9 +13,9 @@ const MyProfile: React.FC = () => {
     <Access accessible={access.isVolunteer || access.isStaff}>
       <Row justify="center" style={{ marginTop: '24px' }}>
         <Col xs={22} sm={20} md={16} lg={12}>
-          <Space direction="vertical" size={24} style={{ width: '100%' }}>
+          <Space direction="vertical" size={16} style={{ width: '100%' }}>
             <Button
-              style={{ marginBottom: '8px' }}
+              style={{ padding: '0px' }}
               type="text"
               icon={<LeftOutlined />}
               onClick={() => history.go(-1)}
