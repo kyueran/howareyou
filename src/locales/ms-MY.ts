@@ -20,7 +20,6 @@ export default {
   'menu.RecordVisit': 'Catat Lawatan Baru',
   'menu.RecordVisitNoId': 'Catat Lawatan Baru',
   'menu.DisplayVisits': 'Pangkalan Data Lawatan',
-  welcome: 'Selamat datang, {name}!',
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: 'Tunjukkan Lawatan {whose}',

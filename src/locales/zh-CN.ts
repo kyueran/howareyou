@@ -20,7 +20,6 @@ export default {
   'menu.RecordVisit': '记录新访问',
   'menu.RecordVisitNoId': '记录新访问',
   'menu.DisplayVisits': '访问数据库',
-  welcome: '欢迎，{name}！',
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: '显示{whose}的访问',

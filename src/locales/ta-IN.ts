@@ -20,7 +20,6 @@ export default {
   'menu.RecordVisit': 'புதிய வருகையை பதிவு செய்க',
   'menu.RecordVisitNoId': 'புதிய வருகையை பதிவு செய்க',
   'menu.DisplayVisits': 'வருகை தரவுத்தளம்',
-  welcome: 'வரவேற்பு, {name}!',
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: '{whose} வருகைகளை காட்டு',

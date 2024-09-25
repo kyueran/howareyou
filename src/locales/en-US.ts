@@ -20,7 +20,6 @@ export default {
   'menu.RecordVisit': 'Record New Visit',
   'menu.RecordVisitNoId': 'Record New Visit',
   'menu.DisplayVisits': 'Visitation Database',
-  welcome: 'Welcome, {name}!',
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: 'Show {whose} Visits',

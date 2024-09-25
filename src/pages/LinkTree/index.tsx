@@ -5,17 +5,22 @@ import React from 'react';
 const LinkTree: React.FC = () => {
   const intl = useIntl();
   const access = useAccess();
-  const { Title } = Typography;
-  const name = access.isVolunteer ? 'Mr Wong Ah Fook' : 'Ms Josephine Lam';
+  const { Title, Text } = Typography;
+  const user = JSON.parse(localStorage.getItem('user'));
 
   return (
     <Access accessible={access.isVolunteer || access.isStaff}>
       <Row justify="center" style={{ marginTop: '24px' }}>
         <Col xs={22} sm={20} md={16} lg={12}>
           <Space direction="vertical" size={24} style={{ width: '100%' }}>
-            <Title level={3}>
-              {intl.formatMessage({ id: 'welcome' }, { name: name })}
-            </Title>
+            <div>
+              <Title level={3} style={{ margin: '0px' }}>
+                {user.full_name}
+              </Title>
+              <Title level={5} style={{ margin: '0px' }}>
+                {user.volunteer_service_role_and_organisation}
+              </Title>
+            </div>
             {(access.isStaff || access.isVolunteer) && (
               <Button
                 type="primary"
