@@ -1,10 +1,12 @@
-import { DownOutlined, UserOutlined } from '@ant-design/icons';
+import { DownOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Dropdown, Space } from 'antd';
+import { Dropdown, Space, Typography } from 'antd';
 import React from 'react';
 import { history } from 'umi'; // Assuming you're using umi's history
 
 const ProfileNavigation: React.FC = () => {
+  const { Text } = Typography;
+
   // Accessing the logout function from the global layout (assuming it's exposed)
   const handleLogout = () => {
     localStorage.removeItem('userRole');
@@ -30,7 +32,12 @@ const ProfileNavigation: React.FC = () => {
       key: '0', // Key for profile redirect
     },
     {
-      label: 'Logout',
+      label: (
+        <span>
+          <LogoutOutlined style={{ color: 'red', marginRight: '4px' }} />
+          <Text type="danger">Logout</Text>
+        </span>
+      ),
       key: '1', // Key for logout
     },
   ];
@@ -43,7 +50,6 @@ const ProfileNavigation: React.FC = () => {
       <a onClick={(e) => e.preventDefault()}>
         <Space>
           <UserOutlined />
-          Profile
           <DownOutlined />
         </Space>
       </a>

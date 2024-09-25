@@ -24,16 +24,10 @@ const MyProfile: React.FC = () => {
             </Button>
             <Descriptions
               title={intl.formatMessage({ id: 'menu.MyProfile' })}
-              column={{ xs: 1, sm: 2, md: 3 }}
+              column={{ xs: 1, md: 2 }}
             >
               <Descriptions.Item label={intl.formatMessage({ id: 'fullName' })}>
                 {user.full_name}
-              </Descriptions.Item>
-
-              <Descriptions.Item
-                label={intl.formatMessage({ id: 'postalCode' })}
-              >
-                {user.postal_code}
               </Descriptions.Item>
               <Descriptions.Item
                 label={intl.formatMessage(
@@ -45,13 +39,13 @@ const MyProfile: React.FC = () => {
               </Descriptions.Item>
               <Descriptions.Item
                 label={intl.formatMessage({ id: 'homeAddress' })}
-                span={3}
+                span={2}
               >
-                {user.home_address}
+                {user.home_address} - S{user.postal_code}
               </Descriptions.Item>
               <Descriptions.Item
                 label={intl.formatMessage({ id: 'roleAndOrg' })}
-                span={3}
+                span={2}
               >
                 {user.volunteer_service_role_and_organisation}
               </Descriptions.Item>
