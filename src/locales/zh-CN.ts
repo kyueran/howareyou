@@ -20,6 +20,14 @@ export default {
   'menu.RecordVisit': '记录新访问',
   'menu.RecordVisitNoId': '记录新访问',
   'menu.DisplayVisits': '访问数据库',
+  'menu.MyProfile': '我的个人资料',
+
+  // These translations are for the My Profile Page
+  fullName: '姓名',
+  homeAddress: '家庭住址',
+  postalCode: '邮政编码',
+  volOrStaffCode: '{role} 编码',
+  roleAndOrg: '角色与组织',
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: '显示{whose}的访问',

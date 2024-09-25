@@ -20,6 +20,14 @@ export default {
   'menu.RecordVisit': 'Catat Lawatan Baru',
   'menu.RecordVisitNoId': 'Catat Lawatan Baru',
   'menu.DisplayVisits': 'Pangkalan Data Lawatan',
+  'menu.MyProfile': 'Profil Saya',
+
+  // These translations are for the My Profile Page
+  fullName: 'Nama',
+  homeAddress: 'Alamat Rumah',
+  postalCode: 'Poskod',
+  volOrStaffCode: 'Kod {role}',
+  roleAndOrg: 'Peranan dan Organisasi',
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: 'Tunjukkan Lawatan {whose}',

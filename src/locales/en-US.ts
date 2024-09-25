@@ -20,6 +20,14 @@ export default {
   'menu.RecordVisit': 'Record New Visit',
   'menu.RecordVisitNoId': 'Record New Visit',
   'menu.DisplayVisits': 'Visitation Database',
+  'menu.MyProfile': 'My Profile',
+
+  // These translations are for the My Profile Page
+  fullName: 'Name',
+  homeAddress: 'Home Address',
+  postalCode: 'PostalCode',
+  volOrStaffCode: '{role} Code',
+  roleAndOrg: 'Role and Organisation',
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: 'Show {whose} Visits',

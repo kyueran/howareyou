@@ -20,6 +20,14 @@ export default {
   'menu.RecordVisit': 'புதிய வருகையை பதிவு செய்க',
   'menu.RecordVisitNoId': 'புதிய வருகையை பதிவு செய்க',
   'menu.DisplayVisits': 'வருகை தரவுத்தளம்',
+  'menu.MyProfile': 'என் சுயவிவரம்',
+
+  // These translations are for the My Profile Page
+  fullName: 'பெயர்',
+  homeAddress: 'வீட்டு முகவரி',
+  postalCode: 'அஞ்சல் குறியீடு',
+  volOrStaffCode: '{role} குறியீடு',
+  roleAndOrg: 'பங்கு மற்றும் அமைப்பு',
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: '{whose} வருகைகளை காட்டு',
