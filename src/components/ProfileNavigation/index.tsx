@@ -49,8 +49,8 @@ const ProfileNavigation: React.FC = () => {
     >
       <a onClick={(e) => e.preventDefault()}>
         <Space>
-          <UserOutlined />
-          <DownOutlined />
+          <UserOutlined style={{ color: 'black' }} />
+          <DownOutlined style={{ color: 'black' }} />
         </Space>
       </a>
     </Dropdown>
