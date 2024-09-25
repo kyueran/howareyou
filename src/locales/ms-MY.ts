@@ -31,7 +31,7 @@ export default {
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: 'Tunjukkan Lawatan {whose}',
-  searchPlaceholder: 'Cari mengikut nama atau kod warga emas',
+  searchPlaceholder: 'Cari dengan nama atau kod',
   noVisits: 'Tiada lawatan ditemui',
   imageThumbnailAlt: 'Foto Lawatan Pertama',
   numberOfPhotos: '{count} foto',
@@ -101,6 +101,7 @@ export default {
     'Halaman mungkin perlu dimuat semula untuk tetapan baru berkuat kuasa.',
   fillUpFormTab: 'ISI BORANG',
   indicateLocation: 'Nyatakan lokasi di mana anda bertemu warga emas',
+  homeVisit: 'Lawatan Rumah',
   aacPaCentre: 'Pusat AAC / PA',
   neighbourhoodArea: 'Kawasan Kejiranan',
   phoneCall: 'Panggilan Telefon',

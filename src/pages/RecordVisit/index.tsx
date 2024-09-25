@@ -60,6 +60,10 @@ const RecordVisit: React.FC = () => {
   const [isScannerOpen, setIsScannerOpen] = useState<boolean>(false);
   const [rearCameraId, setRearCameraId] = useState<string>();
 
+  const [modeOfInteraction, setModeOfInteraction] = useState<string>('Home Visit'); // Default to 'Home Visit'
+  const [customModeOfInteraction, setCustomModeOfInteraction] = useState<string>('');
+
+
   useEffect(() => {
     const fetchSeniorData = async () => {
       try {
@@ -99,8 +103,6 @@ const RecordVisit: React.FC = () => {
     const {
       comments,
       key_concerns,
-      modeOfInteraction,
-      customModeOfInteraction,
       duration,
     } = values;
 
@@ -152,7 +154,8 @@ const RecordVisit: React.FC = () => {
           duration_of_contact: duration,
         });
       }
-
+      
+      console.log("REQUEST BODY", requestBody);
       const response = await fetch('/api/logVisits', {
         method: 'POST',
         headers: {
@@ -284,6 +287,17 @@ const RecordVisit: React.FC = () => {
     }
   }
 
+  const handleModeOfInteractionChange = (value: string) => {
+    setModeOfInteraction(value);
+    setCustomMode(value === 'Others'); // Only trigger custom input if "Others" is selected
+    form.setFieldValue('modeOfInteraction', value);
+  };
+
+  const handleCustomModeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCustomModeOfInteraction(e.target.value); // Update the custom mode state
+    form.setFieldValue('customModeOfInteraction', e.target.value);
+  };
+
   return (
     <Access accessible={access.isVolunteer || access.isStaff}>
       <Row justify="center" style={{ marginTop: '24px' }}>
@@ -344,52 +358,35 @@ const RecordVisit: React.FC = () => {
                       tab={intl.formatMessage({ id: 'fillUpFormTab' })}
                       key="2"
                     >
-                      <Form form={form}>
-                        <Form.Item
-                          name="modeOfInteraction"
-                          label={intl.formatMessage({ id: 'indicateLocation' })}
+                      <Form form={form} onFinish={onFinish}>
+                      <Form.Item
+                        label={intl.formatMessage({ id: 'indicateLocation' })}
+                        rules={[{ required: true, message: intl.formatMessage({ id: 'pleaseSelect' }) }]}
+                      >
+                        <Select
+                          defaultValue="Home Visit" // Default value to 'Home Visit'
+                          onChange={handleModeOfInteractionChange} // Update modeOfInteraction in state
                         >
-                          <Select
-                            onChange={(value) => {
-                              form.setFieldValue('modeOfInteraction', value);
-                              setCustomMode(value === 'Others');
-                            }}
-                            placeholder={intl.formatMessage({
-                              id: 'pleaseSelect',
-                            })}
-                          >
-                            <Option value="AAC / PA Centre">
-                              {intl.formatMessage({ id: 'aacPaCentre' })}
-                            </Option>
-                            <Option value="Neighbourhood Area">
-                              {intl.formatMessage({ id: 'neighbourhoodArea' })}
-                            </Option>
-                            <Option value="Phone Call">
-                              {intl.formatMessage({ id: 'phoneCall' })}
-                            </Option>
-                            <Option value="Others">
-                              {intl.formatMessage({ id: 'others' })}
-                            </Option>
-                          </Select>
+                          <Option value="Home Visit">{intl.formatMessage({ id: 'homeVisit' })}</Option>
+                          <Option value="AAC / PA Centre">{intl.formatMessage({ id: 'aacPaCentre' })}</Option>
+                          <Option value="Neighbourhood Area">{intl.formatMessage({ id: 'neighbourhoodArea' })}</Option>
+                          <Option value="Phone Call">{intl.formatMessage({ id: 'phoneCall' })}</Option>
+                          <Option value="Others">{intl.formatMessage({ id: 'others' })}</Option>
+                        </Select>
+                      </Form.Item>
+
+                      {/* Conditionally show custom mode input */}
+                      {customMode && (
+                        <Form.Item
+                          name="customModeOfInteraction"
+                          label={intl.formatMessage({ id: 'ifOthers' })}
+                          rules={[{ required: true, message: intl.formatMessage({ id: 'pleaseSpecify' }) }]}
+                        >
+                          <Input.TextArea
+                            placeholder={intl.formatMessage({ id: 'ifOthersPlaceHolder' })}
+                            onChange={handleCustomModeChange} // Update custom mode state
+                          />
                         </Form.Item>
-                        {customMode && (
-                          <Form.Item
-                            name="customModeOfInteraction"
-                            label={intl.formatMessage({ id: 'ifOthers' })}
-                          >
-                            <Input.TextArea
-                              onChange={(e) =>
-                                form.setFieldValue(
-                                  'customModeOfInteraction',
-                                  e.target.value,
-                                )
-                              }
-                              autoSize={{ maxRows: 1 }}
-                              placeholder={intl.formatMessage({
-                                id: 'ifOthersPlaceHolder',
-                              })}
-                            />
-                          </Form.Item>
                         )}
                       </Form>
                       {/* Elderly Selection */}

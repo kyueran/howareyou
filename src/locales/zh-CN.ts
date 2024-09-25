@@ -31,7 +31,7 @@ export default {
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: '显示{whose}的访问',
-  searchPlaceholder: '按老人姓名或代码搜索',
+  searchPlaceholder: '按姓名或代码搜索',
   noVisits: '未找到访问记录',
   imageThumbnailAlt: '首次访问照片',
   numberOfPhotos: '{count}张照片',
@@ -99,6 +99,7 @@ export default {
   reloadPageReminder: '可能需要重新加载页面以使新设置生效。',
   fillUpFormTab: '填写表格',
   indicateLocation: '请注明您与老人见面的地点',
+  homeVisit: '家访',
   aacPaCentre: 'AAC / PA 中心',
   neighbourhoodArea: '社区区域',
   phoneCall: '电话联系',

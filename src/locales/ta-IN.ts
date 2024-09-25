@@ -31,7 +31,7 @@ export default {
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: '{whose} வருகைகளை காட்டு',
-  searchPlaceholder: 'மூத்தவரின் பெயர் அல்லது குறியீட்டால் தேடுக',
+  searchPlaceholder: 'எந்த பெயரையோ அல்லது குறியீட்டையோத் தேடவும்',
   noVisits: 'வருகைகள் கிடைக்கவில்லை',
   imageThumbnailAlt: 'முதல் வருகை புகைப்படம்',
   numberOfPhotos: '{count} புகைப்படம்(ங்கள்)',
@@ -106,6 +106,7 @@ export default {
     'புதிய அமைப்புகள் செயல்பட பக்கத்தை மீளேற்ற வேண்டியிருக்கும்.',
   fillUpFormTab: 'படிவத்தை நிரப்பவும்',
   indicateLocation: 'நீங்கள் மூத்தவரை சந்தித்த இடத்தை குறிப்பிடவும்',
+  homeVisit: 'வீட்டு விஜயம்',
   aacPaCentre: 'AAC / PA மையம்',
   neighbourhoodArea: 'அருகாமை பகுதி',
   phoneCall: 'தொலைபேசி அழைப்பு',

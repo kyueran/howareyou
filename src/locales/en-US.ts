@@ -101,6 +101,7 @@ export default {
     'The page may need to be reloaded for the new settings to take effect.',
   fillUpFormTab: 'FILL UP FORM',
   indicateLocation: 'Indicate location where you met the elderly',
+  homeVisit: 'Home Visit',
   aacPaCentre: 'AAC / PA Centre',
   neighbourhoodArea: 'Neighbourhood Area',
   phoneCall: 'Phone Call',
