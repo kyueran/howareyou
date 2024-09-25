@@ -3,6 +3,12 @@ import {
     ExclamationCircleOutlined,
     QuestionCircleOutlined,
     FilterOutlined,
+    UserOutlined,
+    EnvironmentOutlined,
+    ClockCircleOutlined,
+    BellOutlined,
+    CloseCircleOutlined,
+    showFilters,
   } from '@ant-design/icons';
   import { useIntl } from '@umijs/max';
   import {
@@ -18,6 +24,7 @@ import {
     Dropdown,
     Menu,
   } from 'antd';
+  import dayjs from 'dayjs';
   import React, { useEffect, useState, useMemo } from 'react';
   import VisitModal from '../../components/VisitModal';
   import { VisitInfo } from '../ElderlyResidents';
@@ -42,6 +49,7 @@ import {
     const [dateFilter, setDateFilter] = useState('all'); // 'all', 'today', 'pastWeek'
     const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'good', 'notGood', 'notAround'
     const [showStatusFilters, setShowStatusFilters] = useState(false);
+    const [showFilters, setShowFilters] = useState(false);
   
     // Determine the visitor's role and ID
     const user = localStorage.getItem('user');
@@ -273,19 +281,19 @@ import {
   
       if (diffInSeconds < 60) {
         // If less than 60 seconds, show seconds
-        return `${diffInSeconds} seconds ago`;
+        return `${diffInSeconds} s ago`;
       } else if (diffInSeconds < 60 * 60) {
         // If less than 60 minutes (1 hour), show minutes
         const minutes = Math.floor(diffInSeconds / 60);
-        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+        return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
       } else if (diffInSeconds < 24 * 60 * 60) {
         // If less than 24 hours, show hours
         const hours = Math.floor(diffInSeconds / (60 * 60));
-        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        return `${hours}h ago`;
       } else {
         // If more than 24 hours, show days
         const days = Math.floor(diffInSeconds / (60 * 60 * 24));
-        return `${days} day${days > 1 ? 's' : ''} ago`;
+        return `${days}d ago`;
       }
     };
   
@@ -315,57 +323,64 @@ import {
   
               {/* AutoComplete search for elderly or volunteer/staff (staff only) */}
               {visitorInfo.role === 'staff' && (
-              <AutoComplete
-                options={options} // AutoComplete options
-                onSearch={handleSearch} // Search input handler
-                onSelect={handleSelect} // Selection handler
-                onChange={(value) => {
-                  if (!value) {
-                    handleClearSearch();
-                  } else {
-                    setSearchValue(value);
-                  }
-                }}
-                value={searchValue} // Display the selected value in the input
-                allowClear
-                placeholder={intl.formatMessage({ id: 'searchPlaceholder' })}
-                style={{ width: '100%', marginBottom: '0px' }}
-              />
-            )}
-
-            {/* Date Filter */}
-            <Space style={{ marginBottom: '0px' }}>
-              <Radio.Group
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <Radio.Button value="all">All Dates</Radio.Button>
-                <Radio.Button value="today">Today</Radio.Button>
-                <Radio.Button value="pastWeek">Past Week</Radio.Button>
-              </Radio.Group>
-
-              {/* Status Filter Toggle Button (staff only) */}
-              {visitorInfo.role === 'staff' && (
-                <Button
-                  icon={<FilterOutlined />}
-                  onClick={() => setShowStatusFilters(!showStatusFilters)}
-                />
+                <Row gutter={8} align="middle">
+                  <Col xs={18} sm={18} md={20} lg={20} xl={20}>
+                    <AutoComplete
+                      options={options}
+                      onSearch={handleSearch}
+                      onSelect={handleSelect}
+                      onChange={(value) => {
+                        if (!value) {
+                          handleClearSearch();
+                        } else {
+                          setSearchValue(value);
+                        }
+                      }}
+                      value={searchValue}
+                      allowClear
+                      clearIcon={<CloseCircleOutlined style={{ color: 'red' }} />}
+                      placeholder={intl.formatMessage({ id: 'searchPlaceholder' })}
+                      style={{ width: '100%', marginBottom: '0px' }}
+                    />
+                  </Col>
+                  <Col xs={6} sm={6} md={4} lg={4} xl={4}>
+                    <Button
+                      icon={<FilterOutlined />}
+                      onClick={() => setShowFilters(!showFilters)}
+                      type={showFilters ? 'primary' : 'default'}
+                    />
+                  </Col>
+                </Row>
               )}
-            </Space>
-
-            {/* Status Filter Buttons (staff only, conditionally shown) */}
-            {showStatusFilters && (
-              <Radio.Group
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                style={{ marginTop: '-2px' }}
-              >
-                <Radio.Button value="all">All Statuses</Radio.Button>
-                <Radio.Button value="good">Good</Radio.Button>
-                <Radio.Button value="notGood">Not Good</Radio.Button>
-                <Radio.Button value="notAround">Not Around</Radio.Button>
-              </Radio.Group>
-            )}
+  
+              {/* Filters for both staff and volunteers */}
+              {(showFilters || visitorInfo.role === 'volunteer') && (
+                <Space direction="vertical" size={16} style={{ width: '100%' }}>
+                  {/* Date Filter */}
+                  <Radio.Group
+                    value={dateFilter}
+                    onChange={(e) => setDateFilter(e.target.value)}
+                  >
+                    <Radio.Button value="today">Today</Radio.Button>
+                    <Radio.Button value="pastWeek">Past Week</Radio.Button>
+                    <Radio.Button value="all">All</Radio.Button>
+                  </Radio.Group>
+  
+                  {/* Status Filter (only for staff) */}
+                  {visitorInfo.role === 'staff' && (
+                    <Radio.Group
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      style={{ marginTop: '-2px' }}
+                    >
+                      <Radio.Button value="good">Good</Radio.Button>
+                      <Radio.Button value="notGood">Not Good</Radio.Button>
+                      <Radio.Button value="notAround">Not Around</Radio.Button>
+                      <Radio.Button value="all">All</Radio.Button>
+                    </Radio.Group>
+                  )}
+                </Space>
+              )}
   
               {filteredVisits.length === 0 && !loading ? (
                 <Text>{intl.formatMessage({ id: 'noVisits' })}</Text>
@@ -375,6 +390,9 @@ import {
                   if (!visitor) {
                     return null; // Wait until visitor info is loaded
                   }
+  
+                  // Volunteers can only see mode_of_interaction, submission_time, and status
+                  const isVolunteer = visitorInfo.role === 'volunteer';
                   return (
                     <Card
                       key={visit.id}
@@ -394,66 +412,111 @@ import {
                       <Row gutter={16} align="middle">
                         <Col xs={16} sm={18} md={18} lg={19}>
                           <div>
-                            {/* Visitor Name and Role */}
-                            <Text strong style={{ fontSize: '16px' }}>
-                              👤 {visitor.full_name} (
-                              {visitor.role === 'staff' ? 'AAC Staff' : 'Volunteer'})
-                            </Text>
-                            <br />
+                            {/* For volunteers, only display mode_of_interaction, submission_time, and status */}
+                            {isVolunteer ? (
+                              <>
+                                {/* Location */}
+                                <Text>
+                                  <EnvironmentOutlined style={{ marginRight: '8px' }} />
+                                  {visit.mode_of_interaction || intl.formatMessage({ id: 'NA' })}
+                                </Text>
+                                <br />
   
-                            {/* Location */}
-                            <Text>
-                              📍 {visit.mode_of_interaction || intl.formatMessage({ id: 'NA' })}
-                            </Text>
-                            <br />
+                                {/* Time */}
+                                <Text style={{ fontSize: '12px' }}>
+                                  <ClockCircleOutlined style={{ marginRight: '8px' }} />
+                                  {dayjs(visit.submission_time).format('D MMM YYYY, h:mmA')}{' '}
+                                  <Text type="secondary" strong style={{ fontSize: '9px' }}>
+                                    ({formatTimeDifference(visit.submission_time)})
+                                  </Text>
+                                </Text>
+                                <br />
   
-                            <Text>
-                              🕒{' '}
-                              {new Date(visit.submission_time).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric',
-                              })}
-                              ,{' '}
-                              {new Date(visit.submission_time).toLocaleTimeString([], {
-                                hour: 'numeric',
-                                minute: 'numeric',
-                                hour12: true,
-                              })}{' '}
-                              <Text type="secondary" strong>
-                                ({formatTimeDifference(visit.submission_time)})
-                              </Text>
-                            </Text>
-                            <br />
+                                {/* Status */}
+                                {visit.status === 'Good' && (
+                                  <Text strong style={{ color: 'green', fontSize: '12px' }}>
+                                    <CheckCircleOutlined
+                                      style={{ color: 'green', marginRight: '8px' }}
+                                    />
+                                    Good
+                                  </Text>
+                                )}
+                                {visit.status === 'Not Good' && (
+                                  <Text strong style={{ color: 'red', fontSize: '12px' }}>
+                                    <ExclamationCircleOutlined
+                                      style={{ color: 'red', marginRight: '8px' }}
+                                    />
+                                    Not Good
+                                  </Text>
+                                )}
+                                {visit.status === 'Not Around' && (
+                                  <Text strong style={{ color: 'orange', fontSize: '12px' }}>
+                                    <QuestionCircleOutlined
+                                      style={{ color: 'orange', marginRight: '8px' }}
+                                    />
+                                    Not Around
+                                  </Text>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                {/* Staff view, with full information */}
+                                <UserOutlined style={{ marginRight: '8px' }} />
+                                <Text strong style={{ fontSize: '12px' }}>{visitor.full_name}</Text>
+                                <div>
+                                  <Text style={{ color: 'purple', fontSize: '12px' }}>
+                                    {visitor.volunteer_service_role_and_organisation}
+                                  </Text>
+                                </div>
   
-                            {visit.status === 'Good' && (
-                              <Text strong style={{ color: 'green', fontSize: '16px' }}>
-                                <CheckCircleOutlined
-                                  style={{ color: 'green', marginRight: '8px' }}
-                                />
-                                Good
-                              </Text>
+                                {/* Location */}
+                                <Text>
+                                  <EnvironmentOutlined style={{ marginRight: '8px' }} />
+                                  {visit.mode_of_interaction || intl.formatMessage({ id: 'NA' })}
+                                </Text>
+                                <br />
+  
+                                {/* Time */}
+                                <Text style={{ fontSize: '12px' }}>
+                                  <ClockCircleOutlined style={{ marginRight: '8px' }} />
+                                  {dayjs(visit.submission_time).format('D MMM YYYY, h:mmA')}{' '}
+                                  <Text type="secondary" strong style={{ fontSize: '9px' }}>
+                                    ({formatTimeDifference(visit.submission_time)})
+                                  </Text>
+                                </Text>
+                                <br />
+  
+                                {/* Status */}
+                                {visit.status === 'Good' && (
+                                  <Text strong style={{ color: 'green', fontSize: '12px' }}>
+                                    <CheckCircleOutlined
+                                      style={{ color: 'green', marginRight: '8px' }}
+                                    />
+                                    Good
+                                  </Text>
+                                )}
+                                {visit.status === 'Not Good' && (
+                                  <Text strong style={{ color: 'red', fontSize: '12px' }}>
+                                    <ExclamationCircleOutlined
+                                      style={{ color: 'red', marginRight: '8px' }}
+                                    />
+                                    Not Good
+                                  </Text>
+                                )}
+                                {visit.status === 'Not Around' && (
+                                  <Text strong style={{ color: 'orange', fontSize: '12px' }}>
+                                    <QuestionCircleOutlined
+                                      style={{ color: 'orange', marginRight: '8px' }}
+                                    />
+                                    Not Around
+                                  </Text>
+                                )}
+                                <br />
+  
+                                {/* Elderly Comments */}
+                                <Text><BellOutlined style={{ marginRight: '8px' }} /> {visit.key_concerns || '-'}</Text>
+                              </>
                             )}
-                            {visit.status === 'Not Good' && (
-                              <Text strong style={{ color: 'red', fontSize: '16px' }}>
-                                <ExclamationCircleOutlined
-                                  style={{ color: 'red', marginRight: '8px' }}
-                                />
-                                Not Good
-                              </Text>
-                            )}
-                            {visit.status === 'Not Around' && (
-                              <Text strong style={{ color: 'orange', fontSize: '16px' }}>
-                                <QuestionCircleOutlined
-                                  style={{ color: 'orange', marginRight: '8px' }}
-                                />
-                                Not Around
-                              </Text>
-                            )}
-                            <br />
-  
-                            {/* Elderly Comments */}
-                            <Text>🔔 {visit.key_concerns || '-'}</Text>
                           </div>
                         </Col>
                       </Row>

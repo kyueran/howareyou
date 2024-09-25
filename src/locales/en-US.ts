@@ -31,7 +31,7 @@ export default {
 
   // These translations are for the Display Visits (Visit Logs) page
   showXVisits: 'Show {whose} Visits',
-  searchPlaceholder: 'Search by elderly, volunteer, staff, name or code',
+  searchPlaceholder: 'Search by any name or code',
   noVisits: 'No visits found',
   imageThumbnailAlt: 'First Visit Photo',
   numberOfPhotos: '{count} photo(s)',
