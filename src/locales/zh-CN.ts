@@ -67,6 +67,7 @@ export default {
   saveAsImage: '保存为图片',
 
   // These translations are for the Elderly Residents page
+  elderlyResidents: '老年居民',
   topWarningMsg: '您正在查看{location}区域的居民！',
   searchElderlyPlaceholder: '输入老人姓名、编码或地址',
   loading: '加载中...',

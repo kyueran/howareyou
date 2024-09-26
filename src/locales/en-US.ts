@@ -67,6 +67,7 @@ export default {
   saveAsImage: 'Save as Image',
 
   // These translations are for the Elderly Residents page
+  elderlyResidents: 'Elderly Residents',
   topWarningMsg: 'You are viewing residents in the {location} area!',
   searchElderlyPlaceholder: 'Enter elderly name, code or address',
   loading: 'Loading...',

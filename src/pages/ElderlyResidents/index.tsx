@@ -285,7 +285,7 @@ const ResidentListPage: React.FC = () => {
   return (
     <div style={{ margin: '0 8px' }}>
       <Title level={3} style={{ marginTop: 16, marginBottom: 0 }}>
-        {intl.formatMessage({ id: 'visitDetails' })}
+        {intl.formatMessage({ id: 'elderlyResidents' })}
       </Title>
       <FormattedMessage
         id="topWarningMsg"

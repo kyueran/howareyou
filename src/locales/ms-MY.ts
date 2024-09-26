@@ -67,6 +67,7 @@ export default {
   saveAsImage: 'Simpan sebagai Imej',
 
   // These translations are for the Elderly Residents page
+  elderlyResidents: 'Warga Emas',
   topWarningMsg: 'Anda sedang melihat penduduk di kawasan {location}!',
   searchElderlyPlaceholder: 'Masukkan nama, kod atau alamat warga emas',
   loading: 'Memuat...',

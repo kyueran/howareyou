@@ -67,6 +67,7 @@ export default {
   saveAsImage: 'படமாக சேமிக்கவும்',
 
   // These translations are for the Elderly Residents page
+  elderlyResidents: 'வயதான குடியிருப்பாளர்கள்',
   topWarningMsg:
     'நீங்கள் {location} பகுதியில் உள்ள குடியிருப்பாளர்களைக் காண்கிறீர்கள்!',
   searchElderlyPlaceholder:
