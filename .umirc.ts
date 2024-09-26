@@ -20,7 +20,7 @@ export default defineConfig({
   layout: {},
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'menu.LinkTree',
       component: './LinkTree',
       layout: true,
@@ -79,6 +79,11 @@ export default defineConfig({
       access: ['isVolunteer', 'isStaff'],
       layout: true,
       name: 'menu.MyProfile',
+    },
+    {
+      path: '/',
+      component: './LandingPage',
+      layout: false,
     },
   ],
   npmClient: 'pnpm',
