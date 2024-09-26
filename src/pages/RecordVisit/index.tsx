@@ -299,10 +299,9 @@ const RecordVisit: React.FC = () => {
     form.setFieldValue('customModeOfInteraction', e.target.value);
   };
 
-  const handleRedirectToElderlyProfile = () => {
-    const { id } = params;
+  const handleRedirectToElderlyProfile = useCallback(() => {
     history.push(`/elderly/${id}`);
-  };
+  }, [id]);
 
   return (
     <Access accessible={access.isVolunteer || access.isStaff}>
