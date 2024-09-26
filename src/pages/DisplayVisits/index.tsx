@@ -277,7 +277,7 @@ import {
     const formatTimeDifference = (submissionTime) => {
       const now = new Date();
       const submissionDate = new Date(submissionTime);
-      const diffInSeconds = Math.floor((now.getTime() - submissionDate.getTime()) / 1000); // Difference in seconds
+      const diffInSeconds = Math.floor((now - submissionDate) / 1000); // Difference in seconds
   
       if (diffInSeconds < 60) {
         // If less than 60 seconds, show seconds
@@ -410,7 +410,7 @@ import {
                       }}
                     >
                       <Row gutter={16} align="middle">
-                        <Col xs={16} sm={18} md={18} lg={19}>
+                        <Col>
                           <div>
                             {/* For volunteers, only display mode_of_interaction, submission_time, and status */}
                             {isVolunteer ? (

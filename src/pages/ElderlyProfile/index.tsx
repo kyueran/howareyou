@@ -5,7 +5,6 @@ import {
   EnvironmentOutlined,
   ExclamationCircleOutlined,
   LeftOutlined,
-  PhoneOutlined,
   PlusOutlined,
   PrinterOutlined,
   QrcodeOutlined,
@@ -382,7 +381,7 @@ const ResidentProfilePage: React.FC = () => {
                 <Space direction="horizontal">
                   <Text strong>{intl.formatMessage({ id: 'contact' })}</Text>
                   <Text style={{ display: 'block', fontSize: '14px' }}>
-                    {data.contactDetails} <PhoneOutlined />
+                    {data.contactDetails}
                   </Text>
                 </Space>
                 <Space direction="horizontal">
@@ -412,8 +411,7 @@ const ResidentProfilePage: React.FC = () => {
                     key={index}
                     style={{ display: 'block', fontSize: '14px' }}
                   >
-                    {nok.name} ({nok.relationship}) - {nok.contactDetails}{' '}
-                    <PhoneOutlined />
+                    {nok.name} ({nok.relationship}) - {nok.contactDetails}
                   </Text>
                 ))}
               </Col>
