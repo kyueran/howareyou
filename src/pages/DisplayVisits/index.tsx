@@ -28,7 +28,10 @@ import {
   import React, { useEffect, useState, useMemo } from 'react';
   import VisitModal from '../../components/VisitModal';
   import { VisitInfo } from '../ElderlyResidents';
+  import utc from 'dayjs/plugin/utc';
   
+  dayjs.extend(utc);
+
   const { Text, Title } = Typography;
   
   const DisplayVisitsPage: React.FC = () => {
@@ -275,28 +278,29 @@ import {
     };
   
     const formatTimeDifference = (submissionTime) => {
-      const now = new Date();
-      const submissionDate = new Date(submissionTime);
-      const diffInSeconds = Math.floor((now.getTime() - submissionDate.getTime()) / 1000); // Difference in seconds
-  
+      const now = dayjs(); // current time in UTC by default
+      const submissionDate = dayjs(submissionTime); // assuming submissionTime is in UTC or ISO format
+    
+      const diffInSeconds = now.diff(submissionDate, 'second'); // Difference in seconds
+    
       if (diffInSeconds < 60) {
         // If less than 60 seconds, show seconds
         return `${diffInSeconds} s ago`;
       } else if (diffInSeconds < 60 * 60) {
         // If less than 60 minutes (1 hour), show minutes
-        const minutes = Math.floor(diffInSeconds / 60);
+        const minutes = now.diff(submissionDate, 'minute');
         return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
       } else if (diffInSeconds < 24 * 60 * 60) {
         // If less than 24 hours, show hours
-        const hours = Math.floor(diffInSeconds / (60 * 60));
+        const hours = now.diff(submissionDate, 'hour');
         return `${hours}h ago`;
       } else {
         // If more than 24 hours, show days
-        const days = Math.floor(diffInSeconds / (60 * 60 * 24));
+        const days = now.diff(submissionDate, 'day');
         return `${days}d ago`;
       }
     };
-  
+
     // Define the status menu for the dropdown
     const statusMenu = (
       <Menu
