@@ -5,15 +5,17 @@ import {
   ExclamationCircleOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Carousel, Col, Image, Modal, Row, Space, Typography } from 'antd';
+import { Card, Carousel, Col, Image, Modal, Row, Space, Typography } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import React, { useEffect, useState } from 'react';
-import { VisitInfo } from '../../pages/Home';
+import { VisitInfo } from '../../pages/ElderlyResidents';
 
 const { Text, Title } = Typography;
 
 interface ElderlyInfo {
+  photo_url: string;
+  name: string;
   block: string;
   floor: string;
   unit_number: string;
@@ -75,12 +77,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
         }
         let data = await response.json();
         data = data[0];
-        setElderly({
-          block: data.block,
-          floor: data.floor,
-          unit_number: data.unit_number,
-          address: data.address,
-        });
+        setElderly(data)
       } catch (error) {
         console.error(error);
       }
@@ -119,6 +116,10 @@ const VisitModal: React.FC<VisitModalProps> = ({
       <Row gutter={[16, 16]} align="middle" justify="space-between">
         <Col>
           <Space direction="vertical" size={0}>
+            <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
+              Posted by:
+            </Title>
+            <Card bodyStyle={{ padding: 8 }}>
             {/* Conditionally display Visitor Name and Role for staff only */}
             {userRole === 'staff' && (
               <Space align="center">
@@ -134,7 +135,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
             <Space align="center">
               <EnvironmentOutlined />
                 <Text>
-                  {elderly?.block} {elderly?.floor}-{elderly?.unit_number}, {elderly?.address}
+                  {visit.mode_of_interaction}
                 </Text>
             </Space>
 
@@ -154,6 +155,40 @@ const VisitModal: React.FC<VisitModalProps> = ({
                 )
               </Text>
             </Space>
+            </Card>
+
+            <Title level={5} style={{ marginTop: '20px', marginBottom: 8 }}>
+              Elderly visited:
+            </Title>
+
+            <Card bodyStyle={{ padding: 8 }}>
+              <Space direction='horizontal'>
+                <Image width={96} height={96} src={elderly?.photo_url} alt={`Photo ${elderly?.name}`} />
+                <Space.Compact direction='vertical'>
+                  <Space align="center">
+                    <UserOutlined />
+                    <Text>
+                      {elderly?.name}
+                    </Text>
+                  </Space>
+
+                  <Space align="center">
+                    <EnvironmentOutlined />
+                      <Text>
+                        {elderly?.block} {elderly?.floor}-{elderly?.unit_number}, {elderly?.address}
+                      </Text>
+                  </Space>
+
+                  <Space align="center">
+                    <Text strong>Elderly Code: </Text><Text>{elderly?.elderly_code}</Text>
+                  </Space>
+
+                  <Space align="center">
+                    <Text strong>AAC Code: </Text><Text>{elderly?.aac_code}</Text>
+                  </Space>
+                </Space.Compact>
+              </Space>
+            </Card>
 
             {/* Resident Status Heading */}
             <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
@@ -161,6 +196,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
             </Title>
 
             {/* Visit Status */}
+            <Card bodyStyle={{ padding: 8 }}>
             <Space align="center">
               {visit.status === 'Not Good' && (
                 <>
@@ -187,17 +223,21 @@ const VisitModal: React.FC<VisitModalProps> = ({
                 </>
               )}
             </Space>
+            </Card>
 
             {/* Comments Section */}
             <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
               Comments
             </Title>
+            <Card bodyStyle={{ padding: 8 }}>
             <Text>{visit.comments || 'No comments available.'}</Text>
+            </Card>
 
             {/* Photos Section with Carousel */}
             <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
               Photos
             </Title>
+            <Card bodyStyle={{ padding: 8 }}>
             {visit.photo_urls && visit.photo_urls.length > 0 ? (
               <Carousel autoplay>
                 {visit.photo_urls.map((url, index) => (
@@ -209,6 +249,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
             ) : (
               <Text>No photos available.</Text>
             )}
+            </Card>
 
             {/* Conditionally display Duration of Visit for staff only */}
             {userRole === 'staff' && (
@@ -216,7 +257,9 @@ const VisitModal: React.FC<VisitModalProps> = ({
                 <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
                   Duration of visit
                 </Title>
+                <Card bodyStyle={{ padding: 8 }}>
                 <Text>{visit.duration_of_contact ? `${visit.duration_of_contact} mins` : 'Unknown'}</Text>
+                </Card>
               </>
             )}
 
@@ -226,7 +269,9 @@ const VisitModal: React.FC<VisitModalProps> = ({
                 <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
                   Key Concerns
                 </Title>
+                <Card bodyStyle={{ padding: 8 }}>
                 <Text>{visit.key_concerns || 'No key concerns.'}</Text>
+                </Card>
               </>
             )}
 
@@ -235,7 +280,9 @@ const VisitModal: React.FC<VisitModalProps> = ({
                 <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
                   Relationship with Resident
                 </Title>
+                <Card bodyStyle={{ padding: 8 }}>
                 <Text>{visit.relationship || 'Not specified.'}</Text>
+                </Card>
               </>
             )}
           </Space>
