@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Carousel, Col, Image, Modal, Row, Space, Typography } from 'antd';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import React, { useEffect, useState } from 'react';
 import { VisitInfo } from '../../pages/Home';
 
@@ -89,6 +90,8 @@ const VisitModal: React.FC<VisitModalProps> = ({
       fetchElderlyInfo(visit.elderly_id);
     }
   }, [visit.elderly_id]);
+  
+  dayjs.extend(relativeTime);
 
   return (
     <Modal

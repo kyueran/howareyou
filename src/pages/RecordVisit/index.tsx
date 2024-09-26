@@ -286,6 +286,7 @@ const RecordVisit: React.FC = () => {
       return undefined;
     }
   }
+  form.setFieldValue('modeOfInteraction', 'Home Visit');
 
   const handleModeOfInteractionChange = (value: string) => {
     setModeOfInteraction(value);
