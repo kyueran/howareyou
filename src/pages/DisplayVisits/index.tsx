@@ -283,7 +283,7 @@ import {
   
     const formatTimeDifference = (submissionTime) => {
       const now = dayjs();
-      const submissionDate = dayjs(submissionTime).utc();
+      const submissionDate = dayjs(submissionTime).subtract(8, 'hour');
       return submissionDate.from(now);
     };
 
