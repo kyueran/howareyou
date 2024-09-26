@@ -176,16 +176,19 @@ import {
   
       // Apply date filter
       if (dateFilter !== 'all') {
-        const now = new Date();
+        const now = dayjs();
         filtered = filtered.filter((visit) => {
-          const visitDate = new Date(visit.submission_time);
+          const visitDate = dayjs(visit.submission_time).subtract(8, 'hour');
   
           if (dateFilter === 'today') {
-            return visitDate.toDateString() === now.toDateString();
+            // Check if visitDate is the same day as today
+            return visitDate.isSame(now, 'day');
           } else if (dateFilter === 'pastWeek') {
-            const oneWeekAgo = new Date();
-            oneWeekAgo.setDate(now.getDate() - 7);
-            return visitDate >= oneWeekAgo && visitDate <= now;
+            // Get the date 7 days ago using dayjs
+            const oneWeekAgo = now.subtract(7, 'day');
+        
+            // Check if visitDate is within the past week
+            return visitDate.isAfter(oneWeekAgo) && visitDate.isBefore(now);
           }
           return true;
         });
@@ -415,7 +418,7 @@ import {
                                 {/* Time */}
                                 <Text style={{ fontSize: '12px' }}>
                                   <ClockCircleOutlined style={{ marginRight: '8px' }} />
-                                  {dayjs(visit.submission_time).format('D MMM YYYY, h:mmA')}{' '}
+                                  {dayjs(visit.submission_time).subtract(8, 'hour').format('D MMM YYYY, h:mmA')}{' '}
                                   <Text type="secondary" strong style={{ fontSize: '9px' }}>
                                     ({formatTimeDifference(visit.submission_time)})
                                   </Text>
@@ -469,7 +472,7 @@ import {
                                 {/* Time */}
                                 <Text style={{ fontSize: '12px' }}>
                                   <ClockCircleOutlined style={{ marginRight: '8px' }} />
-                                  {dayjs(visit.submission_time).format('D MMM YYYY, h:mmA')}{' '}
+                                  {dayjs(visit.submission_time).subtract(8, 'hour').format('D MMM YYYY, h:mmA')}{' '}
                                   <Text type="secondary" strong style={{ fontSize: '9px' }}>
                                     ({formatTimeDifference(visit.submission_time)})
                                   </Text>
