@@ -1,4 +1,9 @@
-import { CloseOutlined, CopyOutlined, EnvironmentOutlined, RightOutlined } from '@ant-design/icons';
+import {
+  CloseOutlined,
+  CopyOutlined,
+  EnvironmentOutlined,
+  RightOutlined,
+} from '@ant-design/icons';
 import { ProSkeleton } from '@ant-design/pro-components';
 import {
   Button,

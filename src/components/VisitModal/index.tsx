@@ -1,11 +1,19 @@
 import {
-  BellOutlined,
   ClockCircleOutlined,
   EnvironmentOutlined,
   ExclamationCircleOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Card, Carousel, Col, Image, Modal, Row, Space, Typography } from 'antd';
+import {
+  Card,
+  Carousel,
+  Col,
+  Image,
+  Modal,
+  Row,
+  Space,
+  Typography,
+} from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import React, { useEffect, useState } from 'react';
@@ -56,7 +64,9 @@ const VisitModal: React.FC<VisitModalProps> = ({
         }
         const data = await response.json();
         setVisitorName(data.full_name);
-        setVisitorRoleAndOrg(data.volunteer_service_role_and_organisation || '');
+        setVisitorRoleAndOrg(
+          data.volunteer_service_role_and_organisation || '',
+        );
       } catch (error) {
         console.error(error);
       }
@@ -77,7 +87,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
         }
         let data = await response.json();
         data = data[0];
-        setElderly(data)
+        setElderly(data);
       } catch (error) {
         console.error(error);
       }
@@ -87,7 +97,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
       fetchElderlyInfo(visit.elderly_id);
     }
   }, [visit.elderly_id]);
-  
+
   dayjs.extend(relativeTime);
 
   return (
@@ -120,41 +130,41 @@ const VisitModal: React.FC<VisitModalProps> = ({
               Posted by:
             </Title>
             <Card bodyStyle={{ padding: 8 }}>
-            {/* Conditionally display Visitor Name and Role for staff only */}
-            {userRole === 'staff' && (
+              {/* Conditionally display Visitor Name and Role for staff only */}
+              {userRole === 'staff' && (
+                <Space align="center">
+                  <UserOutlined />
+                  <Text>
+                    {visitorName}{' '}
+                    <Text strong style={{ color: 'purple' }}>
+                      {visitorRoleAndOrg}
+                    </Text>
+                  </Text>
+                </Space>
+              )}
+
+              {/* Mode of Interaction / Location - Now showing elderly's address */}
               <Space align="center">
-                <UserOutlined />
+                <EnvironmentOutlined />
+                <Text>{visit.mode_of_interaction}</Text>
+              </Space>
+
+              {/* Submission Time */}
+              <Space align="center">
+                <ClockCircleOutlined />
                 <Text>
-                  {visitorName}{' '}
-                  <Text strong style={{ color: 'purple' }}>{visitorRoleAndOrg}</Text>
+                  {visit.submission_time
+                    ? dayjs(visit.submission_time).format('D MMM YYYY, h:mmA')
+                    : 'Unknown Time'}{' '}
+                  (
+                  <Text strong>
+                    {visit.submission_time
+                      ? `${dayjs().to(dayjs(visit.submission_time))}`
+                      : 'None'}
+                  </Text>
+                  )
                 </Text>
               </Space>
-            )}
-
-            {/* Mode of Interaction / Location - Now showing elderly's address */}
-            <Space align="center">
-              <EnvironmentOutlined />
-                <Text>
-                  {visit.mode_of_interaction}
-                </Text>
-            </Space>
-
-            {/* Submission Time */}
-            <Space align="center">
-              <ClockCircleOutlined />
-              <Text>
-                {visit.submission_time
-                  ? dayjs(visit.submission_time).format('D MMM YYYY, h:mmA')
-                  : 'Unknown Time'}{' '}
-                (
-                <Text strong>
-                  {visit.submission_time
-                    ? `${dayjs().to(dayjs(visit.submission_time))}`
-                    : 'None'}
-                </Text>
-                )
-              </Text>
-            </Space>
             </Card>
 
             <Title level={5} style={{ marginTop: '20px', marginBottom: 8 }}>
@@ -162,29 +172,35 @@ const VisitModal: React.FC<VisitModalProps> = ({
             </Title>
 
             <Card bodyStyle={{ padding: 8 }}>
-              <Space direction='horizontal'>
-                <Image width={96} height={96} src={elderly?.photo_url} alt={`Photo ${elderly?.name}`} />
-                <Space.Compact direction='vertical'>
+              <Space direction="horizontal">
+                <Image
+                  width={96}
+                  height={96}
+                  src={elderly?.photo_url}
+                  alt={`Photo ${elderly?.name}`}
+                />
+                <Space.Compact direction="vertical">
                   <Space align="center">
                     <UserOutlined />
-                    <Text>
-                      {elderly?.name}
-                    </Text>
+                    <Text>{elderly?.name}</Text>
                   </Space>
 
                   <Space align="center">
                     <EnvironmentOutlined />
-                      <Text>
-                        {elderly?.block} {elderly?.floor}-{elderly?.unit_number}, {elderly?.address}
-                      </Text>
+                    <Text>
+                      {elderly?.block} {elderly?.floor}-{elderly?.unit_number},{' '}
+                      {elderly?.address}
+                    </Text>
                   </Space>
 
                   <Space align="center">
-                    <Text strong>Elderly Code: </Text><Text>{elderly?.elderly_code}</Text>
+                    <Text strong>Elderly Code: </Text>
+                    <Text>{elderly?.elderly_code}</Text>
                   </Space>
 
                   <Space align="center">
-                    <Text strong>AAC Code: </Text><Text>{elderly?.aac_code}</Text>
+                    <Text strong>AAC Code: </Text>
+                    <Text>{elderly?.aac_code}</Text>
                   </Space>
                 </Space.Compact>
               </Space>
@@ -197,32 +213,38 @@ const VisitModal: React.FC<VisitModalProps> = ({
 
             {/* Visit Status */}
             <Card bodyStyle={{ padding: 8 }}>
-            <Space align="center">
-              {visit.status === 'Not Good' && (
-                <>
-                  <ExclamationCircleOutlined style={{ color: 'red', fontSize: '14px' }} />
-                  <Text strong style={{ color: 'red', fontSize: '14px' }}>
-                    Not Good
-                  </Text>
-                </>
-              )}
-              {visit.status === 'Good' && (
-                <>
-                  <ExclamationCircleOutlined style={{ color: 'green', fontSize: '14px' }} />
-                  <Text strong style={{ color: 'green', fontSize: '14px' }}>
-                    Good
-                  </Text>
-                </>
-              )}
-              {visit.status === 'Not Around' && (
-                <>
-                  <ExclamationCircleOutlined style={{ color: 'orange', fontSize: '14px' }} />
-                  <Text strong style={{ color: 'orange', fontSize: '14px' }}>
-                    Not Around
-                  </Text>
-                </>
-              )}
-            </Space>
+              <Space align="center">
+                {visit.status === 'Not Good' && (
+                  <>
+                    <ExclamationCircleOutlined
+                      style={{ color: 'red', fontSize: '14px' }}
+                    />
+                    <Text strong style={{ color: 'red', fontSize: '14px' }}>
+                      Not Good
+                    </Text>
+                  </>
+                )}
+                {visit.status === 'Good' && (
+                  <>
+                    <ExclamationCircleOutlined
+                      style={{ color: 'green', fontSize: '14px' }}
+                    />
+                    <Text strong style={{ color: 'green', fontSize: '14px' }}>
+                      Good
+                    </Text>
+                  </>
+                )}
+                {visit.status === 'Not Around' && (
+                  <>
+                    <ExclamationCircleOutlined
+                      style={{ color: 'orange', fontSize: '14px' }}
+                    />
+                    <Text strong style={{ color: 'orange', fontSize: '14px' }}>
+                      Not Around
+                    </Text>
+                  </>
+                )}
+              </Space>
             </Card>
 
             {/* Comments Section */}
@@ -230,7 +252,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
               Comments
             </Title>
             <Card bodyStyle={{ padding: 8 }}>
-            <Text>{visit.comments || 'No comments available.'}</Text>
+              <Text>{visit.comments || 'No comments available.'}</Text>
             </Card>
 
             {/* Photos Section with Carousel */}
@@ -238,27 +260,34 @@ const VisitModal: React.FC<VisitModalProps> = ({
               Photos
             </Title>
             <Card bodyStyle={{ padding: 8 }}>
-            {visit.photo_urls && visit.photo_urls.length > 0 ? (
-              <Carousel autoplay>
-                {visit.photo_urls.map((url, index) => (
-                  <div key={index}>
-                    <Image src={url} alt={`Photo ${index + 1}`} />
-                  </div>
-                ))}
-              </Carousel>
-            ) : (
-              <Text>No photos available.</Text>
-            )}
+              {visit.photo_urls && visit.photo_urls.length > 0 ? (
+                <Carousel autoplay>
+                  {visit.photo_urls.map((url, index) => (
+                    <div key={index}>
+                      <Image src={url} alt={`Photo ${index + 1}`} />
+                    </div>
+                  ))}
+                </Carousel>
+              ) : (
+                <Text>No photos available.</Text>
+              )}
             </Card>
 
             {/* Conditionally display Duration of Visit for staff only */}
             {userRole === 'staff' && (
               <>
-                <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
+                <Title
+                  level={5}
+                  style={{ marginTop: '20px', marginBottom: '0px' }}
+                >
                   Duration of visit
                 </Title>
                 <Card bodyStyle={{ padding: 8 }}>
-                <Text>{visit.duration_of_contact ? `${visit.duration_of_contact} mins` : 'Unknown'}</Text>
+                  <Text>
+                    {visit.duration_of_contact
+                      ? `${visit.duration_of_contact} mins`
+                      : 'Unknown'}
+                  </Text>
                 </Card>
               </>
             )}
@@ -266,22 +295,28 @@ const VisitModal: React.FC<VisitModalProps> = ({
             {/* Conditionally display Key Concerns for staff only */}
             {userRole === 'staff' && (
               <>
-                <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
+                <Title
+                  level={5}
+                  style={{ marginTop: '20px', marginBottom: '0px' }}
+                >
                   Key Concerns
                 </Title>
                 <Card bodyStyle={{ padding: 8 }}>
-                <Text>{visit.key_concerns || 'No key concerns.'}</Text>
+                  <Text>{visit.key_concerns || 'No key concerns.'}</Text>
                 </Card>
               </>
             )}
 
             {userRole === 'volunteer' && (
               <>
-                <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
+                <Title
+                  level={5}
+                  style={{ marginTop: '20px', marginBottom: '0px' }}
+                >
                   Relationship with Resident
                 </Title>
                 <Card bodyStyle={{ padding: 8 }}>
-                <Text>{visit.relationship || 'Not specified.'}</Text>
+                  <Text>{visit.relationship || 'Not specified.'}</Text>
                 </Card>
               </>
             )}

@@ -135,12 +135,12 @@ const ResidentProfilePage: React.FC = () => {
         if (result.success) {
           // Filter visits related to this elderly ID
           const relevantVisits: VisitInfo[] = result.data.filter(
-            (visit: VisitInfo) => visit.elderly_id === Number(params.id)
+            (visit: VisitInfo) => visit.elderly_id === Number(params.id),
           );
 
           // Sort visits by submission_time in descending order (most recent first)
           const sortedVisits = relevantVisits.sort((a, b) =>
-            dayjs(b.submission_time).diff(dayjs(a.submission_time))
+            dayjs(b.submission_time).diff(dayjs(a.submission_time)),
           );
 
           // Extract key concerns from sorted visits
@@ -254,7 +254,11 @@ const ResidentProfilePage: React.FC = () => {
     <div style={{ padding: '8px' }}>
       <Space
         direction="horizontal"
-        style={{ width: '100%', marginTop: '8px', justifyContent: 'flex-start' }}
+        style={{
+          width: '100%',
+          marginTop: '8px',
+          justifyContent: 'flex-start',
+        }}
       >
         <Button
           style={{ marginBottom: '8px' }}

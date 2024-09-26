@@ -60,9 +60,10 @@ const RecordVisit: React.FC = () => {
   const [isScannerOpen, setIsScannerOpen] = useState<boolean>(false);
   const [rearCameraId, setRearCameraId] = useState<string>();
 
-  const [modeOfInteraction, setModeOfInteraction] = useState<string>('Home Visit'); // Default to 'Home Visit'
-  const [customModeOfInteraction, setCustomModeOfInteraction] = useState<string>('');
-
+  const [modeOfInteraction, setModeOfInteraction] =
+    useState<string>('Home Visit'); // Default to 'Home Visit'
+  const [customModeOfInteraction, setCustomModeOfInteraction] =
+    useState<string>('');
 
   useEffect(() => {
     const fetchSeniorData = async () => {
@@ -100,11 +101,7 @@ const RecordVisit: React.FC = () => {
   const onFinish = async (values: any) => {
     setSubmitting(true);
 
-    const {
-      comments,
-      key_concerns,
-      duration,
-    } = values;
+    const { comments, key_concerns, duration } = values;
 
     const mode_of_interaction =
       modeOfInteraction === 'others'
@@ -154,8 +151,8 @@ const RecordVisit: React.FC = () => {
           duration_of_contact: duration,
         });
       }
-      
-      console.log("REQUEST BODY", requestBody);
+
+      console.log('REQUEST BODY', requestBody);
       const response = await fetch('/api/logVisits', {
         method: 'POST',
         headers: {
@@ -294,7 +291,9 @@ const RecordVisit: React.FC = () => {
     form.setFieldValue('modeOfInteraction', value);
   };
 
-  const handleCustomModeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleCustomModeChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
     setCustomModeOfInteraction(e.target.value); // Update the custom mode state
     form.setFieldValue('customModeOfInteraction', e.target.value);
   };
@@ -364,34 +363,60 @@ const RecordVisit: React.FC = () => {
                       key="2"
                     >
                       <Form form={form} onFinish={onFinish}>
-                      <Form.Item
-                        label={intl.formatMessage({ id: 'indicateLocation' })}
-                        rules={[{ required: true, message: intl.formatMessage({ id: 'pleaseSelect' }) }]}
-                      >
-                        <Select
-                          defaultValue="Home Visit" // Default value to 'Home Visit'
-                          onChange={handleModeOfInteractionChange} // Update modeOfInteraction in state
-                        >
-                          <Option value="Home Visit">{intl.formatMessage({ id: 'homeVisit' })}</Option>
-                          <Option value="AAC / PA Centre">{intl.formatMessage({ id: 'aacPaCentre' })}</Option>
-                          <Option value="Neighbourhood Area">{intl.formatMessage({ id: 'neighbourhoodArea' })}</Option>
-                          <Option value="Phone Call">{intl.formatMessage({ id: 'phoneCall' })}</Option>
-                          <Option value="Others">{intl.formatMessage({ id: 'others' })}</Option>
-                        </Select>
-                      </Form.Item>
-
-                      {/* Conditionally show custom mode input */}
-                      {customMode && (
                         <Form.Item
-                          name="customModeOfInteraction"
-                          label={intl.formatMessage({ id: 'ifOthers' })}
-                          rules={[{ required: true, message: intl.formatMessage({ id: 'pleaseSpecify' }) }]}
+                          label={intl.formatMessage({ id: 'indicateLocation' })}
+                          rules={[
+                            {
+                              required: true,
+                              message: intl.formatMessage({
+                                id: 'pleaseSelect',
+                              }),
+                            },
+                          ]}
                         >
-                          <Input.TextArea
-                            placeholder={intl.formatMessage({ id: 'ifOthersPlaceHolder' })}
-                            onChange={handleCustomModeChange} // Update custom mode state
-                          />
+                          <Select
+                            defaultValue="Home Visit" // Default value to 'Home Visit'
+                            onChange={handleModeOfInteractionChange} // Update modeOfInteraction in state
+                          >
+                            <Option value="Home Visit">
+                              {intl.formatMessage({ id: 'homeVisit' })}
+                            </Option>
+                            <Option value="AAC / PA Centre">
+                              {intl.formatMessage({ id: 'aacPaCentre' })}
+                            </Option>
+                            <Option value="Neighbourhood Area">
+                              {intl.formatMessage({ id: 'neighbourhoodArea' })}
+                            </Option>
+                            <Option value="Phone Call">
+                              {intl.formatMessage({ id: 'phoneCall' })}
+                            </Option>
+                            <Option value="Others">
+                              {intl.formatMessage({ id: 'others' })}
+                            </Option>
+                          </Select>
                         </Form.Item>
+
+                        {/* Conditionally show custom mode input */}
+                        {customMode && (
+                          <Form.Item
+                            name="customModeOfInteraction"
+                            label={intl.formatMessage({ id: 'ifOthers' })}
+                            rules={[
+                              {
+                                required: true,
+                                message: intl.formatMessage({
+                                  id: 'pleaseSpecify',
+                                }),
+                              },
+                            ]}
+                          >
+                            <Input.TextArea
+                              placeholder={intl.formatMessage({
+                                id: 'ifOthersPlaceHolder',
+                              })}
+                              onChange={handleCustomModeChange} // Update custom mode state
+                            />
+                          </Form.Item>
                         )}
                       </Form>
                       {/* Elderly Selection */}
@@ -531,77 +556,87 @@ const RecordVisit: React.FC = () => {
                   {intl.formatMessage({ id: 'menu.RecordVisit' })}
                 </Title>
                 <Access accessible={access.isStaff}>
-              <Card style={{ width: '100%' }} bodyStyle={{ padding: '16px' }} loading={loading}>
-                <Row gutter={16} align="middle">
-                  <Col xs={8} sm={6} md={6} lg={6} xl={5}>
-                    <div
-                      style={{
-                        position: 'relative',
-                        width: '100%',
-                        paddingBottom: '100%',
-                        overflow: 'hidden',
-                        borderRadius: '8px',
-                      }}
-                    >
-                      <img
-                        src={seniorData?.photo_url || 'https://via.placeholder.com/150'}
-                        alt="Profile"
-                        style={{
-                          position: 'absolute',
-                          top: '50%',
-                          left: '50%',
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          objectPosition: 'center',
-                          transform: 'translate(-50%, -50%)',
-                        }}
-                      />
-                    </div>
-                  </Col>
-                  <Col xs={16} sm={18} md={18} lg={18} xl={19}>
-                    <div>
+                  <Card
+                    style={{ width: '100%' }}
+                    bodyStyle={{ padding: '16px' }}
+                    loading={loading}
+                  >
+                    <Row gutter={16} align="middle">
+                      <Col xs={8} sm={6} md={6} lg={6} xl={5}>
+                        <div
+                          style={{
+                            position: 'relative',
+                            width: '100%',
+                            paddingBottom: '100%',
+                            overflow: 'hidden',
+                            borderRadius: '8px',
+                          }}
+                        >
+                          <img
+                            src={
+                              seniorData?.photo_url ||
+                              'https://via.placeholder.com/150'
+                            }
+                            alt="Profile"
+                            style={{
+                              position: 'absolute',
+                              top: '50%',
+                              left: '50%',
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              objectPosition: 'center',
+                              transform: 'translate(-50%, -50%)',
+                            }}
+                          />
+                        </div>
+                      </Col>
+                      <Col xs={16} sm={18} md={18} lg={18} xl={19}>
+                        <div>
+                          <Text strong style={{ fontSize: '16px' }}>
+                            {seniorData?.name || 'Loading name...'}
+                          </Text>
+                          <br />
+                          <Text type="secondary">
+                            {`${seniorData?.block} ${seniorData?.floor}-${seniorData?.unit_number}, ${seniorData?.address}, ${seniorData?.postal_code}`}
+                          </Text>
+                        </div>
+                        <div style={{ marginTop: '8px' }}>
+                          <Button
+                            type="primary"
+                            onClick={handleRedirectToElderlyProfile}
+                          >
+                            View Profile
+                          </Button>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Card>
+                </Access>
+                <Access accessible={access.isVolunteer}>
+                  <div>
+                    <Space direction="vertical" size="small">
                       <Text strong style={{ fontSize: '16px' }}>
-                        {seniorData?.name || 'Loading name...'}
-                      </Text>
-                      <br />
-                      <Text type="secondary">
-                        {`${seniorData?.block} ${seniorData?.floor}-${seniorData?.unit_number}, ${seniorData?.address}, ${seniorData?.postal_code}`}
-                      </Text>
-                    </div>
-                    <div style={{ marginTop: '8px' }}>
-                      <Button type="primary" onClick={handleRedirectToElderlyProfile}>
-                        View Profile
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
-              </Card>
-            </Access>
-            <Access accessible={access.isVolunteer}>
-                <div>
-                  <Space direction="vertical" size="small">
-                    <Text strong style={{ fontSize: '16px' }}>
-                      {intl.formatMessage({ id: 'residentsAddress' })}
-                    </Text>{' '}
-                    {/* Bold and slightly larger label */}
-                    <Card
-                      loading={loading}
-                      style={{
-                        backgroundColor: '#d6eaf8', // Light gray background
-                        borderRadius: '8px', // Rounded corners
-                        width: '100%', // Full width
-                      }}
-                      bordered={false} // No border
-                    >
-                      <Text>
-                        {seniorData?.block} {seniorData?.floor}-
-                        {seniorData?.unit_number}, {seniorData?.address},
-                        {seniorData?.postal_code}
-                      </Text>
-                    </Card>
-                  </Space>
-                </div>
+                        {intl.formatMessage({ id: 'residentsAddress' })}
+                      </Text>{' '}
+                      {/* Bold and slightly larger label */}
+                      <Card
+                        loading={loading}
+                        style={{
+                          backgroundColor: '#d6eaf8', // Light gray background
+                          borderRadius: '8px', // Rounded corners
+                          width: '100%', // Full width
+                        }}
+                        bordered={false} // No border
+                      >
+                        <Text>
+                          {seniorData?.block} {seniorData?.floor}-
+                          {seniorData?.unit_number}, {seniorData?.address},
+                          {seniorData?.postal_code}
+                        </Text>
+                      </Card>
+                    </Space>
+                  </div>
                 </Access>
                 <Form form={form} layout="vertical" onFinish={onFinish}>
                   <Form.Item
