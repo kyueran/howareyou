@@ -11,7 +11,7 @@ const ProfileNavigation: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem('userRole');
     localStorage.removeItem('user');
-    history.push('/login');
+    history.push('/');
   };
 
   // Handle clicks for profile and logout
