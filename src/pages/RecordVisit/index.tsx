@@ -711,17 +711,19 @@ const RecordVisit: React.FC = () => {
                   </Form.Item>
 
                   {/* Key Concerns for Staff only */}
-                  <Text strong>
-                    {intl.formatMessage({ id: 'keyConcernsLabel' })}
-                  </Text>
-                  <br />
-                  <Text style={{ fontSize: '12px', color: 'gray' }}>
-                    {intl.formatMessage({ id: 'keyConcernsPlaceholder' })}
-                  </Text>
                   {access.isStaff && (
-                    <Form.Item name="key_concerns">
-                      <TextArea rows={3} />
-                    </Form.Item>
+                    <>
+                      <Text strong>
+                        {intl.formatMessage({ id: 'keyConcernsLabel' })}
+                      </Text>
+                      <br />
+                      <Text style={{ fontSize: '12px', color: 'gray' }}>
+                        {intl.formatMessage({ id: 'keyConcernsPlaceholder' })}
+                      </Text>
+                      <Form.Item name="key_concerns">
+                        <TextArea rows={3} />
+                      </Form.Item>
+                    </>
                   )}
 
                   {/* Duration for Staff only */}
