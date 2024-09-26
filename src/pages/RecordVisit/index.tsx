@@ -299,6 +299,11 @@ const RecordVisit: React.FC = () => {
     form.setFieldValue('customModeOfInteraction', e.target.value);
   };
 
+  const handleRedirectToElderlyProfile = () => {
+    const { id } = params;
+    history.push(`/elderly/${id}`);
+  };
+
   return (
     <Access accessible={access.isVolunteer || access.isStaff}>
       <Row justify="center" style={{ marginTop: '24px' }}>
@@ -526,6 +531,55 @@ const RecordVisit: React.FC = () => {
                 <Title level={3} style={{ marginBottom: '0px' }}>
                   {intl.formatMessage({ id: 'menu.RecordVisit' })}
                 </Title>
+                <Access accessible={access.isStaff}>
+              <Card style={{ width: '100%' }} bodyStyle={{ padding: '16px' }} loading={loading}>
+                <Row gutter={16} align="middle">
+                  <Col xs={8} sm={6} md={6} lg={6} xl={5}>
+                    <div
+                      style={{
+                        position: 'relative',
+                        width: '100%',
+                        paddingBottom: '100%',
+                        overflow: 'hidden',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <img
+                        src={seniorData?.photo_url || 'https://via.placeholder.com/150'}
+                        alt="Profile"
+                        style={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: 'center',
+                          transform: 'translate(-50%, -50%)',
+                        }}
+                      />
+                    </div>
+                  </Col>
+                  <Col xs={16} sm={18} md={18} lg={18} xl={19}>
+                    <div>
+                      <Text strong style={{ fontSize: '16px' }}>
+                        {seniorData?.name || 'Loading name...'}
+                      </Text>
+                      <br />
+                      <Text type="secondary">
+                        {`${seniorData?.block} ${seniorData?.floor}-${seniorData?.unit_number}, ${seniorData?.address}, ${seniorData?.postal_code}`}
+                      </Text>
+                    </div>
+                    <div style={{ marginTop: '8px' }}>
+                      <Button type="primary" onClick={handleRedirectToElderlyProfile}>
+                        View Profile
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
+              </Card>
+            </Access>
+            <Access accessible={access.isVolunteer}>
                 <div>
                   <Space direction="vertical" size="small">
                     <Text strong style={{ fontSize: '16px' }}>
@@ -549,6 +603,7 @@ const RecordVisit: React.FC = () => {
                     </Card>
                   </Space>
                 </div>
+                </Access>
                 <Form form={form} layout="vertical" onFinish={onFinish}>
                   <Form.Item
                     label={
