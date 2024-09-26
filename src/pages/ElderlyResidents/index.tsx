@@ -345,7 +345,7 @@ const ResidentListPage: React.FC = () => {
                 )}`;
               } else {
                 // More than one day ago
-                displayVisitInfo = `visited ${daysSinceLastVisit} days ago}`;
+                displayVisitInfo = `visited ${daysSinceLastVisit} days ago`;
               }
             }
             const distance = currentPosition
