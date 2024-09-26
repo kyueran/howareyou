@@ -49,7 +49,11 @@ const LinkTree: React.FC = () => {
                 onClick={() => history.push('/display-visits')}
                 block
               >
-                {intl.formatMessage({ id: 'menu.DisplayVisits' })}
+                {intl.formatMessage({
+                  id: access.isStaff
+                    ? 'menu.DisplayVisits.Staff'
+                    : 'menu.DisplayVisits.Volunteer',
+                })}
               </Button>
             )}
             <LanguageSelector />
