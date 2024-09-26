@@ -256,7 +256,9 @@ const ResidentListPage: React.FC = () => {
       const filtered = data.filter(
         (elderly) =>
           elderly.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          elderly.block.toLowerCase().includes(searchText.toLowerCase()) ||
+          `${elderly.floor.toLowerCase()}${elderly.unitNumber.toLowerCase()}`.includes(searchText.toLowerCase()) ||
+          `${elderly.floor.toLowerCase()}-${elderly.unitNumber.toLowerCase()}`.includes(searchText.toLowerCase()) ||
+          `${elderly.block} ${elderly.floor}-${elderly.unitNumber}`.toLowerCase().includes(searchText.toLowerCase()) ||
           elderly.unitNumber.includes(searchText) ||
           elderly.address.toLowerCase().includes(searchText.toLowerCase()) ||
           elderly.elderlyCode
