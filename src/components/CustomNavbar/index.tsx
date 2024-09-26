@@ -16,7 +16,7 @@ const CustomNavbar: React.FC = () => {
 
   // Handle logo click
   const handleLogoClick = () => {
-    history.push('/');
+    history.push('/home');
   };
 
   return (

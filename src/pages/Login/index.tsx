@@ -122,7 +122,7 @@ const Login: React.FC = () => {
         flushSync(() => setInitialState({ ...initialState, ...response.data }));
         // Redirect to respective homepage after successful login
         const redirectUrl =
-          new URLSearchParams(location.search).get('redirect') || '/';
+          new URLSearchParams(location.search).get('redirect') || '/home';
 
         history.push(redirectUrl);
         message.success('Login successful!');
