@@ -44,6 +44,7 @@ const normFile = (e: any) => {
 
 const RecordVisit: React.FC = () => {
   const [form] = Form.useForm();
+  const [noIdForm] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>('');
@@ -58,7 +59,6 @@ const RecordVisit: React.FC = () => {
   const params = useParams<{ id: string }>();
   const [id, setId] = useState<string | undefined>(params.id);
   const [isScannerOpen, setIsScannerOpen] = useState<boolean>(false);
-  const [rearCameraId, setRearCameraId] = useState<string>();
 
   useEffect(() => {
     const fetchSeniorData = async () => {
@@ -96,13 +96,12 @@ const RecordVisit: React.FC = () => {
   const onFinish = async (values: any) => {
     setSubmitting(true);
 
-    const {
-      comments,
-      key_concerns,
-      modeOfInteraction,
-      customModeOfInteraction,
-      duration,
-    } = values;
+    const modeOfInteraction = noIdForm.getFieldValue('modeOfInteraction');
+    const customModeOfInteraction = noIdForm.getFieldValue(
+      'customModeOfInteraction',
+    );
+
+    const { comments, key_concerns, duration } = values;
 
     const mode_of_interaction =
       modeOfInteraction === 'others'
@@ -251,39 +250,6 @@ const RecordVisit: React.FC = () => {
     })),
   };
 
-  useEffect(() => {
-    if (isScannerOpen) {
-      // Get the deviceId of the rear camera when the scanner is opened
-      getRearCameraDeviceId().then((deviceId) => {
-        setRearCameraId(deviceId);
-      });
-    }
-  }, [isScannerOpen]);
-
-  async function getRearCameraDeviceId() {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(
-        (device) => device.kind === 'videoinput',
-      );
-
-      // Try to find a device labeled 'back' or 'rear'
-      const rearCamera = videoDevices.find(
-        (device) =>
-          device.label.toLowerCase().includes('back') ||
-          device.label.toLowerCase().includes('rear'),
-      );
-
-      // If not found, default to the last video device
-      return (
-        rearCamera?.deviceId || videoDevices[videoDevices.length - 1]?.deviceId
-      );
-    } catch (error) {
-      console.error('Error enumerating devices:', error);
-      return undefined;
-    }
-  }
-
   return (
     <Access accessible={access.isVolunteer || access.isStaff}>
       <Row justify="center" style={{ marginTop: '24px' }}>
@@ -344,14 +310,17 @@ const RecordVisit: React.FC = () => {
                       tab={intl.formatMessage({ id: 'fillUpFormTab' })}
                       key="2"
                     >
-                      <Form form={form}>
+                      <Form form={noIdForm}>
                         <Form.Item
                           name="modeOfInteraction"
                           label={intl.formatMessage({ id: 'indicateLocation' })}
                         >
                           <Select
                             onChange={(value) => {
-                              form.setFieldValue('modeOfInteraction', value);
+                              noIdForm.setFieldValue(
+                                'modeOfInteraction',
+                                value,
+                              );
                               setCustomMode(value === 'Others');
                             }}
                             placeholder={intl.formatMessage({
@@ -379,7 +348,7 @@ const RecordVisit: React.FC = () => {
                           >
                             <Input.TextArea
                               onChange={(e) =>
-                                form.setFieldValue(
+                                noIdForm.setFieldValue(
                                   'customModeOfInteraction',
                                   e.target.value,
                                 )
