@@ -1,4 +1,4 @@
-import { CloseOutlined, CopyOutlined, RightOutlined } from '@ant-design/icons';
+import { CloseOutlined, CopyOutlined, EnvironmentOutlined, RightOutlined } from '@ant-design/icons';
 import { ProSkeleton } from '@ant-design/pro-components';
 import {
   Button,
@@ -473,7 +473,7 @@ const ResidentListPage: React.FC = () => {
                             {displayVisitInfo}
                           </Text>
                           <Text type="secondary" style={{ fontSize: '12px' }}>
-                            📍 {distance}
+                            <EnvironmentOutlined /> {distance}
                           </Text>
                         </Space>
                       </Space>
