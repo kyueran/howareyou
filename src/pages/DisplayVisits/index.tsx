@@ -283,25 +283,8 @@ import {
   
     const formatTimeDifference = (submissionTime) => {
       const now = dayjs().tz("Asia/Singapore");
-      const submissionDate = dayjs(submissionTime);
-      const diffInSeconds = Math.floor((now.valueOf() - submissionDate.valueOf()) / 1000);
-  
-      if (diffInSeconds < 60) {
-        // If less than 60 seconds, show seconds
-        return `${diffInSeconds} sec${diffInSeconds > 1 ? 's' : ''} ago`;
-      } else if (diffInSeconds < 60 * 60) {
-        // If less than 60 minutes (1 hour), show minutes
-        const minutes = Math.floor(diffInSeconds / 60);
-        return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
-      } else if (diffInSeconds < 24 * 60 * 60) {
-        // If less than 24 hours, show hours
-        const hours = Math.floor(diffInSeconds / (60 * 60));
-        return `${hours} hr${hours > 1 ? 's' : ''} ago`;
-      } else {
-        // If more than 24 hours, show days
-        const days = Math.floor(diffInSeconds / (60 * 60 * 24));
-        return `${days} day${days > 1 ? 's' : ''} ago`;
-      }
+      const submissionDate = dayjs(submissionTime).tz("Asia/Singapore");
+      return submissionDate.from(now);
     };
 
     // Define the status menu for the dropdown
