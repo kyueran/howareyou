@@ -19,6 +19,7 @@ export default {
   'menu.ElderlyProfile': 'Profil Warga Emas',
   'menu.RecordVisit': 'Catat Lawatan Baru',
   'menu.RecordVisitNoId': 'Catat Lawatan Baru',
+  'menu.DisplayVisits': 'Pangkalan Data Lawatan',
   'menu.DisplayVisits.Staff': 'Pangkalan Data Lawatan',
   'menu.DisplayVisits.Volunteer': 'Penghantaran Saya',
   'menu.MyProfile': 'Profil Saya',

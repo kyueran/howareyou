@@ -19,6 +19,7 @@ export default {
   'menu.ElderlyProfile': 'மூத்தவர் சுயவிவரம்',
   'menu.RecordVisit': 'புதிய வருகையை பதிவு செய்க',
   'menu.RecordVisitNoId': 'புதிய வருகையை பதிவு செய்க',
+  'menu.DisplayVisits': 'பார்வை தரவுத்தொகுப்பு',
   'menu.DisplayVisits.Staff': 'பார்வை தரவுத்தொகுப்பு',
   'menu.DisplayVisits.Volunteer': 'என் சமர்ப்பிப்புகள்',
   'menu.MyProfile': 'என் சுயவிவரம்',

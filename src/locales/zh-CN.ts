@@ -19,6 +19,7 @@ export default {
   'menu.ElderlyProfile': '老年人档案',
   'menu.RecordVisit': '记录新访问',
   'menu.RecordVisitNoId': '记录新访问',
+  'menu.DisplayVisits': '探访数据库',
   'menu.DisplayVisits.Staff': '探访数据库',
   'menu.DisplayVisits.Volunteer': '我的提交',
   'menu.MyProfile': '我的个人资料',

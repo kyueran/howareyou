@@ -19,6 +19,7 @@ export default {
   'menu.ElderlyProfile': 'Elderly Profile',
   'menu.RecordVisit': 'Record New Visit',
   'menu.RecordVisitNoId': 'Record New Visit',
+  'menu.DisplayVisits': 'Visitation Database',
   'menu.DisplayVisits.Staff': 'Visitation Database',
   'menu.DisplayVisits.Volunteer': 'My Submissions',
   'menu.MyProfile': 'My Profile',
