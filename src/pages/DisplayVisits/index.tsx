@@ -282,8 +282,8 @@ import {
     };
   
     const formatTimeDifference = (submissionTime) => {
-      const now = dayjs().tz("Asia/Singapore");
-      const submissionDate = dayjs(submissionTime);
+      const now = dayjs();
+      const submissionDate = dayjs(submissionTime).utc();
       return submissionDate.from(now);
     };
 
