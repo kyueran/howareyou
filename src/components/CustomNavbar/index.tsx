@@ -32,7 +32,7 @@ const CustomNavbar: React.FC = () => {
         <Col xs={4}>
           <div
             onClick={handleLogoClick}
-            style={{ cursor: 'pointer', color: 'white', fontSize: '20px' }}
+            style={{ cursor: 'pointer', color: 'white', fontSize: '18px' }}
           >
             <HomeOutlined />
           </div>
