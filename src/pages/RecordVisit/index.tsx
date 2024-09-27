@@ -279,19 +279,17 @@ const RecordVisit: React.FC = () => {
               direction="horizontal"
               style={{
                 width: '100%',
-                marginTop: '8px',
                 justifyContent: 'flex-start',
               }}
             >
               <Button
-                style={{ marginBottom: '8px' }}
                 type="text"
                 icon={<LeftOutlined />}
                 onClick={() => history.go(-1)}
               >
                 {intl.formatMessage({ id: 'backBtn' })}
               </Button>
-              <Title level={3}>
+              <Title level={3} style={{ margin: '0px' }}>
                 {intl.formatMessage({ id: 'menu.RecordVisit' })}
               </Title>
             </Space>
