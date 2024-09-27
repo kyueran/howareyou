@@ -444,7 +444,7 @@ const DisplayVisitsPage: React.FC = () => {
 
                       <Space align="center">
                         <EnvironmentOutlined />
-                        <Text>{visit.mode_of_interaction ?? 'Unknown'}</Text>
+                        <Text>{visit.mode_of_interaction ?? 'Home Visit'}</Text>
                       </Space>
                       
                       <Space align="center">
