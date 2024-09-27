@@ -1,3 +1,4 @@
+import { purple } from '@ant-design/colors';
 import { HomeOutlined } from '@ant-design/icons';
 import { history, useAccess, useIntl } from '@umijs/max';
 import { Col, Layout, Row, Typography } from 'antd';
@@ -20,29 +21,32 @@ const CustomNavbar: React.FC = () => {
   };
 
   return (
-    <Header
+    <div
       style={{
-        background: '#fff',
+        background: purple[4],
         padding: '0 16px',
-        boxShadow: '0 2px 8px #f0f1f2',
+        boxShadow: '0 2px 8px rgb(150 150 150)',
       }}
     >
       <Row align="middle" justify="space-between">
-        <Col xs={4} sm={4}>
-          <div onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
+        <Col xs={4}>
+          <div
+            onClick={handleLogoClick}
+            style={{ cursor: 'pointer', color: 'white' }}
+          >
             <HomeOutlined />
           </div>
         </Col>
         <Col xs={12} sm={16} style={{ textAlign: 'center' }}>
-          <Title level={4} style={{ margin: 0 }}>
+          <Title level={3} style={{ margin: 0, color: 'white' }}>
             {navbarTitle}
           </Title>
         </Col>
-        <Col xs={8} sm={4} style={{ textAlign: 'right' }}>
+        <Col xs={4} style={{ textAlign: 'right' }}>
           <ProfileNavigation />
         </Col>
       </Row>
-    </Header>
+    </div>
   );
 };
 
