@@ -46,6 +46,7 @@ export default {
   elderlyProfile: 'சுயவிவரம்',
   visits: 'வருகைகள்',
   address: 'முகவரி: ',
+  contactInformation: 'தொடர்பு விவரங்கள்',
   socialInformation: 'சமூகத் தகவல்',
   otherInformation: 'மற்றவை',
   copiedSuccess: 'முகவரி கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது!',

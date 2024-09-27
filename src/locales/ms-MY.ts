@@ -46,6 +46,7 @@ export default {
   elderlyProfile: 'Profil',
   visits: 'Lawatan',
   address: 'Alamat: ',
+  contactInformation: 'Maklumat Perhubungan',
   socialInformation: 'Sosial',
   otherInformation: 'Lain-lain',
   copiedSuccess: 'Alamat disalin ke papan klip!',

@@ -285,7 +285,7 @@ const ResidentProfilePage: React.FC = () => {
                     justifyContent: 'space-between',
                   }}
                 >
-                  <Space.Compact direction="vertical" align="center">
+                  <Space.Compact direction="vertical">
                     <div>
                       <Text strong>
                         {intl.formatMessage({ id: 'seniorCode' })}
@@ -298,36 +298,38 @@ const ResidentProfilePage: React.FC = () => {
                       <Text>{data.centreCode}</Text>
                     </div>
 
-                    <Button
-                      type="primary"
-                      icon={<PlusOutlined />}
-                      onClick={handleSubmitInfo}
-                      style={{ marginTop: 8, borderRadius: 5 }}
-                    >
-                      {intl.formatMessage({ id: 'addVisitBtn' })}
-                    </Button>
-                  </Space.Compact>
-                  <Button
-                    onClick={showModal}
-                    icon={
-                      <QrcodeOutlined
-                        style={{ fontSize: '24px', alignItems: 'center' }}
+                    <Space direction='horizontal' align='center' style={{ marginTop: 8 }}>
+                      <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={handleSubmitInfo}
+                        style={{ borderRadius: 5 }}
+                      >
+                        {intl.formatMessage({ id: 'addVisitBtn' })}
+                      </Button>
+                      <Button
+                        onClick={showModal}
+                        icon={
+                          <QrcodeOutlined
+                            style={{ fontSize: '24px', alignItems: 'center' }}
+                          />
+                        }
                       />
-                    }
-                  />
+                    </Space>
+                  </Space.Compact>
                 </Space>
               </Col>
             </Row>
 
-            
+            <Title level={4} style={{ marginBottom: 8 }}>{intl.formatMessage({ id: 'contactInformation' })}</Title> 
             <Card bodyStyle={{ padding: 16, paddingTop: 8, paddingBottom: 8 }}>
               <Row>
-              <Space direction="horizontal">
-                <Text strong>{intl.formatMessage({ id: 'contact' })}</Text>
-                <Text style={{ display: 'block', fontSize: '14px' }}>
-                  {data.contactDetails}
-                </Text>
-              </Space>
+                <Space direction="horizontal">
+                  <Text strong>{intl.formatMessage({ id: 'contact' })}</Text>
+                  <Text style={{ display: 'block', fontSize: '14px' }}>
+                    {data.contactDetails}
+                  </Text>
+                </Space>
               </Row>
               <Row>
                 <Space direction="horizontal">
@@ -363,32 +365,32 @@ const ResidentProfilePage: React.FC = () => {
                 </Col>
               </Row>
 
-            {/* NOK Section */}
-            <Row gutter={24} style={{ marginTop: 4, alignItems: 'start' }}>
-              <Col> {/* Fixed width for the label */}
-                <Text strong>{intl.formatMessage({ id: 'nok' })}</Text>
-              </Col>
-              <Col flex="auto"> {/* The NOK info will take up the remaining space */}
-                <Text style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }}>
-                  {`${data.nok[0].name} (${data.nok[0].relationship}) - ${data.nok[0].contactDetails}`}
-                </Text>
-              </Col>
-            </Row>
+              {/* NOK Section */}
+              <Row gutter={24} style={{ marginTop: 4, alignItems: 'start' }}>
+                <Col> {/* Fixed width for the label */}
+                  <Text strong>{intl.formatMessage({ id: 'nok' })}</Text>
+                </Col>
+                <Col flex="auto"> {/* The NOK info will take up the remaining space */}
+                  <Text style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }}>
+                    {`${data.nok[0].name} (${data.nok[0].relationship}) - ${data.nok[0].contactDetails}`}
+                  </Text>
+                </Col>
+              </Row>
 
-            <Row style={{ marginTop: 4 }}>
-              <Col>
-                <Text strong>{intl.formatMessage({ id: 'languages' })}</Text>
-                {data.languages.length > 0 ? (
-                  data.languages.map((lang, i) => (
-                    <Tag key={i} color="" bordered={false}>
-                      {lang}
-                    </Tag>
-                  ))
-                ) : (
-                  <Text color="gray">{intl.formatMessage({ id: 'none' })}</Text>
-                )}
-              </Col>
-            </Row>
+              <Row style={{ marginTop: 4 }}>
+                <Col>
+                  <Text strong>{intl.formatMessage({ id: 'languages' })}</Text>
+                  {data.languages.length > 0 ? (
+                    data.languages.map((lang, i) => (
+                      <Tag key={i} color="" bordered={false}>
+                        {lang}
+                      </Tag>
+                    ))
+                  ) : (
+                    <Text color="gray">{intl.formatMessage({ id: 'none' })}</Text>
+                  )}
+                </Col>
+              </Row>
             </Card>
 
             {/* Social Information */}

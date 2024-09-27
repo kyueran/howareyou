@@ -46,6 +46,7 @@ export default {
   elderlyProfile: '档案',
   visits: '访问',
   address: '地址: ',
+  contactInformation: '联系方式',
   socialInformation: '社交',
   otherInformation: '其他',
   copiedSuccess: '地址已复制到剪贴板！',

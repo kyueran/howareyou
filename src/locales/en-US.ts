@@ -46,6 +46,7 @@ export default {
   elderlyProfile: 'Profile',
   visits: 'Visits',
   address: 'Address: ',
+  contactInformation: 'Contacts',
   socialInformation: 'Social',
   otherInformation: 'Other',
   copiedSuccess: 'Address copied to clipboard!',
