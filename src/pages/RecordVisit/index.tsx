@@ -2,6 +2,7 @@ import {
   CheckCircleFilled,
   CloseOutlined,
   ExclamationCircleFilled,
+  LeftOutlined,
   PlusOutlined,
   QuestionCircleFilled,
   RightOutlined,
@@ -58,7 +59,6 @@ const RecordVisit: React.FC = () => {
   const params = useParams<{ id: string }>();
   const [id, setId] = useState<string | undefined>(params.id);
   const [isScannerOpen, setIsScannerOpen] = useState<boolean>(false);
-  const [rearCameraId, setRearCameraId] = useState<string>();
 
   const [modeOfInteraction, setModeOfInteraction] =
     useState<string>('Home Visit'); // Default to 'Home Visit'
@@ -251,38 +251,6 @@ const RecordVisit: React.FC = () => {
     })),
   };
 
-  useEffect(() => {
-    if (isScannerOpen) {
-      // Get the deviceId of the rear camera when the scanner is opened
-      getRearCameraDeviceId().then((deviceId) => {
-        setRearCameraId(deviceId);
-      });
-    }
-  }, [isScannerOpen]);
-
-  async function getRearCameraDeviceId() {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(
-        (device) => device.kind === 'videoinput',
-      );
-
-      // Try to find a device labeled 'back' or 'rear'
-      const rearCamera = videoDevices.find(
-        (device) =>
-          device.label.toLowerCase().includes('back') ||
-          device.label.toLowerCase().includes('rear'),
-      );
-
-      // If not found, default to the last video device
-      return (
-        rearCamera?.deviceId || videoDevices[videoDevices.length - 1]?.deviceId
-      );
-    } catch (error) {
-      console.error('Error enumerating devices:', error);
-      return undefined;
-    }
-  }
   form.setFieldValue('modeOfInteraction', 'Home Visit');
 
   const handleModeOfInteractionChange = (value: string) => {
@@ -307,6 +275,26 @@ const RecordVisit: React.FC = () => {
       <Row justify="center" style={{ marginTop: '24px' }}>
         <Col xs={22} sm={20} md={16} lg={12}>
           <Space direction="vertical" size={20} style={{ width: '100%' }}>
+            <Space
+              direction="horizontal"
+              style={{
+                width: '100%',
+                marginTop: '8px',
+                justifyContent: 'flex-start',
+              }}
+            >
+              <Button
+                style={{ marginBottom: '8px' }}
+                type="text"
+                icon={<LeftOutlined />}
+                onClick={() => history.go(-1)}
+              >
+                {intl.formatMessage({ id: 'backBtn' })}
+              </Button>
+              <Title level={3}>
+                {intl.formatMessage({ id: 'menu.RecordVisit' })}
+              </Title>
+            </Space>
             {id === undefined ? (
               <>
                 <Tabs defaultActiveKey="1" centered type="card">
@@ -552,9 +540,6 @@ const RecordVisit: React.FC = () => {
               </>
             ) : (
               <>
-                <Title level={3} style={{ marginBottom: '0px' }}>
-                  {intl.formatMessage({ id: 'menu.RecordVisit' })}
-                </Title>
                 <Access accessible={access.isStaff}>
                   <Card
                     style={{ width: '100%' }}
