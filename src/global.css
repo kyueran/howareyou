@@ -2,3 +2,14 @@ html,
 body {
   overflow-x: hidden;
 }
+.full-screen-modal .ant-modal,
+.full-screen-modal .ant-modal-content {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  top: 0;
+  left: 0;
+  padding: 0;
+  position: fixed;
+  overflow: auto;
+}

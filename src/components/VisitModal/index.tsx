@@ -2,9 +2,11 @@ import {
   ClockCircleOutlined,
   EnvironmentOutlined,
   ExclamationCircleOutlined,
+  LeftOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import {
+  Button,
   Card,
   Carousel,
   Col,
@@ -19,6 +21,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import React, { useEffect, useState } from 'react';
 import { VisitInfo } from '../../pages/ElderlyResidents';
+import { useIntl } from 'umi';
 
 const { Text, Title } = Typography;
 
@@ -36,6 +39,8 @@ interface VisitModalProps {
   isVisible: boolean;
   onClose: () => void;
 }
+
+dayjs.extend(relativeTime);
 
 const VisitModal: React.FC<VisitModalProps> = ({
   visit,
@@ -107,29 +112,41 @@ const VisitModal: React.FC<VisitModalProps> = ({
     }
   }, [visit.elderly_id, userRole]);
 
-  dayjs.extend(relativeTime);
+  const intl = useIntl()
 
   return (
     <Modal
       title={
-        <div
-          style={{
-            fontSize: '24px', // Larger font size
-            fontWeight: 'bold', // Bold text
-            padding: '6px', // Padding around the title
-            borderBottom: '1px solid #e8e8e8', // Bottom border to separate from the form
-            textAlign: 'center', // Center align the title
-          }}
+        <Row
+        align="middle" // Vertically align the button and title
+        style={{ width: '100%', marginBottom: 8, marginTop: 16, position: 'relative' }} // Add margin to avoid overlap
         >
-          Visit Details
-        </div>
+          <Col flex="none" style={{ marginRight: 'auto', zIndex: 3 }}>
+            <Button
+              type="text"
+              icon={<LeftOutlined />}
+              onClick={onClose}
+            >
+              {intl.formatMessage({ id: 'backBtn' })}
+            </Button>
+          </Col>
+          
+          <Col flex="auto" style={{ textAlign: 'center', position: 'absolute', left: 0, right: 0 }}>
+            <Title level={3} style={{ margin: 0 }}>
+              {intl.formatMessage({ id: 'menu.ElderlyProfile' })}
+            </Title>
+          </Col>
+        </Row>
       }
       open={isVisible}
       onCancel={onClose}
       footer={null}
+      closable={false}
       width="100%" // Make the modal full width
-      style={{ top: 0, height: '100%', padding: 0 }} // Position it at the top and make it full height
+      style={{ top: 0, height: '100vh', width: '100vw', margin: 0, padding: 0 }} // Position it at the top and make it full height
+      bodyStyle={{ padding: 8 }}
       centered={false} // Disable centering since it's fullscreen
+      className='full-screen-modal'
     >
       <Row gutter={[16, 16]} align="middle" justify="space-between">
         <Col>
