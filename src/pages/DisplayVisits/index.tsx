@@ -6,6 +6,7 @@ import {
   EnvironmentOutlined,
   ExclamationCircleOutlined,
   FilterOutlined,
+  LeftOutlined,
   QuestionCircleOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -336,9 +337,24 @@ const DisplayVisitsPage: React.FC = () => {
       <Row justify="center" style={{ marginTop: '24px' }}>
         <Col xs={22} sm={20} md={16} lg={12}>
           <Space direction="vertical" size={16} style={{ width: '100%' }}>
-            <Title level={3} style={{ marginBottom: '-2px' }}>
-              {intl.formatMessage({ id: 'menu.DisplayVisits' })}
-            </Title>
+            <Space
+              direction="horizontal"
+              style={{
+                width: '100%',
+                justifyContent: 'flex-start',
+              }}
+            >
+              <Button
+                type="text"
+                icon={<LeftOutlined />}
+                onClick={() => history.go(-1)}
+              >
+                {intl.formatMessage({ id: 'backBtn' })}
+              </Button>
+              <Title level={3} style={{ margin: '0px' }}>
+                {intl.formatMessage({ id: 'menu.DisplayVisits' })}
+              </Title>
+            </Space>
 
             {/* AutoComplete search for elderly or volunteer/staff (staff only) */}
             {visitorInfo.role === 'staff' && (
