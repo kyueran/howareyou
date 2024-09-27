@@ -213,7 +213,7 @@ const ResidentProfilePage: React.FC = () => {
 
   return (
     <Row justify='center'>
-    <Col xs={22} sm={20} md={16} lg={12}>
+    <Col xs={24} sm={20} md={16} lg={12}>
       <Row
         align="middle" // Vertically align the button and title
         style={{ width: '100%', marginBottom: 8, marginTop: 16, position: 'relative' }} // Add margin to avoid overlap
@@ -236,7 +236,7 @@ const ResidentProfilePage: React.FC = () => {
       </Row>
 
       {loading || !data ? (
-        <Skeleton active title paragraph={{ rows: 4 }} />
+        <Skeleton active title paragraph={{ rows: 4 }} style={{ margin: 16 }} />
       ) : (
         <>
           {/* Profile Information Section */}

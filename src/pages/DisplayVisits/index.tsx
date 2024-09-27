@@ -309,12 +309,6 @@ const DisplayVisitsPage: React.FC = () => {
     setSearchVasId(null);
   };
 
-  const formatTimeDifference = (submissionTime) => {
-    const now = dayjs();
-    const submissionDate = dayjs(submissionTime).subtract(8, 'hour');
-    return submissionDate.from(now);
-  };
-
   return (
     <>
       <Row justify="center" style={{ marginTop: '24px' }}>
@@ -475,14 +469,14 @@ const DisplayVisitsPage: React.FC = () => {
                         <ClockCircleOutlined />
                         <Text>
                           {visit.submission_time
-                            ? dayjs(visit.submission_time).subtract(8, 'hour').format(
+                            ? dayjs(visit.submission_time).format(
                                 'D MMM YYYY, h:mmA',
                               )
                             : 'Unknown Time'}{' '}
                           (
                           <Text strong>
                             {visit.submission_time
-                              ? `${dayjs().to(dayjs(visit.submission_time).subtract(8, 'hour'))}`
+                              ? `${dayjs().to(dayjs(visit.submission_time))}`
                               : 'None'}
                           </Text>
                           )
