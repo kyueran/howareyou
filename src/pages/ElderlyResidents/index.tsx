@@ -297,7 +297,8 @@ const ResidentListPage: React.FC = () => {
     } else {
       // Map days 1-6 to shades of red
       // Calculate lightness from 100% (white) to 85% (darker red)
-      const lightness = 100 - Math.pow(Math.max(0, Number(days) - 1) / 6, 2) * 15; // Adjust lightness between 100% and 85%
+      const lightness =
+        100 - Math.pow(Math.max(0, Number(days) - 1) / 6, 2) * 15; // Adjust lightness between 100% and 85%
       return `hsl(0, 100%, ${lightness}%)`;
     }
   };
@@ -355,14 +356,20 @@ const ResidentListPage: React.FC = () => {
           itemLayout="vertical"
           dataSource={filteredData}
           renderItem={(elderly) => {
-            const mostRecentVisit = elderly.recentVisits && elderly.recentVisits.length > 0
-              ? elderly.recentVisits.reduce((latestVisit, currentVisit) => {
-                  const currentVisitTime = dayjs(currentVisit.submission_time);
-                  return !latestVisit || currentVisitTime.isAfter(dayjs(latestVisit.submission_time))
-                    ? currentVisitTime
-                    : latestVisit;
-                }, null)
-              : null;
+            const mostRecentVisit =
+              elderly.recentVisits && elderly.recentVisits.length > 0
+                ? elderly.recentVisits.reduce((latestVisit, currentVisit) => {
+                    const currentVisitTime = dayjs(
+                      currentVisit.submission_time,
+                    );
+                    return !latestVisit ||
+                      currentVisitTime.isAfter(
+                        dayjs(latestVisit.submission_time),
+                      )
+                      ? currentVisitTime
+                      : latestVisit;
+                  }, null)
+                : null;
             const daysSinceLastVisit = mostRecentVisit
               ? dayjs().diff(mostRecentVisit.startOf('day'), 'days')
               : 'No visits';
@@ -384,7 +391,8 @@ const ResidentListPage: React.FC = () => {
             const visitInfoColor = daysSinceLastVisit < 8 ? 'default' : 'red';
 
             // Calculate background color based on daysSinceLastVisit
-            const cardBackgroundColor = getCardBackgroundColor(daysSinceLastVisit);
+            const cardBackgroundColor =
+              getCardBackgroundColor(daysSinceLastVisit);
 
             // Calculate distance (existing code)
             const distance = currentPosition
@@ -463,7 +471,9 @@ const ResidentListPage: React.FC = () => {
                           </Title>
 
                           {/* Right-aligned RightOutlined icon */}
-                          <div style={{ marginLeft: 'auto', fontWeight: 'bold' }}>
+                          <div
+                            style={{ marginLeft: 'auto', fontWeight: 'bold' }}
+                          >
                             <RightOutlined />
                           </div>
                         </Space>
@@ -496,10 +506,7 @@ const ResidentListPage: React.FC = () => {
                               />
                             }
                             onClick={(e) => {
-                              handleCopy(
-                                e,
-                                `${elderly.postalCode}`,
-                              );
+                              handleCopy(e, `${elderly.postalCode}`);
                             }}
                           >
                             <Text type="secondary">
@@ -516,7 +523,10 @@ const ResidentListPage: React.FC = () => {
                             justifyContent: 'space-between',
                           }}
                         >
-                          <Text strong={daysSinceLastVisit >= 8} style={{ fontSize: '12px', color: visitInfoColor }}>
+                          <Text
+                            strong={daysSinceLastVisit >= 8}
+                            style={{ fontSize: '12px', color: visitInfoColor }}
+                          >
                             {displayVisitInfo}
                           </Text>
                           <Text style={{ fontSize: '12px' }}>

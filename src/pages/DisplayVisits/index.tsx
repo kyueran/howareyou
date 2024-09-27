@@ -412,7 +412,6 @@ const DisplayVisitsPage: React.FC = () => {
                 }
 
                 // Volunteers can only see mode_of_interaction, submission_time, and status
-                const isVolunteer = visitorInfo.role === 'volunteer';
                 return (
                   <Card
                     key={visit.id}
@@ -452,14 +451,14 @@ const DisplayVisitsPage: React.FC = () => {
                         <ClockCircleOutlined />
                         <Text>
                           {visit.submission_time
-                            ? dayjs(visit.submission_time).format(
+                            ? dayjs(visit.submission_time).subtract(8, 'hour').format(
                                 'D MMM YYYY, h:mmA',
                               )
                             : 'Unknown Time'}{' '}
                           (
                           <Text strong>
                             {visit.submission_time
-                              ? `${dayjs().to(dayjs(visit.submission_time))}`
+                              ? `${dayjs().to(dayjs(visit.submission_time).subtract(8, 'hour'))}`
                               : 'None'}
                           </Text>
                           )
