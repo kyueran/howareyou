@@ -152,7 +152,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
     >
       <Row justify='center' style={{ width: '100%' }}>
         <Col xs={22} sm={20} md={16} lg={12}>
-          <Space direction="vertical" size={0} style={{ width: '100%', paddingBottom: '10vh' }}>
+          <Space direction="vertical" size={0} style={{ width: '100%', paddingBottom: '20vh' }}>
             <Title level={5} style={{ marginTop: 8, marginBottom: '8px' }}>
               Posted by:
             </Title>

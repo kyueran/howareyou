@@ -12,4 +12,5 @@ body {
   padding: 0;
   position: fixed;
   overflow: auto;
+  border-radius: 0;
 }
