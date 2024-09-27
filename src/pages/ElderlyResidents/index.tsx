@@ -2,6 +2,7 @@ import {
   CloseOutlined,
   CopyOutlined,
   EnvironmentOutlined,
+  LeftOutlined,
   RightOutlined,
 } from '@ant-design/icons';
 import { ProSkeleton } from '@ant-design/pro-components';
@@ -256,9 +257,15 @@ const ResidentListPage: React.FC = () => {
       const filtered = data.filter(
         (elderly) =>
           elderly.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          `${elderly.floor.toLowerCase()}${elderly.unitNumber.toLowerCase()}`.includes(searchText.toLowerCase()) ||
-          `${elderly.floor.toLowerCase()}-${elderly.unitNumber.toLowerCase()}`.includes(searchText.toLowerCase()) ||
-          `${elderly.block} ${elderly.floor}-${elderly.unitNumber}`.toLowerCase().includes(searchText.toLowerCase()) ||
+          `${elderly.floor.toLowerCase()}${elderly.unitNumber.toLowerCase()}`.includes(
+            searchText.toLowerCase(),
+          ) ||
+          `${elderly.floor.toLowerCase()}-${elderly.unitNumber.toLowerCase()}`.includes(
+            searchText.toLowerCase(),
+          ) ||
+          `${elderly.block} ${elderly.floor}-${elderly.unitNumber}`
+            .toLowerCase()
+            .includes(searchText.toLowerCase()) ||
           elderly.unitNumber.includes(searchText) ||
           elderly.address.toLowerCase().includes(searchText.toLowerCase()) ||
           elderly.elderlyCode
@@ -290,10 +297,26 @@ const ResidentListPage: React.FC = () => {
   };
 
   return (
-    <div style={{ margin: '0 8px' }}>
-      <Title level={3} style={{ marginTop: 16, marginBottom: 0 }}>
-        {intl.formatMessage({ id: 'elderlyResidents' })}
-      </Title>
+    <div style={{ margin: '24px 8px' }}>
+      <Space
+        direction="horizontal"
+        style={{
+          width: '100%',
+          justifyContent: 'flex-start',
+          marginBottom: '8px',
+        }}
+      >
+        <Button
+          type="text"
+          icon={<LeftOutlined />}
+          onClick={() => history.go(-1)}
+        >
+          {intl.formatMessage({ id: 'backBtn' })}
+        </Button>
+        <Title level={3} style={{ margin: '0px' }}>
+          {intl.formatMessage({ id: 'elderlyResidents' })}
+        </Title>
+      </Space>
       <FormattedMessage
         id="topWarningMsg"
         values={{ location: <Text type="danger">Queenstown</Text> }}
