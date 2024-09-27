@@ -273,16 +273,13 @@ const RecordVisit: React.FC = () => {
 
   return (
     <Access accessible={access.isVolunteer || access.isStaff}>
-      <Row justify="center" style={{ marginTop: '24px' }}>
-        <Col xs={22} sm={20} md={16} lg={12}>
-          <Space direction="vertical" size={20} style={{ width: '100%' }}>
-            <Space
-              direction="horizontal"
-              style={{
-                width: '100%',
-                justifyContent: 'flex-start',
-              }}
-            >
+      <Row justify="center">
+        <Col xs={24} sm={20} md={16} lg={12}>
+          <Row
+            align="middle" // Vertically align the button and title
+            style={{ width: '100%', marginTop: 16, marginBottom: 16, position: 'relative' }} // Add margin to avoid overlap
+          >
+            <Col flex="none" style={{ marginRight: 'auto', zIndex: 3 }}>
               <Button
                 type="text"
                 icon={<LeftOutlined />}
@@ -290,19 +287,35 @@ const RecordVisit: React.FC = () => {
               >
                 {intl.formatMessage({ id: 'backBtn' })}
               </Button>
-              <Title level={3} style={{ margin: '0px' }}>
+            </Col>
+            
+            <Col flex="auto" style={{ textAlign: 'center', position: 'absolute', left: 0, right: 0 }}>
+              <Title level={3} style={{ margin: 0 }}>
                 {intl.formatMessage({ id: 'menu.RecordVisit' })}
               </Title>
-            </Space>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+
+      <Row justify="center">
+        <Col xs={22} sm={20} md={16} lg={12}>
+          <Space direction="vertical" size={20} style={{ width: '100%' }}>
             {id === undefined ? (
               <>
-                <Tabs defaultActiveKey="1" centered type="card">
+                <Tabs
+                  defaultActiveKey="1"
+                  centered
+                  type="card"
+                  tabBarStyle={{ marginBottom: 0 }}
+                >
                   <TabPane
                     tab={intl.formatMessage({ id: 'qrCodeTab' })}
                     key="1"
+                    style={{ backgroundColor: 'white', padding: 16, paddingBottom: '10vh' }}
                   >
                     {/* Button to open QR scanner */}
-                    <Text type="primary">
+                    <Text>
                       {intl.formatMessage({ id: 'areYouAtResidence' })}
                     </Text>
 

@@ -118,8 +118,8 @@ const VisitModal: React.FC<VisitModalProps> = ({
     <Modal
       title={
         <Row
-        align="middle" // Vertically align the button and title
-        style={{ width: '100%', marginBottom: 8, marginTop: 16, position: 'relative' }} // Add margin to avoid overlap
+          align="middle" // Vertically align the button and title
+          style={{ width: '100%', marginBottom: 8, marginTop: 16, position: 'relative' }} // Add margin to avoid overlap
         >
           <Col flex="none" style={{ marginRight: 'auto', zIndex: 3 }}>
             <Button

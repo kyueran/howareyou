@@ -19,6 +19,7 @@ import {
   message,
   Radio,
   Row,
+  Skeleton,
   Space,
   Typography,
 } from 'antd';
@@ -311,16 +312,13 @@ const DisplayVisitsPage: React.FC = () => {
 
   return (
     <>
-      <Row justify="center" style={{ marginTop: '24px' }}>
-        <Col xs={22} sm={20} md={16} lg={12}>
-          <Space direction="vertical" size={16} style={{ width: '100%' }}>
-            <Space
-              direction="horizontal"
-              style={{
-                width: '100%',
-                justifyContent: 'flex-start',
-              }}
-            >
+      <Row justify='center'>
+        <Col xs={24} sm={20} md={16} lg={12}>
+          <Row
+            align="middle" // Vertically align the button and title
+            style={{ width: '100%', marginTop: 16, position: 'relative' }} // Add margin to avoid overlap
+          >
+            <Col flex="none" style={{ marginRight: 'auto', zIndex: 3 }}>
               <Button
                 type="text"
                 icon={<LeftOutlined />}
@@ -328,16 +326,26 @@ const DisplayVisitsPage: React.FC = () => {
               >
                 {intl.formatMessage({ id: 'backBtn' })}
               </Button>
-              <Title level={3} style={{ margin: '0px' }}>
+            </Col>
+            
+            <Col flex="auto" style={{ textAlign: 'center', position: 'absolute', left: 0, right: 0 }}>
+              <Title level={3} style={{ margin: 0 }}>
                 {intl.formatMessage({ id: 'menu.DisplayVisits' })}
               </Title>
-            </Space>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
 
+      <Row justify="center" style={{ marginTop: 16 }}>
+        <Col xs={22} sm={20} md={16} lg={12}>
+          <Space direction="vertical" size={16} style={{ width: '100%' }}>
             {/* AutoComplete search for elderly or volunteer/staff (staff only) */}
             {visitorInfo.role === 'staff' && (
               <Row gutter={8} align="middle">
-                <Col xs={18} sm={18} md={20} lg={20} xl={20}>
+                <Col flex='auto'>
                   <AutoComplete
+                    size='large'
                     options={options}
                     onSearch={handleSearch}
                     onSelect={handleSelect}
@@ -357,8 +365,9 @@ const DisplayVisitsPage: React.FC = () => {
                     style={{ width: '100%', marginBottom: '0px' }}
                   />
                 </Col>
-                <Col xs={6} sm={6} md={4} lg={4} xl={4}>
+                <Col>
                   <Button
+                    size='large'
                     icon={<FilterOutlined />}
                     onClick={() => setShowFilters(!showFilters)}
                     type={showFilters ? 'primary' : 'default'}
@@ -387,7 +396,7 @@ const DisplayVisitsPage: React.FC = () => {
                     onChange={(e) => setStatusFilter(e.target.value)}
                     style={{ marginTop: '-2px' }}
                   >
-                    <Radio.Button value="good">Good</Radio.Button>
+                  <Radio.Button value="good">Good</Radio.Button>
                     <Radio.Button value="notGood">Not Good</Radio.Button>
                     <Radio.Button value="notAround">Not Around</Radio.Button>
                     <Radio.Button value="all">All</Radio.Button>
@@ -396,7 +405,8 @@ const DisplayVisitsPage: React.FC = () => {
               </Space>
             )}
 
-            {filteredVisits.length === 0 && !loading ? (
+            {loading ? <Skeleton />
+            : filteredVisits.length === 0 && !loading ? (
               <Text>{intl.formatMessage({ id: 'noVisits' })}</Text>
             ) : (
               filteredVisits.map((visit) => {

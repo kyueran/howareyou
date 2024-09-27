@@ -304,255 +304,261 @@ const ResidentListPage: React.FC = () => {
   };
 
   return (
+    <>
     <Row justify='center'>
-    <Col xs={22} sm={20} md={16} lg={12} style={{ paddingBottom: '5vh' }}>
-      <Row
-        align="middle" // Vertically align the button and title
-        style={{ width: '100%', marginTop: 16, position: 'relative' }} // Add margin to avoid overlap
-      >
-        <Col flex="none" style={{ marginRight: 'auto', zIndex: 3 }}>
-          <Button
-            type="text"
-            icon={<LeftOutlined />}
-            onClick={() => history.go(-1)}
-          >
-            {intl.formatMessage({ id: 'backBtn' })}
-          </Button>
-        </Col>
-        
-        <Col flex="auto" style={{ textAlign: 'center', position: 'absolute', left: 0, right: 0 }}>
-          <Title level={3} style={{ margin: 0 }}>
-            {intl.formatMessage({ id: 'elderlyResidents' })}
-          </Title>
+      <Col xs={22} sm={20} md={16} lg={12}>
+        <Row
+          align="middle" // Vertically align the button and title
+          style={{ width: '100%', marginTop: 16, position: 'relative' }} // Add margin to avoid overlap
+        >
+          <Col flex="none" style={{ marginRight: 'auto', zIndex: 3 }}>
+            <Button
+              type="text"
+              icon={<LeftOutlined />}
+              onClick={() => history.go(-1)}
+            >
+              {intl.formatMessage({ id: 'backBtn' })}
+            </Button>
+          </Col>
+          
+          <Col flex="auto" style={{ textAlign: 'center', position: 'absolute', left: 0, right: 0 }}>
+            <Title level={3} style={{ margin: 0 }}>
+              {intl.formatMessage({ id: 'elderlyResidents' })}
+            </Title>
+          </Col>
+        </Row>
+      </Col>
+    </Row>
+
+    <Row justify='center'>
+      <Col xs={22} sm={20} md={16} lg={12} style={{ paddingBottom: '5vh' }}>
+        <div style={{ marginTop: 8 }}>
+          <FormattedMessage
+            id="topWarningMsg"
+            values={{ location: <Text type="danger">Queenstown</Text> }}
+          />
+          <Input
+            style={{ width: '100%', margin: '8px 0' }}
+            size="large"
+            placeholder={intl.formatMessage({ id: 'searchElderlyPlaceholder' })}
+            suffix={
+              searchValue.length > 0 ? (
+                <CloseOutlined
+                  style={{
+                    fontSize: '20px',
+                    color: 'rgba(0, 0, 0, 0.45)',
+                    cursor: 'pointer',
+                  }}
+                  onClick={handleClear}
+                />
+              ) : (
+                <span />
+              )
+            }
+            value={searchValue}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
+          {loading ? (
+            <ProSkeleton type="list" />
+          ) : (
+            <List
+              itemLayout="vertical"
+              dataSource={filteredData}
+              renderItem={(elderly) => {
+                const mostRecentVisit =
+                  elderly.recentVisits && elderly.recentVisits.length > 0
+                    ? elderly.recentVisits.reduce((latestVisit, currentVisit) => {
+                        const currentVisitTime = dayjs(
+                          currentVisit.submission_time,
+                        );
+                        return !latestVisit ||
+                          currentVisitTime.isAfter(
+                            dayjs(latestVisit.submission_time),
+                          )
+                          ? currentVisitTime
+                          : latestVisit;
+                      }, null)
+                    : null;
+                const daysSinceLastVisit = mostRecentVisit
+                  ? dayjs().diff(mostRecentVisit.startOf('day'), 'days')
+                  : 'No visits';
+                let displayVisitInfo = 'No visits';
+                if (mostRecentVisit) {
+                  if (daysSinceLastVisit === 0) {
+                    displayVisitInfo = `visited today ${mostRecentVisit.format(
+                      'H:mmA',
+                    )}`;
+                  } else if (daysSinceLastVisit === 1) {
+                    displayVisitInfo = `visited yesterday ${mostRecentVisit.format(
+                      'H:mmA',
+                    )}`;
+                  } else {
+                    displayVisitInfo = `visited ${daysSinceLastVisit} days ago`;
+                  }
+                }
+
+                const visitInfoColor = daysSinceLastVisit < 8 ? 'default' : 'red';
+
+                // Calculate background color based on daysSinceLastVisit
+                const cardBackgroundColor =
+                  getCardBackgroundColor(daysSinceLastVisit);
+
+                // Calculate distance (existing code)
+                const distance = currentPosition
+                  ? `${(
+                      calculateDistance(
+                        1.3521,
+                        103.8198,
+                        currentPosition.lat,
+                        currentPosition.lon,
+                      ) / 1000
+                    ).toFixed(1)} km away`
+                  : intl.formatMessage({ id: 'loading' });
+
+                return (
+                  <List.Item style={{ padding: 0, paddingBottom: 8 }}>
+                    <Card
+                      style={{
+                        cursor: 'pointer',
+                        transition:
+                          'transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Initial light shadow
+                        overflow: 'hidden',
+                        // backgroundColor: cardBackgroundColor
+                      }}
+                      bodyStyle={{ padding: '8px 16px' }}
+                      onClick={() => history.push(`/elderly/${elderly.id}`)}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.03)'; // Slightly enlarge the card
+                        e.currentTarget.style.boxShadow =
+                          '0 6px 16px rgba(0, 0, 0, 0.15)'; // Darker shadow
+                        e.currentTarget.style.backgroundColor = '#f0f0f0'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)'; // Reset scale
+                        e.currentTarget.style.boxShadow =
+                          '0 2px 8px rgba(0, 0, 0, 0.1)'; // Reset shadow
+                        e.currentTarget.style.backgroundColor = 'white'
+                      }}
+                      onTouchStart={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.03)'; // Enlarge slightly on touch
+                        e.currentTarget.style.boxShadow =
+                          '0 6px 16px rgba(0, 0, 0, 0.15)'; // Darker shadow
+                        e.currentTarget.style.backgroundColor = '#f0f0f0'
+                      }}
+                      onTouchEnd={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)'; // Reset scale
+                        e.currentTarget.style.boxShadow =
+                          '0 2px 8px rgba(0, 0, 0, 0.1)'; // Reset shadow
+                        e.currentTarget.style.backgroundColor = 'white'
+                      }}
+                    >
+                      <Row gutter={0} justify="space-between">
+                        <Col xs={8} sm={6} style={{ alignContent: 'center' }}>
+                          <Image
+                            preview={false}
+                            src={
+                              elderly.photoUrl ||
+                              'https://via.placeholder.com/48x48'
+                            } // Reduce size for compact layout
+                            width={96}
+                            height={96}
+                            style={{ cursor: 'pointer' }}
+                          />
+                        </Col>
+                        <Col xs={16} sm={18}>
+                          <Space
+                            direction="vertical"
+                            size={0}
+                            style={{ width: '100%' }}
+                          >
+                            <Space
+                              direction="horizontal"
+                              style={{
+                                justifyContent: 'space-between',
+                                width: '100%',
+                              }}
+                            >
+                              <Title level={5} style={{ margin: 0 }}>
+                                {elderly.name} ({elderly.elderlyCode})
+                              </Title>
+
+                              {/* Right-aligned RightOutlined icon */}
+                              <div
+                                style={{ marginLeft: 'auto', fontWeight: 'bold' }}
+                              >
+                                <RightOutlined />
+                              </div>
+                            </Space>
+
+                            {/* Block, Floor, Unit, Address */}
+                            <Text type="secondary">
+                              {elderly.block} {elderly.floor}-{elderly.unitNumber},{' '}
+                              {elderly.address}
+                            </Text>
+
+                            <Space
+                              direction="horizontal"
+                              style={{
+                                justifyContent: 'space-between',
+                                width: '100%',
+                              }}
+                            >
+                              <Text type="secondary">
+                                Singapore {elderly.postalCode}
+                              </Text>
+
+                              {/* Secondary-colored Copy button */}
+                              <Button
+                                type="default"
+                                size="small"
+                                style={{ marginLeft: 0, borderRadius: 4 }}
+                                icon={
+                                  <CopyOutlined
+                                    style={{ color: 'rgba(0, 0, 0, 0.45)' }}
+                                  />
+                                }
+                                onClick={(e) => {
+                                  handleCopy(e, `${elderly.postalCode}`);
+                                }}
+                              >
+                                <Text type="secondary">
+                                  {intl.formatMessage({ id: 'copy' })}
+                                </Text>
+                              </Button>
+                            </Space>
+
+                            <Space
+                              direction="horizontal"
+                              style={{
+                                width: '100%',
+                                marginTop: 4,
+                                justifyContent: 'space-between',
+                              }}
+                            >
+                              <Text
+                                strong={daysSinceLastVisit >= 8}
+                                style={{ fontSize: '12px', color: visitInfoColor }}
+                              >
+                                {displayVisitInfo}
+                              </Text>
+                              <Text style={{ fontSize: '12px' }}>
+                                <EnvironmentOutlined /> {distance}
+                              </Text>
+                            </Space>
+                          </Space>
+                        </Col>
+                      </Row>
+                    </Card>
+                  </List.Item>
+                );
+              }}
+            />
+          )}
+          </div>
         </Col>
       </Row>
-
-      <div style={{ marginTop: 8 }}>
-      <FormattedMessage
-        id="topWarningMsg"
-        values={{ location: <Text type="danger">Queenstown</Text> }}
-      />
-      <Input
-        style={{ width: '100%', margin: '8px 0' }}
-        size="large"
-        placeholder={intl.formatMessage({ id: 'searchElderlyPlaceholder' })}
-        suffix={
-          searchValue.length > 0 ? (
-            <CloseOutlined
-              style={{
-                fontSize: '20px',
-                color: 'rgba(0, 0, 0, 0.45)',
-                cursor: 'pointer',
-              }}
-              onClick={handleClear}
-            />
-          ) : (
-            <span />
-          )
-        }
-        value={searchValue}
-        onChange={(e) => handleSearch(e.target.value)}
-      />
-      {loading ? (
-        <ProSkeleton type="list" />
-      ) : (
-        <List
-          itemLayout="vertical"
-          dataSource={filteredData}
-          renderItem={(elderly) => {
-            const mostRecentVisit =
-              elderly.recentVisits && elderly.recentVisits.length > 0
-                ? elderly.recentVisits.reduce((latestVisit, currentVisit) => {
-                    const currentVisitTime = dayjs(
-                      currentVisit.submission_time,
-                    );
-                    return !latestVisit ||
-                      currentVisitTime.isAfter(
-                        dayjs(latestVisit.submission_time),
-                      )
-                      ? currentVisitTime
-                      : latestVisit;
-                  }, null)
-                : null;
-            const daysSinceLastVisit = mostRecentVisit
-              ? dayjs().diff(mostRecentVisit.startOf('day'), 'days')
-              : 'No visits';
-            let displayVisitInfo = 'No visits';
-            if (mostRecentVisit) {
-              if (daysSinceLastVisit === 0) {
-                displayVisitInfo = `visited today ${mostRecentVisit.format(
-                  'H:mmA',
-                )}`;
-              } else if (daysSinceLastVisit === 1) {
-                displayVisitInfo = `visited yesterday ${mostRecentVisit.format(
-                  'H:mmA',
-                )}`;
-              } else {
-                displayVisitInfo = `visited ${daysSinceLastVisit} days ago`;
-              }
-            }
-
-            const visitInfoColor = daysSinceLastVisit < 8 ? 'default' : 'red';
-
-            // Calculate background color based on daysSinceLastVisit
-            const cardBackgroundColor =
-              getCardBackgroundColor(daysSinceLastVisit);
-
-            // Calculate distance (existing code)
-            const distance = currentPosition
-              ? `${(
-                  calculateDistance(
-                    1.3521,
-                    103.8198,
-                    currentPosition.lat,
-                    currentPosition.lon,
-                  ) / 1000
-                ).toFixed(1)} km away`
-              : intl.formatMessage({ id: 'loading' });
-
-            return (
-              <List.Item style={{ padding: 0, paddingBottom: 8 }}>
-                <Card
-                  style={{
-                    cursor: 'pointer',
-                    transition:
-                      'transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Initial light shadow
-                    overflow: 'hidden',
-                    // backgroundColor: cardBackgroundColor
-                  }}
-                  bodyStyle={{ padding: '8px 16px' }}
-                  onClick={() => history.push(`/elderly/${elderly.id}`)}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.03)'; // Slightly enlarge the card
-                    e.currentTarget.style.boxShadow =
-                      '0 6px 16px rgba(0, 0, 0, 0.15)'; // Darker shadow
-                    e.currentTarget.style.backgroundColor = '#f0f0f0'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)'; // Reset scale
-                    e.currentTarget.style.boxShadow =
-                      '0 2px 8px rgba(0, 0, 0, 0.1)'; // Reset shadow
-                    e.currentTarget.style.backgroundColor = 'white'
-                  }}
-                  onTouchStart={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.03)'; // Enlarge slightly on touch
-                    e.currentTarget.style.boxShadow =
-                      '0 6px 16px rgba(0, 0, 0, 0.15)'; // Darker shadow
-                    e.currentTarget.style.backgroundColor = '#f0f0f0'
-                  }}
-                  onTouchEnd={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)'; // Reset scale
-                    e.currentTarget.style.boxShadow =
-                      '0 2px 8px rgba(0, 0, 0, 0.1)'; // Reset shadow
-                    e.currentTarget.style.backgroundColor = 'white'
-                  }}
-                >
-                  <Row gutter={0} justify="space-between">
-                    <Col xs={8} sm={6} style={{ alignContent: 'center' }}>
-                      <Image
-                        preview={false}
-                        src={
-                          elderly.photoUrl ||
-                          'https://via.placeholder.com/48x48'
-                        } // Reduce size for compact layout
-                        width={96}
-                        height={96}
-                        style={{ cursor: 'pointer' }}
-                      />
-                    </Col>
-                    <Col xs={16} sm={18}>
-                      <Space
-                        direction="vertical"
-                        size={0}
-                        style={{ width: '100%' }}
-                      >
-                        <Space
-                          direction="horizontal"
-                          style={{
-                            justifyContent: 'space-between',
-                            width: '100%',
-                          }}
-                        >
-                          <Title level={5} style={{ margin: 0 }}>
-                            {elderly.name} ({elderly.elderlyCode})
-                          </Title>
-
-                          {/* Right-aligned RightOutlined icon */}
-                          <div
-                            style={{ marginLeft: 'auto', fontWeight: 'bold' }}
-                          >
-                            <RightOutlined />
-                          </div>
-                        </Space>
-
-                        {/* Block, Floor, Unit, Address */}
-                        <Text type="secondary">
-                          {elderly.block} {elderly.floor}-{elderly.unitNumber},{' '}
-                          {elderly.address}
-                        </Text>
-
-                        <Space
-                          direction="horizontal"
-                          style={{
-                            justifyContent: 'space-between',
-                            width: '100%',
-                          }}
-                        >
-                          <Text type="secondary">
-                            Singapore {elderly.postalCode}
-                          </Text>
-
-                          {/* Secondary-colored Copy button */}
-                          <Button
-                            type="default"
-                            size="small"
-                            style={{ marginLeft: 0, borderRadius: 4 }}
-                            icon={
-                              <CopyOutlined
-                                style={{ color: 'rgba(0, 0, 0, 0.45)' }}
-                              />
-                            }
-                            onClick={(e) => {
-                              handleCopy(e, `${elderly.postalCode}`);
-                            }}
-                          >
-                            <Text type="secondary">
-                              {intl.formatMessage({ id: 'copy' })}
-                            </Text>
-                          </Button>
-                        </Space>
-
-                        <Space
-                          direction="horizontal"
-                          style={{
-                            width: '100%',
-                            marginTop: 4,
-                            justifyContent: 'space-between',
-                          }}
-                        >
-                          <Text
-                            strong={daysSinceLastVisit >= 8}
-                            style={{ fontSize: '12px', color: visitInfoColor }}
-                          >
-                            {displayVisitInfo}
-                          </Text>
-                          <Text style={{ fontSize: '12px' }}>
-                            <EnvironmentOutlined /> {distance}
-                          </Text>
-                        </Space>
-                      </Space>
-                    </Col>
-                  </Row>
-                </Card>
-              </List.Item>
-            );
-          }}
-        />
-      )}
-      </div>
-    </Col>
-    </Row>
+    </>
   );
 };
 
