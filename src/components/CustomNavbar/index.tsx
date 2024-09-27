@@ -32,7 +32,7 @@ const CustomNavbar: React.FC = () => {
         <Col xs={4}>
           <div
             onClick={handleLogoClick}
-            style={{ cursor: 'pointer', color: 'white' }}
+            style={{ cursor: 'pointer', color: 'white', fontSize: '18px' }}
           >
             <HomeOutlined />
           </div>
@@ -42,7 +42,7 @@ const CustomNavbar: React.FC = () => {
             {navbarTitle}
           </Title>
         </Col>
-        <Col xs={4} style={{ textAlign: 'right' }}>
+        <Col xs={4} style={{ textAlign: 'right', fontSize: '18px' }}>
           <ProfileNavigation />
         </Col>
       </Row>
