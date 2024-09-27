@@ -212,7 +212,8 @@ const ResidentProfilePage: React.FC = () => {
   };
 
   return (
-    <div>
+    <Row justify='center'>
+    <Col xs={22} sm={20} md={16} lg={12}>
       <Row
         align="middle" // Vertically align the button and title
         style={{ width: '100%', marginBottom: 8, marginTop: 16, position: 'relative' }} // Add margin to avoid overlap
@@ -256,7 +257,7 @@ const ResidentProfilePage: React.FC = () => {
               </Title>
 
             <Row
-              style={{ padding: 16, maxWidth: 400 }}
+              style={{ width: '100%', padding: 16 }}
               gutter={16}
               align="middle"
               justify='space-between'
@@ -319,7 +320,7 @@ const ResidentProfilePage: React.FC = () => {
             </Row>
 
             
-            <Card bodyStyle={{ padding: 16, paddingTop: 8, paddingBottom: 8 }} style={{ maxWidth: 400 }}>
+            <Card bodyStyle={{ padding: 16, paddingTop: 8, paddingBottom: 8 }}>
               <Row>
               <Space direction="horizontal">
                 <Text strong>{intl.formatMessage({ id: 'contact' })}</Text>
@@ -392,7 +393,7 @@ const ResidentProfilePage: React.FC = () => {
 
             {/* Social Information */}
             <Title level={4} style={{ marginBottom: 8, marginTop: 16 }}>{intl.formatMessage({ id: 'socialInformation' })}</Title>
-            <Card bodyStyle={{ padding: 16, paddingTop: 8, paddingBottom: 8 }} style={{ maxWidth: 400 }}>
+            <Card bodyStyle={{ padding: 16, paddingTop: 8, paddingBottom: 8 }}>
             <Row>
               <Col style={{ width: '100%', maxWidth: 260 }}>
                 <Row justify="space-between">
@@ -438,7 +439,7 @@ const ResidentProfilePage: React.FC = () => {
 
             {/* Health Information */}
             <Title level={4} style={{ marginBottom: 8, marginTop: 16 }}>Health</Title>
-            <Card bodyStyle={{ padding: 16, paddingTop: 8, paddingBottom: 8 }} style={{ maxWidth: 400 }}>
+            <Card bodyStyle={{ padding: 16, paddingTop: 8, paddingBottom: 8 }}>
             <Row>
               <Col>
                 <Text strong>
@@ -520,7 +521,7 @@ const ResidentProfilePage: React.FC = () => {
 
             {/* Other Information */}
             <Title level={4} style={{ marginBottom: 8, marginTop: 16 }}>Other</Title>
-            <Card bodyStyle={{ padding: 16, paddingTop: 8, paddingBottom: 8 }} style={{ maxWidth: 400 }}>
+            <Card bodyStyle={{ padding: 16, paddingTop: 8, paddingBottom: 8 }}>
             <Row>
               <Col>
                 <Text strong>{intl.formatMessage({ id: 'notes' })}</Text>
@@ -542,7 +543,7 @@ const ResidentProfilePage: React.FC = () => {
             </Card>
             </TabPane>
 
-          <TabPane key='2' tab={intl.formatMessage({ id: 'visits' })} style={{ backgroundColor: 'white', padding: 16 }}>
+          <TabPane key='2' tab={intl.formatMessage({ id: 'visits' })} style={{ backgroundColor: 'white', padding: 16, paddingBottom: '10vh' }}>
           {/* Recent Visits Section */}
           <Title level={3}>
             {intl.formatMessage({ id: 'recentVisits' })}
@@ -720,7 +721,8 @@ const ResidentProfilePage: React.FC = () => {
           )}
         </>
       )}
-    </div>
+    </Col>
+    </Row>
   );
 };
 

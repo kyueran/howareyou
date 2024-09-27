@@ -304,8 +304,9 @@ const ResidentListPage: React.FC = () => {
   };
 
   return (
-    <div style={{ paddingBottom: '5vh' }}>
-        <Row
+    <Row justify='center'>
+    <Col xs={22} sm={20} md={16} lg={12} style={{ paddingBottom: '5vh' }}>
+      <Row
         align="middle" // Vertically align the button and title
         style={{ width: '100%', marginTop: 16, position: 'relative' }} // Add margin to avoid overlap
       >
@@ -550,7 +551,8 @@ const ResidentListPage: React.FC = () => {
         />
       )}
       </div>
-    </div>
+    </Col>
+    </Row>
   );
 };
 
