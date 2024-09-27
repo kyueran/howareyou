@@ -188,13 +188,22 @@ const RecordVisit: React.FC = () => {
       const filtered = elderlies.filter(
         (elderly) =>
           elderly.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          elderly.block.toLowerCase().includes(searchText.toLowerCase()) ||
+          `${elderly.floor.toLowerCase()}${elderly.unit_number.toLowerCase()}`.includes(
+            searchText.toLowerCase(),
+          ) ||
+          `${elderly.floor.toLowerCase()}-${elderly.unit_number.toLowerCase()}`.includes(
+            searchText.toLowerCase(),
+          ) ||
+          `${elderly.block} ${elderly.floor}-${elderly.unit_number}`
+            .toLowerCase()
+            .includes(searchText.toLowerCase()) ||
           elderly.unit_number.includes(searchText) ||
           elderly.address.toLowerCase().includes(searchText.toLowerCase()) ||
           elderly.elderly_code
             .toLowerCase()
             .includes(searchText.toLowerCase()) ||
-          elderly.postal_code.includes(searchText),
+          elderly.postal_code.includes(searchText) ||
+          elderly.aac_code.toLowerCase().includes(searchText.toLowerCase()),
       );
       setFilteredElderlies(filtered);
     },
@@ -299,7 +308,7 @@ const RecordVisit: React.FC = () => {
       </Row>
 
       <Row justify="center">
-        <Col xs={22} sm={20} md={16} lg={12}>
+        <Col xs={24} sm={20} md={16} lg={12}>
           <Space direction="vertical" size={20} style={{ width: '100%' }}>
             {id === undefined ? (
               <>
@@ -362,6 +371,7 @@ const RecordVisit: React.FC = () => {
                     <TabPane
                       tab={intl.formatMessage({ id: 'fillUpFormTab' })}
                       key="2"
+                      style={{ backgroundColor: 'white', padding: 16, paddingBottom: '10vh' }}
                     >
                       <Form form={form} onFinish={onFinish}>
                         <Form.Item
