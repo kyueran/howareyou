@@ -28,8 +28,7 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
     const basePath = '/';
     if (currentPath.startsWith(basePath))
       currentPath = currentPath.slice(basePath.length);
-    if (currentPath !== '/login')
-      history.push(`/login?redirect=${currentPath}`);
+    if (currentPath !== basePath) history.push(`/?redirect=${currentPath}`);
   }
 
   return {
@@ -41,7 +40,7 @@ export const layout: RunTimeLayoutConfig = (initialState) => {
     logout: (initialState: any) => {
       localStorage.removeItem('userRole');
       localStorage.removeItem('user');
-      history.push('/login');
+      history.push('/');
     },
     token: {
       pageContainer: {

@@ -152,7 +152,10 @@ const LandingPage: React.FC = () => {
                     flushSync(() =>
                       setInitialState({ ...initialState, ...user }),
                     );
-                    history.push('/home');
+                    const redirectUrl =
+                      new URLSearchParams(location.search).get('redirect') ||
+                      '/home';
+                    history.push(redirectUrl);
                   }}
                 >
                   <Row gutter={[16, 16]}>

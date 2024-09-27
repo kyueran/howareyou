@@ -26,12 +26,12 @@ export default defineConfig({
       layout: true,
       access: ['isVolunteer', 'isStaff'],
     },
-    {
-      name: 'menu.Login',
-      path: '/login',
-      component: './Login',
-      layout: false,
-    },
+    // {
+    //   name: 'menu.Login',
+    //   path: '/login',
+    //   component: './Login',
+    //   layout: false,
+    // },
     {
       name: 'menu.ElderlyResidents',
       path: '/elderly',
