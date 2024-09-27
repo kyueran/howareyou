@@ -264,7 +264,7 @@ const ResidentProfilePage: React.FC = () => {
           style={{ marginBottom: '8px' }}
           type="text"
           icon={<LeftOutlined />}
-          onClick={() => history.push('/elderly')}
+          onClick={() => history.go(-1)}
         >
           {intl.formatMessage({ id: 'backBtn' })}
         </Button>

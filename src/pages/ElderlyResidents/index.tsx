@@ -97,13 +97,6 @@ const ResidentListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const intl = useIntl();
 
-  // Sorry I see the width damn messed up on frontend i damn keh kao
-  const customStyles = `
-    .skeleton-full-width {
-      width: 100% !important; /* Force width to be 100% */
-    }
-  `;
-
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -186,9 +179,9 @@ const ResidentListPage: React.FC = () => {
 
   // Function to calculate the number of days since last visit
   const calculateDaysSinceLastVisit = (recentVisits: VisitInfo[]) => {
-    if (recentVisits.length === 0) return Infinity;
+    if (recentVisits.length === 0) return 'No Visits';
     const lastVisitDate = dayjs(recentVisits[0].submission_time);
-    return dayjs().diff(lastVisitDate, 'days');
+    return dayjs().diff(lastVisitDate.startOf('day'), 'days');
   };
 
   // Function to calculate the distance between two coordinates using the Haversine formula
@@ -296,6 +289,19 @@ const ResidentListPage: React.FC = () => {
       });
   };
 
+  const getCardBackgroundColor = (days: number | string) => {
+    if (days === 'No visits' || days <= 0) {
+      return '#FFFFFF'; // White
+    } else if (days >= 7) {
+      return '#FFCCCC'; // Deep red
+    } else {
+      // Map days 1-6 to shades of red
+      // Calculate lightness from 100% (white) to 85% (darker red)
+      const lightness = 100 - Math.pow(Math.max(0, Number(days) - 1) / 6, 2) * 15; // Adjust lightness between 100% and 85%
+      return `hsl(0, 100%, ${lightness}%)`;
+    }
+  };
+
   return (
     <div style={{ margin: '24px 8px' }}>
       <Space
@@ -349,30 +355,38 @@ const ResidentListPage: React.FC = () => {
           itemLayout="vertical"
           dataSource={filteredData}
           renderItem={(elderly) => {
-            const mostRecentVisit =
-              elderly.recentVisits && elderly.recentVisits.length > 0
-                ? dayjs(elderly.recentVisits[0].submission_time)
-                : null;
+            const mostRecentVisit = elderly.recentVisits && elderly.recentVisits.length > 0
+              ? elderly.recentVisits.reduce((latestVisit, currentVisit) => {
+                  const currentVisitTime = dayjs(currentVisit.submission_time);
+                  return !latestVisit || currentVisitTime.isAfter(dayjs(latestVisit.submission_time))
+                    ? currentVisitTime
+                    : latestVisit;
+                }, null)
+              : null;
             const daysSinceLastVisit = mostRecentVisit
               ? dayjs().diff(mostRecentVisit.startOf('day'), 'days')
               : 'No visits';
             let displayVisitInfo = 'No visits';
             if (mostRecentVisit) {
               if (daysSinceLastVisit === 0) {
-                // Same day: display the time in HH:mm format
                 displayVisitInfo = `visited today ${mostRecentVisit.format(
                   'H:mmA',
                 )}`;
               } else if (daysSinceLastVisit === 1) {
-                // Yesterday
                 displayVisitInfo = `visited yesterday ${mostRecentVisit.format(
                   'H:mmA',
                 )}`;
               } else {
-                // More than one day ago
                 displayVisitInfo = `visited ${daysSinceLastVisit} days ago`;
               }
             }
+
+            const visitInfoColor = daysSinceLastVisit < 8 ? 'default' : 'red';
+
+            // Calculate background color based on daysSinceLastVisit
+            const cardBackgroundColor = getCardBackgroundColor(daysSinceLastVisit);
+
+            // Calculate distance (existing code)
             const distance = currentPosition
               ? `${(
                   calculateDistance(
@@ -383,6 +397,7 @@ const ResidentListPage: React.FC = () => {
                   ) / 1000
                 ).toFixed(1)} km away`
               : intl.formatMessage({ id: 'loading' });
+
             return (
               <List.Item style={{ padding: 0, paddingBottom: 8 }}>
                 <Card
@@ -392,6 +407,7 @@ const ResidentListPage: React.FC = () => {
                       'transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease',
                     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Initial light shadow
                     overflow: 'hidden',
+                    // backgroundColor: cardBackgroundColor
                   }}
                   bodyStyle={{ padding: '8px 16px' }}
                   onClick={() => history.push(`/elderly/${elderly.id}`)}
@@ -447,8 +463,8 @@ const ResidentListPage: React.FC = () => {
                           </Title>
 
                           {/* Right-aligned RightOutlined icon */}
-                          <div style={{ marginLeft: 'auto' }}>
-                            <RightOutlined style={{ fontSize: '14px' }} />
+                          <div style={{ marginLeft: 'auto', fontWeight: 'bold' }}>
+                            <RightOutlined />
                           </div>
                         </Space>
 
@@ -461,7 +477,7 @@ const ResidentListPage: React.FC = () => {
                         <Space
                           direction="horizontal"
                           style={{
-                            justifyContent: 'flex-start',
+                            justifyContent: 'space-between',
                             width: '100%',
                           }}
                         >
@@ -482,7 +498,7 @@ const ResidentListPage: React.FC = () => {
                             onClick={(e) => {
                               handleCopy(
                                 e,
-                                `${elderly.address}, ${elderly.postalCode}`,
+                                `${elderly.postalCode}`,
                               );
                             }}
                           >
@@ -496,13 +512,14 @@ const ResidentListPage: React.FC = () => {
                           direction="horizontal"
                           style={{
                             width: '100%',
+                            marginTop: 4,
                             justifyContent: 'space-between',
                           }}
                         >
-                          <Text type="secondary" style={{ fontSize: '12px' }}>
+                          <Text strong={daysSinceLastVisit >= 8} style={{ fontSize: '12px', color: visitInfoColor }}>
                             {displayVisitInfo}
                           </Text>
-                          <Text type="secondary" style={{ fontSize: '12px' }}>
+                          <Text style={{ fontSize: '12px' }}>
                             <EnvironmentOutlined /> {distance}
                           </Text>
                         </Space>

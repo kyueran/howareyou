@@ -8,9 +8,11 @@ import {
   Card,
   Carousel,
   Col,
+  Divider,
   Image,
   Modal,
   Row,
+  Skeleton,
   Space,
   Typography,
 } from 'antd';
@@ -41,6 +43,8 @@ const VisitModal: React.FC<VisitModalProps> = ({
   isVisible,
   onClose,
 }) => {
+  const [visitorLoading, setVisitorLoading] = useState(false)
+  const [elderlyLoading, setElderlyLoading] = useState(false)
   const [visitorName, setVisitorName] = useState<string>('Unknown Visitor');
   const [visitorRoleAndOrg, setVisitorRoleAndOrg] = useState<string>(''); // State for role and organization
   const [userRole, setUserRole] = useState<string>(''); // State for user role
@@ -57,6 +61,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
 
   useEffect(() => {
     const fetchVisitorInfo = async (id: string) => {
+      setVisitorLoading(true)
       try {
         const response = await fetch(`/api/vas/${id}`);
         if (!response.ok) {
@@ -69,6 +74,8 @@ const VisitModal: React.FC<VisitModalProps> = ({
         );
       } catch (error) {
         console.error(error);
+      } finally {
+        setVisitorLoading(false)
       }
     };
 
@@ -80,6 +87,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
   // Fetch elderly info using visit.elderly_id
   useEffect(() => {
     const fetchElderlyInfo = async (id: string) => {
+      setElderlyLoading(true)
       try {
         const response = await fetch(`/api/senior/${id}`);
         if (!response.ok) {
@@ -90,6 +98,8 @@ const VisitModal: React.FC<VisitModalProps> = ({
         setElderly(data);
       } catch (error) {
         console.error(error);
+      } finally {
+        setElderlyLoading(false)
       }
     };
 
@@ -108,8 +118,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
             fontSize: '24px', // Larger font size
             fontWeight: 'bold', // Bold text
             padding: '6px', // Padding around the title
-            backgroundColor: '#f0f0f0', // Background color to distinguish
-            borderBottom: '2px solid #e8e8e8', // Bottom border to separate from the form
+            borderBottom: '1px solid #e8e8e8', // Bottom border to separate from the form
             textAlign: 'center', // Center align the title
           }}
         >
@@ -130,6 +139,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
               Posted by:
             </Title>
             <Card bodyStyle={{ padding: 8 }}>
+              <Space.Compact direction='vertical'>
               {/* Conditionally display Visitor Name and Role for staff only */}
               {userRole === 'staff' && (
                 <Space align="center">
@@ -143,13 +153,11 @@ const VisitModal: React.FC<VisitModalProps> = ({
                 </Space>
               )}
 
-              {/* Mode of Interaction / Location - Now showing elderly's address */}
               <Space align="center">
                 <EnvironmentOutlined />
-                <Text>{visit.mode_of_interaction}</Text>
+                <Text>{visit.mode_of_interaction ?? 'Unknown'}</Text>
               </Space>
 
-              {/* Submission Time */}
               <Space align="center">
                 <ClockCircleOutlined />
                 <Text>
@@ -165,6 +173,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
                   )
                 </Text>
               </Space>
+            </Space.Compact>
             </Card>
 
             <Title level={5} style={{ marginTop: '20px', marginBottom: 8 }}>
@@ -172,6 +181,9 @@ const VisitModal: React.FC<VisitModalProps> = ({
             </Title>
 
             <Card bodyStyle={{ padding: 8 }}>
+              {elderlyLoading ?
+              <Skeleton avatar />
+              :
               <Space direction="horizontal">
                 <Image
                   width={96}
@@ -204,6 +216,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
                   </Space>
                 </Space.Compact>
               </Space>
+      }
             </Card>
 
             {/* Resident Status Heading */}
@@ -269,7 +282,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
                   ))}
                 </Carousel>
               ) : (
-                <Text>No photos available.</Text>
+                <Text>No photos taken.</Text>
               )}
             </Card>
 
