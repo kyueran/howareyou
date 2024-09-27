@@ -133,7 +133,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
           
           <Col flex="auto" style={{ textAlign: 'center', position: 'absolute', left: 0, right: 0 }}>
             <Title level={3} style={{ margin: 0 }}>
-              {intl.formatMessage({ id: 'menu.ElderlyProfile' })}
+              {intl.formatMessage({ id: 'visitDetails' })}
             </Title>
           </Col>
         </Row>
@@ -142,231 +142,225 @@ const VisitModal: React.FC<VisitModalProps> = ({
       onCancel={onClose}
       footer={null}
       closable={false}
-      width="100%" // Make the modal full width
-      style={{ top: 0, height: '100vh', width: '100vw', margin: 0, padding: 0 }} // Position it at the top and make it full height
-      bodyStyle={{ padding: 8 }}
+      bodyStyle={{ padding: 16 }}
       centered={false} // Disable centering since it's fullscreen
       className='full-screen-modal'
     >
-      <Row gutter={[16, 16]} align="middle" justify="space-between">
-        <Col>
-          <Space direction="vertical" size={0}>
-            <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
-              Posted by:
-            </Title>
-            <Card bodyStyle={{ padding: 8 }}>
-              <Space.Compact direction="vertical">
-                {/* Conditionally display Visitor Name and Role for staff only */}
-                {userRole === 'staff' && (
-                  <Space align="center">
-                    <UserOutlined />
-                    <Text>
-                      {visitorName}{' '}
-                      <Text strong style={{ color: 'purple' }}>
-                        {visitorRoleAndOrg}
-                      </Text>
-                    </Text>
-                  </Space>
-                )}
-                {userRole === 'staff' && (
-                <>
-                <Space align="center">
-                  <EnvironmentOutlined />
-                  <Text>{visit.mode_of_interaction ?? 'Unknown'}</Text>
-                </Space>
-                </>)}
-
-                {userRole === 'volunteer' && (
-                <>
-                <Space align="center">
-                  <EnvironmentOutlined />
-                  <Text>{elderly?.block} {elderly?.floor}-
-                  {elderly?.unit_number}, {elderly?.address}</Text>
-                </Space>
-                </>)}
-
-                <Space align="center">
-                  <ClockCircleOutlined />
-                  <Text>
-                    {visit.submission_time
-                      ? dayjs(visit.submission_time).format('D MMM YYYY, h:mmA')
-                      : 'Unknown Time'}{' '}
-                    (
-                    <Text strong>
-                      {visit.submission_time
-                        ? `${dayjs().to(dayjs(visit.submission_time))}`
-                        : 'None'}
-                    </Text>
-                    )
-                  </Text>
-                </Space>
-              </Space.Compact>
-            </Card>
-
+      <Space direction="vertical" size={0} style={{ width: '100%', paddingBottom: '10vh' }}>
+        <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
+          Posted by:
+        </Title>
+        <Card bodyStyle={{ padding: 8 }}>
+          <Space.Compact direction="vertical">
+            {/* Conditionally display Visitor Name and Role for staff only */}
             {userRole === 'staff' && (
-              <>
-                <Title level={5} style={{ marginTop: '20px', marginBottom: 8 }}>
-                  Elderly visited:
-                </Title>
-
-                <Card bodyStyle={{ padding: 8 }}>
-                  {elderlyLoading ? (
-                    <Skeleton avatar />
-                  ) : (
-                    <Space direction="horizontal">
-                      <Image
-                        width={96}
-                        height={96}
-                        src={elderly?.photo_url}
-                        alt={`Photo ${elderly?.name}`}
-                      />
-                      <Space.Compact direction="vertical">
-                        <Space align="center">
-                          <UserOutlined />
-                          <Text>{elderly?.name}</Text>
-                        </Space>
-
-                        <Space align="center">
-                          <EnvironmentOutlined />
-                          <Text>
-                            {elderly?.block} {elderly?.floor}-
-                            {elderly?.unit_number}, {elderly?.address}
-                          </Text>
-                        </Space>
-
-                        <Space align="center">
-                          <Text strong>Elderly Code: </Text>
-                          <Text>{elderly?.elderly_code}</Text>
-                        </Space>
-
-                        <Space align="center">
-                          <Text strong>AAC Code: </Text>
-                          <Text>{elderly?.aac_code}</Text>
-                        </Space>
-                      </Space.Compact>
-                    </Space>
-                  )}
-                </Card>
-              </>
-            )}
-
-            {/* Resident Status Heading */}
-            <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
-              How is the resident doing?
-            </Title>
-
-            {/* Visit Status */}
-            <Card bodyStyle={{ padding: 8 }}>
               <Space align="center">
-                {visit.status === 'Not Good' && (
-                  <>
-                    <ExclamationCircleOutlined
-                      style={{ color: 'red', fontSize: '14px' }}
-                    />
-                    <Text strong style={{ color: 'red', fontSize: '14px' }}>
-                      Not Good
-                    </Text>
-                  </>
-                )}
-                {visit.status === 'Good' && (
-                  <>
-                    <ExclamationCircleOutlined
-                      style={{ color: 'green', fontSize: '14px' }}
-                    />
-                    <Text strong style={{ color: 'green', fontSize: '14px' }}>
-                      Good
-                    </Text>
-                  </>
-                )}
-                {visit.status === 'Not Around' && (
-                  <>
-                    <ExclamationCircleOutlined
-                      style={{ color: 'orange', fontSize: '14px' }}
-                    />
-                    <Text strong style={{ color: 'orange', fontSize: '14px' }}>
-                      Not Around
-                    </Text>
-                  </>
-                )}
-              </Space>
-            </Card>
-
-            {/* Comments Section */}
-            <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
-              Comments
-            </Title>
-            <Card bodyStyle={{ padding: 8 }}>
-              <Text>{visit.comments || 'No comments available.'}</Text>
-            </Card>
-
-            {/* Photos Section with Carousel */}
-            <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
-              Photos
-            </Title>
-            <Card bodyStyle={{ padding: 8 }}>
-              {visit.photo_urls && visit.photo_urls.length > 0 ? (
-                <Carousel autoplay>
-                  {visit.photo_urls.map((url, index) => (
-                    <div key={index}>
-                      <Image src={url} alt={`Photo ${index + 1}`} />
-                    </div>
-                  ))}
-                </Carousel>
-              ) : (
-                <Text>No photos taken.</Text>
-              )}
-            </Card>
-
-            {/* Conditionally display Duration of Visit for staff only */}
-            {userRole === 'staff' && (
-              <>
-                <Title
-                  level={5}
-                  style={{ marginTop: '20px', marginBottom: '0px' }}
-                >
-                  Duration of visit
-                </Title>
-                <Card bodyStyle={{ padding: 8 }}>
-                  <Text>
-                    {visit.duration_of_contact
-                      ? `${visit.duration_of_contact} mins`
-                      : 'Unknown'}
+                <UserOutlined />
+                <Text>
+                  {visitorName}{' '}
+                  <Text strong style={{ color: 'purple' }}>
+                    {visitorRoleAndOrg}
                   </Text>
-                </Card>
-              </>
+                </Text>
+              </Space>
             )}
-
-            {/* Conditionally display Key Concerns for staff only */}
             {userRole === 'staff' && (
-              <>
-                <Title
-                  level={5}
-                  style={{ marginTop: '20px', marginBottom: '0px' }}
-                >
-                  Key Concerns
-                </Title>
-                <Card bodyStyle={{ padding: 8 }}>
-                  <Text>{visit.key_concerns || 'No key concerns.'}</Text>
-                </Card>
-              </>
-            )}
+            <>
+            <Space align="center">
+              <EnvironmentOutlined />
+              <Text>{visit.mode_of_interaction ?? 'Unknown'}</Text>
+            </Space>
+            </>)}
 
             {userRole === 'volunteer' && (
+            <>
+            <Space align="center">
+              <EnvironmentOutlined />
+              <Text>{elderly?.block} {elderly?.floor}-
+              {elderly?.unit_number}, {elderly?.address}</Text>
+            </Space>
+            </>)}
+
+            <Space align="center">
+              <ClockCircleOutlined />
+              <Text>
+                {visit.submission_time
+                  ? dayjs(visit.submission_time).format('D MMM YYYY, h:mmA')
+                  : 'Unknown Time'}{' '}
+                (
+                <Text strong>
+                  {visit.submission_time
+                    ? `${dayjs().to(dayjs(visit.submission_time))}`
+                    : 'None'}
+                </Text>
+                )
+              </Text>
+            </Space>
+          </Space.Compact>
+        </Card>
+
+        {userRole === 'staff' && (
+          <>
+            <Title level={5} style={{ marginTop: '20px', marginBottom: 8 }}>
+              Elderly visited:
+            </Title>
+
+            <Card bodyStyle={{ padding: 8 }}>
+              {elderlyLoading ? (
+                <Skeleton avatar />
+              ) : (
+                <Space direction="horizontal">
+                  <Image
+                    width={96}
+                    height={96}
+                    src={elderly?.photo_url}
+                    alt={`Photo ${elderly?.name}`}
+                  />
+                  <Space.Compact direction="vertical">
+                    <Space align="center">
+                      <UserOutlined />
+                      <Text>{elderly?.name}</Text>
+                    </Space>
+
+                    <Space align="center">
+                      <EnvironmentOutlined />
+                      <Text>
+                        {elderly?.block} {elderly?.floor}-
+                        {elderly?.unit_number}, {elderly?.address}
+                      </Text>
+                    </Space>
+
+                    <Space align="center">
+                      <Text strong>Elderly Code: </Text>
+                      <Text>{elderly?.elderly_code}</Text>
+                    </Space>
+
+                    <Space align="center">
+                      <Text strong>AAC Code: </Text>
+                      <Text>{elderly?.aac_code}</Text>
+                    </Space>
+                  </Space.Compact>
+                </Space>
+              )}
+            </Card>
+          </>
+        )}
+
+        {/* Resident Status Heading */}
+        <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
+          How is the resident doing?
+        </Title>
+
+        {/* Visit Status */}
+        <Card bodyStyle={{ padding: 8 }}>
+          <Space align="center">
+            {visit.status === 'Not Good' && (
               <>
-                <Title
-                  level={5}
-                  style={{ marginTop: '20px', marginBottom: '0px' }}
-                >
-                  Relationship with Resident
-                </Title>
-                <Card bodyStyle={{ padding: 8 }}>
-                  <Text>{visit.relationship || 'Not specified.'}</Text>
-                </Card>
+                <ExclamationCircleOutlined
+                  style={{ color: 'red', fontSize: '14px' }}
+                />
+                <Text strong style={{ color: 'red', fontSize: '14px' }}>
+                  Not Good
+                </Text>
+              </>
+            )}
+            {visit.status === 'Good' && (
+              <>
+                <ExclamationCircleOutlined
+                  style={{ color: 'green', fontSize: '14px' }}
+                />
+                <Text strong style={{ color: 'green', fontSize: '14px' }}>
+                  Good
+                </Text>
+              </>
+            )}
+            {visit.status === 'Not Around' && (
+              <>
+                <ExclamationCircleOutlined
+                  style={{ color: 'orange', fontSize: '14px' }}
+                />
+                <Text strong style={{ color: 'orange', fontSize: '14px' }}>
+                  Not Around
+                </Text>
               </>
             )}
           </Space>
-        </Col>
-      </Row>
+        </Card>
+
+        {/* Comments Section */}
+        <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
+          Comments
+        </Title>
+        <Card bodyStyle={{ padding: 8 }}>
+          <Text>{visit.comments || 'No comments available.'}</Text>
+        </Card>
+
+        {/* Photos Section with Carousel */}
+        <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>
+          Photos
+        </Title>
+        <Card bodyStyle={{ padding: 8 }}>
+          {visit.photo_urls && visit.photo_urls.length > 0 ? (
+            <Carousel autoplay>
+              {visit.photo_urls.map((url, index) => (
+                <div key={index}>
+                  <Image src={url} alt={`Photo ${index + 1}`} />
+                </div>
+              ))}
+            </Carousel>
+          ) : (
+            <Text>No photos taken.</Text>
+          )}
+        </Card>
+
+        {/* Conditionally display Duration of Visit for staff only */}
+        {userRole === 'staff' && (
+          <>
+            <Title
+              level={5}
+              style={{ marginTop: '20px', marginBottom: '0px' }}
+            >
+              Duration of visit
+            </Title>
+            <Card bodyStyle={{ padding: 8 }}>
+              <Text>
+                {visit.duration_of_contact
+                  ? `${visit.duration_of_contact} mins`
+                  : 'Unknown'}
+              </Text>
+            </Card>
+          </>
+        )}
+
+        {/* Conditionally display Key Concerns for staff only */}
+        {userRole === 'staff' && (
+          <>
+            <Title
+              level={5}
+              style={{ marginTop: '20px', marginBottom: '0px' }}
+            >
+              Key Concerns
+            </Title>
+            <Card bodyStyle={{ padding: 8 }}>
+              <Text>{visit.key_concerns || 'No key concerns.'}</Text>
+            </Card>
+          </>
+        )}
+
+        {userRole === 'volunteer' && (
+          <>
+            <Title
+              level={5}
+              style={{ marginTop: '20px', marginBottom: '0px' }}
+            >
+              Relationship with Resident
+            </Title>
+            <Card bodyStyle={{ padding: 8 }}>
+              <Text>{visit.relationship || 'Not specified.'}</Text>
+            </Card>
+          </>
+        )}
+      </Space>
     </Modal>
   );
 };

@@ -304,26 +304,29 @@ const ResidentListPage: React.FC = () => {
   };
 
   return (
-    <div style={{ margin: '24px 8px' }}>
-      <Space
-        direction="horizontal"
-        style={{
-          width: '100%',
-          justifyContent: 'flex-start',
-          marginBottom: '8px',
-        }}
+    <div style={{ paddingBottom: '5vh' }}>
+        <Row
+        align="middle" // Vertically align the button and title
+        style={{ width: '100%', marginTop: 16, position: 'relative' }} // Add margin to avoid overlap
       >
-        <Button
-          type="text"
-          icon={<LeftOutlined />}
-          onClick={() => history.go(-1)}
-        >
-          {intl.formatMessage({ id: 'backBtn' })}
-        </Button>
-        <Title level={3} style={{ margin: '0px' }}>
-          {intl.formatMessage({ id: 'elderlyResidents' })}
-        </Title>
-      </Space>
+        <Col flex="none" style={{ marginRight: 'auto', zIndex: 3 }}>
+          <Button
+            type="text"
+            icon={<LeftOutlined />}
+            onClick={() => history.go(-1)}
+          >
+            {intl.formatMessage({ id: 'backBtn' })}
+          </Button>
+        </Col>
+        
+        <Col flex="auto" style={{ textAlign: 'center', position: 'absolute', left: 0, right: 0 }}>
+          <Title level={3} style={{ margin: 0 }}>
+            {intl.formatMessage({ id: 'elderlyResidents' })}
+          </Title>
+        </Col>
+      </Row>
+
+      <div style={{ padding: 16 }}>
       <FormattedMessage
         id="topWarningMsg"
         values={{ location: <Text type="danger">Queenstown</Text> }}
@@ -546,6 +549,7 @@ const ResidentListPage: React.FC = () => {
           }}
         />
       )}
+      </div>
     </div>
   );
 };

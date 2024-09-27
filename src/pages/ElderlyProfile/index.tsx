@@ -248,7 +248,7 @@ const ResidentProfilePage: React.FC = () => {
             <TabPane
               key="1"
               tab={intl.formatMessage({ id: 'elderlyProfile' })}
-              style={{ backgroundColor: 'white', padding: 8, paddingBottom: 32 }}
+              style={{ backgroundColor: 'white', padding: 16, paddingBottom: '10vh' }}
             >
               {/* Profile Header */}
               <Title level={3} style={{ margin: 0 }}>
