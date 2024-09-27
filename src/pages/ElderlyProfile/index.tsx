@@ -18,6 +18,7 @@ import {
   Card,
   Col,
   ConfigProvider,
+  Descriptions,
   Image,
   List,
   message,
@@ -26,10 +27,10 @@ import {
   Row,
   Skeleton,
   Space,
+  Tabs,
   Tag,
   Typography,
 } from 'antd';
-import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import html2canvas from 'html2canvas';
@@ -37,38 +38,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
 import VisitModal from '../../components/VisitModal';
 import { ElderlyInfo, LineItem, VisitInfo } from '../ElderlyResidents'; // Ensure path is correct
+import TabPane from 'antd/es/tabs/TabPane';
 
 const { Title, Text, Paragraph } = Typography;
 
 dayjs.extend(advancedFormat);
-
-const useGradientButtonStyle = createStyles(({ prefixCls, css }) => ({
-  gradientButton: css`
-    &.${prefixCls}-btn-primary:not([disabled]):not(
-        .${prefixCls}-btn-dangerous
-      ) {
-      border-width: 0;
-      color: white;
-      > span {
-        position: relative;
-      }
-
-      &::before {
-        content: '';
-        background: linear-gradient(135deg, #ff4d4f, #ff7875);
-        position: absolute;
-        inset: 0;
-        opacity: 1;
-        transition: all 0.3s;
-        border-radius: inherit;
-      }
-
-      &:hover::before {
-        opacity: 0.8;
-      }
-    }
-  `,
-}));
 
 const ResidentProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -80,7 +54,6 @@ const ResidentProfilePage: React.FC = () => {
   const qrCodeRef = useRef<HTMLDivElement>(null);
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { styles } = useGradientButtonStyle();
   const access = useAccess();
   const intl = useIntl();
   const [keyConcerns, setKeyConcerns] = useState<LineItem[]>([]);
@@ -227,18 +200,6 @@ const ResidentProfilePage: React.FC = () => {
     }
   };
 
-  const handleCopy = (e: React.MouseEvent, text: string) => {
-    e.stopPropagation(); // Prevent triggering the card onClick event
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        message.success(intl.formatMessage({ id: 'copiedSuccess' })); // Show success message
-      })
-      .catch((err) => {
-        message.error('Failed to copy address');
-      });
-  };
-
   const getVisitStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'not good':
@@ -251,84 +212,61 @@ const ResidentProfilePage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '8px' }}>
-      <Space
-        direction="horizontal"
-        style={{
-          width: '100%',
-          marginTop: '8px',
-          justifyContent: 'flex-start',
-        }}
+    <div>
+      <Row
+        align="middle" // Vertically align the button and title
+        style={{ width: '100%', marginBottom: 8, marginTop: 16, position: 'relative' }} // Add margin to avoid overlap
       >
-        <Button
-          style={{ marginBottom: '8px' }}
-          type="text"
-          icon={<LeftOutlined />}
-          onClick={() => history.go(-1)}
-        >
-          {intl.formatMessage({ id: 'backBtn' })}
-        </Button>
-        <Title level={3}>
-          {intl.formatMessage({ id: 'menu.ElderlyProfile' })}
-        </Title>
-      </Space>
+        <Col flex="none" style={{ marginRight: 'auto' }}>
+          <Button
+            type="text"
+            icon={<LeftOutlined />}
+            onClick={() => history.go(-1)}
+          >
+            {intl.formatMessage({ id: 'backBtn' })}
+          </Button>
+        </Col>
+        
+        <Col flex="auto" style={{ textAlign: 'center', position: 'absolute', left: 0, right: 0 }}>
+          <Title level={3} style={{ margin: 0 }}>
+            {intl.formatMessage({ id: 'menu.ElderlyProfile' })}
+          </Title>
+        </Col>
+      </Row>
 
       {loading || !data ? (
         <Skeleton active title paragraph={{ rows: 4 }} />
       ) : (
-        <ConfigProvider button={{ className: styles.gradientButton }}>
+        <>
           {/* Profile Information Section */}
-          <Card style={{ marginBottom: '8px' }} bodyStyle={{ padding: '16px' }}>
-            <Row style={{ alignItems: 'center' }}>
+          <Tabs
+            defaultActiveKey="1"
+            centered
+            type="card"
+            tabBarStyle={{ marginBottom: 0 }}
+          >
+            <TabPane
+              key="1"
+              tab={intl.formatMessage({ id: 'elderlyProfile' })}
+              style={{ backgroundColor: 'white', padding: 8, paddingBottom: 32 }}
+            >
+              {/* Profile Header */}
               <Title level={3} style={{ margin: 0 }}>
                 {data.name}
               </Title>
-            </Row>
-
-            <Row style={{ width: '100%' }}>
-              <Col>
-                <Space direction="horizontal">
-                  <Space.Compact direction="vertical">
-                    <Text
-                      style={{
-                        whiteSpace: 'normal',
-                        overflowWrap: 'break-word',
-                      }}
-                    >
-                      {`${data.block} ${data.floor}-${data.unitNumber}, ${data.address}, Singapore ${data.postalCode}`}
-                    </Text>
-                  </Space.Compact>
-                  <div style={{ alignItems: 'center', alignContent: 'center' }}>
-                    <Button
-                      type="default"
-                      size="small"
-                      style={{ marginLeft: 8, borderRadius: 4 }} // Center the button vertically
-                      icon={
-                        <CopyOutlined
-                          style={{ color: 'rgba(0, 0, 0, 0.45)' }}
-                        />
-                      } // Secondary-colored icon
-                      onClick={(e) => {
-                        handleCopy(e, `${data.address}, ${data.postalCode}`); // Handle copy action
-                      }}
-                    />
-                  </div>
-                </Space>
-              </Col>
-            </Row>
 
             <Row
-              style={{ marginTop: 4 }}
+              style={{ padding: 16, maxWidth: 400 }}
               gutter={16}
               align="middle"
-              justify="space-between"
+              justify='space-between'
             >
               <Col xs={9}>
                 <Image
                   style={{
                     cursor: 'pointer',
-                    maxWidth: '128px',
-                    maxHeight: '128px',
+                    maxWidth: '100px',
+                    maxHeight: '100px',
                   }}
                   width="100%"
                   height="100%"
@@ -341,11 +279,12 @@ const ResidentProfilePage: React.FC = () => {
                   direction="horizontal"
                   style={{
                     width: '100%',
+                    height: '100%',
                     maxWidth: 240,
                     justifyContent: 'space-between',
                   }}
                 >
-                  <Space direction="vertical" align="center">
+                  <Space.Compact direction="vertical" align="center">
                     <div>
                       <Text strong>
                         {intl.formatMessage({ id: 'seniorCode' })}
@@ -357,14 +296,16 @@ const ResidentProfilePage: React.FC = () => {
                       </Text>
                       <Text>{data.centreCode}</Text>
                     </div>
+
                     <Button
                       type="primary"
                       icon={<PlusOutlined />}
                       onClick={handleSubmitInfo}
+                      style={{ marginTop: 8, borderRadius: 5 }}
                     >
                       {intl.formatMessage({ id: 'addVisitBtn' })}
                     </Button>
-                  </Space>
+                  </Space.Compact>
                   <Button
                     onClick={showModal}
                     icon={
@@ -377,17 +318,17 @@ const ResidentProfilePage: React.FC = () => {
               </Col>
             </Row>
 
-            <Row style={{ marginTop: 12 }}>
-              <Space
-                direction="horizontal"
-                style={{ width: '100%', justifyContent: 'space-between' }}
-              >
-                <Space direction="horizontal">
-                  <Text strong>{intl.formatMessage({ id: 'contact' })}</Text>
-                  <Text style={{ display: 'block', fontSize: '14px' }}>
-                    {data.contactDetails}
-                  </Text>
-                </Space>
+            
+            <Card bodyStyle={{ padding: 16, paddingTop: 8, paddingBottom: 8 }} style={{ maxWidth: 400 }}>
+              <Row>
+              <Space direction="horizontal">
+                <Text strong>{intl.formatMessage({ id: 'contact' })}</Text>
+                <Text style={{ display: 'block', fontSize: '14px' }}>
+                  {data.contactDetails}
+                </Text>
+              </Space>
+              </Row>
+              <Row>
                 <Space direction="horizontal">
                   <Text strong>
                     {intl.formatMessage({ id: 'callResponse' })}
@@ -403,25 +344,37 @@ const ResidentProfilePage: React.FC = () => {
                     {data.callResponse ?? intl.formatMessage({ id: 'none' })}
                   </Text>
                 </Space>
-              </Space>
-            </Row>
+              </Row>
+
+              <Row gutter={16} style={{ marginTop: 4, alignItems: 'start' }}>
+                <Col> {/* Fixed width for the label */}
+                  <Text strong>{intl.formatMessage({ id: 'address' })}</Text>
+                </Col>
+                <Col flex="auto">
+                  {/* Address Line 1 */}
+                  <Text style={{ whiteSpace: 'normal', wordWrap: 'break-word', display: 'block' }}>
+                    {`${data.block} ${data.floor}-${data.unitNumber}`}
+                  </Text>
+                  {/* Address Line 2 */}
+                  <Text style={{ whiteSpace: 'normal', wordWrap: 'break-word', display: 'block' }}>
+                    {`${data.address}, ${data.postalCode}`}
+                  </Text>
+                </Col>
+              </Row>
 
             {/* NOK Section */}
-            <Row style={{ marginTop: 4 }}>
-              <Col>
+            <Row gutter={24} style={{ marginTop: 4, alignItems: 'start' }}>
+              <Col> {/* Fixed width for the label */}
                 <Text strong>{intl.formatMessage({ id: 'nok' })}</Text>
-                {data?.nok.map((nok, index) => (
-                  <Text
-                    key={index}
-                    style={{ display: 'block', fontSize: '14px' }}
-                  >
-                    {nok.name} ({nok.relationship}) - {nok.contactDetails}
-                  </Text>
-                ))}
+              </Col>
+              <Col flex="auto"> {/* The NOK info will take up the remaining space */}
+                <Text style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }}>
+                  {`${data.nok[0].name} (${data.nok[0].relationship}) - ${data.nok[0].contactDetails}`}
+                </Text>
               </Col>
             </Row>
 
-            <Row style={{ marginTop: 8 }}>
+            <Row style={{ marginTop: 4 }}>
               <Col>
                 <Text strong>{intl.formatMessage({ id: 'languages' })}</Text>
                 {data.languages.length > 0 ? (
@@ -435,9 +388,12 @@ const ResidentProfilePage: React.FC = () => {
                 )}
               </Col>
             </Row>
+            </Card>
 
             {/* Social Information */}
-            <Row style={{ marginTop: 8 }}>
+            <Title level={4} style={{ marginBottom: 8, marginTop: 16 }}>{intl.formatMessage({ id: 'socialInformation' })}</Title>
+            <Card bodyStyle={{ padding: 16, paddingTop: 8, paddingBottom: 8 }} style={{ maxWidth: 400 }}>
+            <Row>
               <Col style={{ width: '100%', maxWidth: 260 }}>
                 <Row justify="space-between">
                   <Col>
@@ -478,9 +434,12 @@ const ResidentProfilePage: React.FC = () => {
                 </Row>
               </Col>
             </Row>
+            </Card>
 
             {/* Health Information */}
-            <Row style={{ marginTop: 8 }}>
+            <Title level={4} style={{ marginBottom: 8, marginTop: 16 }}>Health</Title>
+            <Card bodyStyle={{ padding: 16, paddingTop: 8, paddingBottom: 8 }} style={{ maxWidth: 400 }}>
+            <Row>
               <Col>
                 <Text strong>
                   {intl.formatMessage({ id: 'adlDifficulty' })}
@@ -535,27 +494,34 @@ const ResidentProfilePage: React.FC = () => {
 
                 <Text strong>{intl.formatMessage({ id: 'keyConcerns' })}</Text>
                 {keyConcerns.length > 0 ? (
-                  <ul style={{ margin: 0, marginLeft: 8, paddingLeft: '16px' }}>
-                    {keyConcerns.map((concern, index) => (
-                      <li key={index}>
-                        {dayjs(concern.date).format('D MMM YYYY')} -{' '}
-                        {concern.details}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <>
-                    <br />
-                    <Text type="secondary">
-                      {intl.formatMessage({ id: 'none' })}
-                    </Text>
-                  </>
-                )}
+                    <ul
+                      style={{
+                        margin: 0,
+                        paddingLeft: '16px',
+                        marginLeft: 8,
+                        marginBottom: 8,
+                      }}
+                    >
+                      {keyConcerns
+                        .sort((a, b) => dayjs(b.date).diff(dayjs(a.date))) // Sort by most recent date first
+                        .slice(0, 5) // Get the 5 most recent concerns
+                        .map((concern, index) => (
+                          <li key={index}>
+                            {dayjs(concern.date).format('D MMM YYYY')} - {concern.details}
+                          </li>
+                        ))}
+                    </ul>
+                  ) : (
+                    intl.formatMessage({ id: 'none' })
+                  )}
               </Col>
             </Row>
+            </Card>
 
             {/* Other Information */}
-            <Row style={{ marginTop: 8 }}>
+            <Title level={4} style={{ marginBottom: 8, marginTop: 16 }}>Other</Title>
+            <Card bodyStyle={{ padding: 16, paddingTop: 8, paddingBottom: 8 }} style={{ maxWidth: 400 }}>
+            <Row>
               <Col>
                 <Text strong>{intl.formatMessage({ id: 'notes' })}</Text>
                 <Paragraph
@@ -573,10 +539,12 @@ const ResidentProfilePage: React.FC = () => {
                 </Text>
               </Col>
             </Row>
-          </Card>
+            </Card>
+            </TabPane>
 
+          <TabPane key='2' tab={intl.formatMessage({ id: 'visits' })} style={{ backgroundColor: 'white', padding: 16 }}>
           {/* Recent Visits Section */}
-          <Title level={4} style={{ marginTop: 16 }}>
+          <Title level={3}>
             {intl.formatMessage({ id: 'recentVisits' })}
           </Title>
           <List
@@ -697,6 +665,8 @@ const ResidentProfilePage: React.FC = () => {
               );
             }}
           />
+          </TabPane>
+          </Tabs>
 
           <Modal
             title={intl.formatMessage({ id: 'QRCode' })}
@@ -744,7 +714,7 @@ const ResidentProfilePage: React.FC = () => {
               }}
             />
           )}
-        </ConfigProvider>
+        </>
       )}
     </div>
   );

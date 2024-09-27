@@ -43,6 +43,11 @@ export default {
   NA: 'N/A',
 
   // These translations are for the Elderly Profile page (btw the whitespace cannot anyhow delete, will affect frontend)
+  elderlyProfile: 'Profil',
+  visits: 'Lawatan',
+  address: 'Alamat: ',
+  socialInformation: 'Sosial',
+  otherInformation: 'Lain-lain',
   copiedSuccess: 'Alamat disalin ke papan klip!',
   altProfilePic: 'Gambar Profil Warga Emas',
   seniorCode: 'Kod Warga Emas: ',

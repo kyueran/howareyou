@@ -43,11 +43,16 @@ export default {
   NA: 'N/A',
 
   // These translations are for the Elderly Profile page (btw the whitespace cannot anyhow delete, will affect frontend)
+  elderlyProfile: 'Profile',
+  visits: 'Visits',
+  address: 'Address: ',
+  socialInformation: 'Social',
+  otherInformation: 'Other',
   copiedSuccess: 'Address copied to clipboard!',
   altProfilePic: 'Elderly Profile Picture',
   seniorCode: 'Senior Code: ',
   centreCode: 'Centre Code: ',
-  addVisitBtn: 'Add Visit',
+  addVisitBtn: 'Register Visit',
   contact: 'Contact: ',
   callResponse: 'Call Response: ',
   nok: 'NOK: ',

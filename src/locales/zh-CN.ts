@@ -43,6 +43,11 @@ export default {
   NA: 'N/A',
 
   // These translations are for the Elderly Profile page (btw the whitespace cannot anyhow delete, will affect frontend)
+  elderlyProfile: '档案',
+  visits: '访问',
+  address: '地址: ',
+  socialInformation: '社交',
+  otherInformation: '其他',
   copiedSuccess: '地址已复制到剪贴板！',
   altProfilePic: '老人头像',
   seniorCode: '老人代码：',

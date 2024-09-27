@@ -43,6 +43,11 @@ export default {
   NA: 'N/A',
 
   // These translations are for the Elderly Profile page (btw the whitespace cannot anyhow delete, will affect frontend)
+  elderlyProfile: 'சுயவிவரம்',
+  visits: 'வருகைகள்',
+  address: 'முகவரி: ',
+  socialInformation: 'சமூகத் தகவல்',
+  otherInformation: 'மற்றவை',
   copiedSuccess: 'முகவரி கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது!',
   altProfilePic: 'மூத்தவர் சுயவிவர படம்',
   seniorCode: 'மூத்தவர் குறியீடு: ',
