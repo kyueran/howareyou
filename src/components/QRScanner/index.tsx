@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import {
   Html5Qrcode,
   Html5QrcodeCameraScanConfig,
@@ -71,13 +71,25 @@ const QRScanner: React.FC<QRScannerProps> = (props: QRScannerProps) => {
           // Use the first back camera
           cameraId = backCameras[0].id;
         } else {
-          // No back cameras found, use the first available camera
-          console.log('No back cameras found');
-          // messageApi.open({
-          //   type: 'error',
-          //   content: 'No back cameras found',
-          // });
-          props.onScanError?.('No back cameras found');
+          /**
+           * FOR ALL ERRORS, I AM DOING THIS BECAUSE FOR SOME REASON, IF YOU PASS ONSCANERROR,
+           * IF IN THE EVENT ALL IS OKAY AND USER STARTS SCANNING, IF THE SCANNER DOES NOT SEE A QR CODE,
+           * IT WILL TRIGGER THE ONSCANERROR FUNCTION SAYING NO QR CAN BE FOUND OR SOMETHING.
+           * SO I AM JUST DISPLAYING A MESSAGE TO THE USER.
+           * BECAUSE I DON'T KNOW WHERE ELSE WE WILL USE THE QR SCANNER, I AM DISPLAYING IT EVERYWHERE INSTEAD.
+           */
+          console.log('No back cameras found, using default camera instead.');
+          messageApi.open({
+            type: 'error',
+            content: 'No back cameras found, using default camera instead.',
+          });
+          props.onScanError?.(
+            'No back cameras found, using default camera instead.',
+          );
+          Modal.error({
+            title: 'Scan Error',
+            content: 'No back cameras found, using default camera instead.',
+          });
         }
 
         const config: Html5QrcodeCameraScanConfig = { fps: 10, qrbox: 250 };
@@ -90,14 +102,27 @@ const QRScanner: React.FC<QRScannerProps> = (props: QRScannerProps) => {
         );
       } else {
         console.log('No cameras found');
-        throw new Error('No cameras found');
+        messageApi.open({
+          type: 'error',
+          content: 'No cameras found',
+        });
+        props.onScanError?.('No cameras found');
+        Modal.error({
+          title: 'Scan Error',
+          content: 'No cameras found',
+        });
       }
     } catch (err: any) {
-      // messageApi.open({
-      //   type: 'error',
-      //   content: err instanceof Error ? err.message : String(err),
-      // });
       console.log(err instanceof Error ? err.message : String(err));
+      messageApi.open({
+        type: 'error',
+        content: err instanceof Error ? err.message : String(err),
+      });
+      props.onScanError?.(err instanceof Error ? err.message : String(err));
+      Modal.error({
+        title: 'Scan Error',
+        content: err instanceof Error ? err.message : String(err),
+      });
     }
   };
 
