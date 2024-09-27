@@ -28,6 +28,7 @@ import {
 } from 'antd';
 import TabPane from 'antd/es/tabs/TabPane';
 import type { UploadProps } from 'antd/es/upload/interface';
+import { Html5QrcodeResult } from 'html5-qrcode';
 import React, { useCallback, useEffect, useState } from 'react';
 import QRScanner from '../../components/QRScanner';
 
@@ -331,12 +332,13 @@ const RecordVisit: React.FC = () => {
                       open={isScannerOpen}
                       onCancel={() => setIsScannerOpen(false)}
                       footer={null}
+                      destroyOnClose
                     >
                       <QRScanner
-                        fps={10}
-                        qrbox={250}
-                        disableFlip={false}
-                        qrCodeSuccessCallback={(decodedText, decodedResult) => {
+                        onScanSuccess={(
+                          decodedText: string,
+                          decodedResult: Html5QrcodeResult,
+                        ) => {
                           setIsScannerOpen(false);
                           history.push(decodedText);
                         }}
