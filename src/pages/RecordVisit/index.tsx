@@ -638,13 +638,9 @@ const RecordVisit: React.FC = () => {
                       },
                     ]}
                   >
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexWrap: 'wrap', // Allows wrapping on smaller screens
-                        gap: '10px', // Space between buttons
-                        justifyContent: 'space-around', // Distributes buttons evenly
-                      }}
+                    <Space
+                    direction='vertical'
+                    style={{ width: '100%'}}
                     >
                       <Button
                         type="default"
@@ -655,6 +651,7 @@ const RecordVisit: React.FC = () => {
                         }
                         size="large"
                         style={{
+                          width: '100%',
                           borderWidth: '2px',
                           padding: '15px 20px', // Reduced padding for mobile
                           flex: '1 1 100px', // Flex basis ensures the buttons resize properly
@@ -679,6 +676,7 @@ const RecordVisit: React.FC = () => {
                         }
                         size="large"
                         style={{
+                          width: '100%',
                           borderWidth: '2px',
                           padding: '15px 20px',
                           flex: '1 1 100px',
@@ -703,6 +701,7 @@ const RecordVisit: React.FC = () => {
                         }
                         size="large"
                         style={{
+                          width: '100%',
                           borderWidth: '2px',
                           padding: '15px 20px',
                           flex: '1 1 100px',
@@ -717,7 +716,7 @@ const RecordVisit: React.FC = () => {
                       >
                         {intl.formatMessage({ id: 'notGood' })}
                       </Button>
-                    </div>
+                    </Space>
                   </Form.Item>
                   {/* Comments */}
                   <Text strong>{intl.formatMessage({ id: 'comments' })}</Text>
