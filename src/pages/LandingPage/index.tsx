@@ -2,9 +2,9 @@ import { Avatar, Button, Col, Collapse, Layout, Row, Typography } from 'antd';
 import React from 'react';
 import { flushSync } from 'react-dom';
 import ChineseMan1 from '../../assets/chinese-man-1.jpg';
-import ChineseMan2 from '../../assets/chinese-man-2.jpg';
 import ChineseWoman1 from '../../assets/chinese-woman-1.jpg';
 import ChineseWoman2 from '../../assets/chinese-woman-2.jpg';
+import ChineseWoman3 from '../../assets/chinese-woman-3.jpg';
 import IndianMan from '../../assets/indian-man.jpg';
 import IndianWoman from '../../assets/indian-woman.jpg';
 //@ts-ignore
@@ -93,7 +93,7 @@ const LandingPage: React.FC = () => {
       postal_code: '310678',
       volunteer_service_role_and_organisation: 'Family / Neighbour',
       access_rights: 'none',
-      profile_pic: ChineseMan2,
+      profile_pic: ChineseWoman3,
     },
   ];
 
