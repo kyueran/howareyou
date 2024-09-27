@@ -28,8 +28,9 @@ const LinkTree: React.FC = () => {
                 key={'/record-visit'}
                 onClick={() => history.push('/record-visit')}
                 block
+                size="large"
               >
-                {intl.formatMessage({ id: 'menu.RecordVisitNoId' })}
+                🖊️ {intl.formatMessage({ id: 'menu.RecordVisitNoId' })}
               </Button>
             )}
             {access.isStaff && (
@@ -38,8 +39,9 @@ const LinkTree: React.FC = () => {
                 key={'/elderly'}
                 onClick={() => history.push('/elderly')}
                 block
+                size="large"
               >
-                {intl.formatMessage({ id: 'menu.ElderlyResidents' })}
+                👴🏻 {intl.formatMessage({ id: 'menu.ElderlyResidents' })}
               </Button>
             )}
             {(access.isStaff || access.isVolunteer) && (
@@ -48,7 +50,9 @@ const LinkTree: React.FC = () => {
                 key={'/display-visits'}
                 onClick={() => history.push('/display-visits')}
                 block
+                size="large"
               >
+                🏠{' '}
                 {intl.formatMessage({
                   id: access.isStaff
                     ? 'menu.DisplayVisits.Staff'
