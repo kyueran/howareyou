@@ -659,7 +659,7 @@ const RecordVisit: React.FC = () => {
                           padding: '15px 20px', // Reduced padding for mobile
                           flex: '1 1 100px', // Flex basis ensures the buttons resize properly
                           backgroundColor:
-                            selectedStatus === 'Good' ? '#1890ff' : '',
+                            selectedStatus === 'Good' ? '#7f53d1' : '',
                           color: selectedStatus === 'Good' ? 'white' : '',
                         }}
                         onClick={() => {
@@ -683,7 +683,7 @@ const RecordVisit: React.FC = () => {
                           padding: '15px 20px',
                           flex: '1 1 100px',
                           backgroundColor:
-                            selectedStatus === 'Not Around' ? '#1890ff' : '',
+                            selectedStatus === 'Not Around' ? '#7f53d1' : '',
                           color: selectedStatus === 'Not Around' ? 'white' : '',
                         }}
                         onClick={() => {
@@ -707,7 +707,7 @@ const RecordVisit: React.FC = () => {
                           padding: '15px 20px',
                           flex: '1 1 100px',
                           backgroundColor:
-                            selectedStatus === 'Not Good' ? '#1890ff' : '',
+                            selectedStatus === 'Not Good' ? '#7f53d1' : '',
                           color: selectedStatus === 'Not Good' ? 'white' : '',
                         }}
                         onClick={() => {

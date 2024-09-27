@@ -446,7 +446,7 @@ const DisplayVisitsPage: React.FC = () => {
                         <EnvironmentOutlined />
                         <Text>{visit.mode_of_interaction ?? 'Unknown'}</Text>
                       </Space>
-
+                      
                       <Space align="center">
                         <ClockCircleOutlined />
                         <Text>

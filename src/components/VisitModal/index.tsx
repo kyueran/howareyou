@@ -86,7 +86,6 @@ const VisitModal: React.FC<VisitModalProps> = ({
   // Fetch elderly info using visit.elderly_id
   useEffect(() => {
     const fetchElderlyInfo = async (id: string) => {
-      if (userRole !== 'staff') return;
       setElderlyLoading(true);
       try {
         const response = await fetch(`/api/senior/${id}`);
@@ -152,11 +151,22 @@ const VisitModal: React.FC<VisitModalProps> = ({
                     </Text>
                   </Space>
                 )}
-
+                {userRole === 'staff' && (
+                <>
                 <Space align="center">
                   <EnvironmentOutlined />
                   <Text>{visit.mode_of_interaction ?? 'Unknown'}</Text>
                 </Space>
+                </>)}
+
+                {userRole === 'volunteer' && (
+                <>
+                <Space align="center">
+                  <EnvironmentOutlined />
+                  <Text>{elderly?.block} {elderly?.floor}-
+                  {elderly?.unit_number}, {elderly?.address}</Text>
+                </Space>
+                </>)}
 
                 <Space align="center">
                   <ClockCircleOutlined />
