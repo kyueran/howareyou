@@ -2,6 +2,7 @@ import { Access, history, useAccess, useIntl } from '@umijs/max';
 import { Button, Col, Row, Space, Typography } from 'antd';
 import React from 'react';
 import LanguageSelector from '../../components/LanguageSelector';
+import LogoTitleSubtitle from '../../components/LogoTitleSubtitle';
 
 const LinkTree: React.FC = () => {
   const intl = useIntl();
@@ -14,14 +15,10 @@ const LinkTree: React.FC = () => {
       <Row justify="center" style={{ marginTop: '24px' }}>
         <Col xs={22} sm={20} md={16} lg={12}>
           <Space direction="vertical" size={24} style={{ width: '100%' }}>
-            <div>
-              <Title level={3} style={{ margin: '0px' }}>
-                {user.full_name}
-              </Title>
-              <Title level={5} style={{ margin: '0px' }}>
-                {user.volunteer_service_role_and_organisation}
-              </Title>
-            </div>
+            <LogoTitleSubtitle
+              title={user.full_name}
+              subtitle={user.volunteer_service_role_and_organisation}
+            />
             {(access.isStaff || access.isVolunteer) && (
               <Button
                 type="primary"

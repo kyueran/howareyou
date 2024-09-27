@@ -1,8 +1,16 @@
-import { Button, Col, Collapse, Layout, Row, Typography } from 'antd';
+import { Avatar, Button, Col, Collapse, Layout, Row, Typography } from 'antd';
 import React from 'react';
 import { flushSync } from 'react-dom';
+import ChineseMan1 from '../../assets/chinese-man-1.jpg';
+import ChineseMan2 from '../../assets/chinese-man-2.jpg';
+import ChineseWoman1 from '../../assets/chinese-woman-1.jpg';
+import ChineseWoman2 from '../../assets/chinese-woman-2.jpg';
+import IndianMan from '../../assets/indian-man.jpg';
+import IndianWoman from '../../assets/indian-woman.jpg';
 //@ts-ignore
+import { purple } from '@ant-design/colors';
 import { history, useModel } from 'umi';
+import LogoTitleSubtitle from '../../components/LogoTitleSubtitle';
 
 const { Header, Content } = Layout;
 const { Panel } = Collapse;
@@ -22,6 +30,7 @@ const LandingPage: React.FC = () => {
       postal_code: '730123',
       volunteer_service_role_and_organisation: 'PA Staff (Woodlands)',
       access_rights: 'woodlands',
+      profile_pic: ChineseWoman1,
     },
     {
       id: 2,
@@ -33,6 +42,7 @@ const LandingPage: React.FC = () => {
       postal_code: '149234',
       volunteer_service_role_and_organisation: 'AAC Staff (Queenstown)',
       access_rights: 'queenstown',
+      profile_pic: ChineseMan1,
     },
     {
       id: 3,
@@ -44,6 +54,7 @@ const LandingPage: React.FC = () => {
       postal_code: '460345',
       volunteer_service_role_and_organisation: 'AAC Staff (Admin)',
       access_rights: 'all',
+      profile_pic: ChineseWoman2,
     },
   ];
 
@@ -58,6 +69,7 @@ const LandingPage: React.FC = () => {
       postal_code: '520456',
       volunteer_service_role_and_organisation: 'AAC Volunteer',
       access_rights: 'none',
+      profile_pic: IndianWoman,
     },
     {
       id: 5,
@@ -69,6 +81,7 @@ const LandingPage: React.FC = () => {
       postal_code: '650567',
       volunteer_service_role_and_organisation: 'Lions Befrienders',
       access_rights: 'none',
+      profile_pic: IndianMan,
     },
     {
       id: 6,
@@ -80,6 +93,7 @@ const LandingPage: React.FC = () => {
       postal_code: '310678',
       volunteer_service_role_and_organisation: 'Family / Neighbour',
       access_rights: 'none',
+      profile_pic: ChineseMan2,
     },
   ];
 
@@ -107,7 +121,7 @@ const LandingPage: React.FC = () => {
       {/* Header Section with Flexbox */}
       <Header
         style={{
-          backgroundColor: '#d3d3d3',
+          backgroundColor: purple[2],
           padding: '20px',
           textAlign: 'center',
           display: 'flex',
@@ -117,18 +131,25 @@ const LandingPage: React.FC = () => {
           height: '100px',
         }}
       >
-        <Title level={2} style={{ margin: 0 }}>
+        {/* <Title level={2} style={{ margin: 0 }}>
           HowAreYou
         </Title>
-        <Text>Empowering Communities to Care for the Elderly</Text>
+        <Text>Empowering Communities to Care for the Elderly</Text> */}
+        <LogoTitleSubtitle
+          title="HowAreYou"
+          subtitle="Empowering Communities to Care"
+        />
       </Header>
 
       {/* Content Section */}
-      <Content style={{ padding: '50px' }}>
+      <Content style={{ padding: '50px', backgroundColor: purple[1] }}>
         {/* Grid layout with two rows and three columns */}
         <Row gutter={[16, 16]}>
           <Col span={24} style={{ textAlign: 'center' }}>
-            <Title level={4}>Login as a Staff</Title>
+            <Title level={4}>
+              Login as a{' '}
+              <span style={{ color: 'red', fontSize: '24px' }}>STAFF</span>
+            </Title>
             <Text type="secondary">
               Staffs have privileged access to selected elderly’s database and
               visit logs.
@@ -158,16 +179,21 @@ const LandingPage: React.FC = () => {
                     history.push(redirectUrl);
                   }}
                 >
-                  <Row gutter={[16, 16]}>
-                    <Col span={24}>
-                      <span style={{ fontSize: '18px', fontWeight: 'bold' }}>
-                        {user.full_name}
-                      </span>
+                  <Row gutter={[16, 16]} style={{ width: '100%' }}>
+                    <Col span={8}>
+                      <Avatar shape="square" src={user.profile_pic} size={64} />
                     </Col>
-                    <Col span={24}>
-                      <span style={{ fontSize: '14px', marginTop: '5px' }}>
-                        {user.volunteer_service_role_and_organisation}
-                      </span>
+                    <Col span={16}>
+                      <Row>
+                        <span style={{ fontSize: '18px', fontWeight: 'bold' }}>
+                          {user.full_name}
+                        </span>
+                      </Row>
+                      <Row>
+                        <span style={{ fontSize: '14px', marginTop: '5px' }}>
+                          {user.volunteer_service_role_and_organisation}
+                        </span>
+                      </Row>
                     </Col>
                   </Row>
                 </Button>
@@ -177,10 +203,13 @@ const LandingPage: React.FC = () => {
         </Row>
         <Row gutter={[16, 16]} style={{ marginTop: '50px' }}>
           <Col span={24} style={{ textAlign: 'center' }}>
-            <Title level={4}>Log in as a Community Member ...</Title>
+            <Title level={4}>
+              Log in as a{' '}
+              <span style={{ color: 'red', fontSize: '24px' }}>VOLUNTEER</span>
+            </Title>
             <Text type="secondary">
-              Community members can submit visitation records by scanning a QR
-              code provided for each elderly resident.
+              Volunteers can submit visitation records by scanning a QR code
+              provided for each elderly resident.
             </Text>
           </Col>
           {volunteerUsers.map((user) => {
@@ -204,16 +233,21 @@ const LandingPage: React.FC = () => {
                     history.push('/home');
                   }}
                 >
-                  <Row gutter={[16, 16]}>
-                    <Col span={24}>
-                      <span style={{ fontSize: '18px', fontWeight: 'bold' }}>
-                        {user.full_name}
-                      </span>
+                  <Row gutter={[16, 16]} style={{ width: '100%' }}>
+                    <Col span={8}>
+                      <Avatar shape="square" src={user.profile_pic} size={64} />
                     </Col>
-                    <Col span={24}>
-                      <span style={{ fontSize: '14px', marginTop: '5px' }}>
-                        {user.volunteer_service_role_and_organisation}
-                      </span>
+                    <Col span={16}>
+                      <Row>
+                        <span style={{ fontSize: '18px', fontWeight: 'bold' }}>
+                          {user.full_name}
+                        </span>
+                      </Row>
+                      <Row>
+                        <span style={{ fontSize: '14px', marginTop: '5px' }}>
+                          {user.volunteer_service_role_and_organisation}
+                        </span>
+                      </Row>
                     </Col>
                   </Row>
                 </Button>

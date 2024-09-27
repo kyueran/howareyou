@@ -1,3 +1,4 @@
+import { purple } from '@ant-design/colors';
 import { defineConfig } from '@umijs/max';
 
 export default defineConfig({
@@ -5,7 +6,17 @@ export default defineConfig({
   history: {
     type: 'browser', // Use browser-based routing
   },
-  antd: {},
+  antd: {
+    theme: {
+      token: {
+        // Seed Token
+        colorLink: purple[4],
+        colorInfo: purple[4],
+        colorIcon: purple[4],
+        colorPrimary: purple[4],
+      },
+    },
+  },
   access: {},
   model: {},
   initialState: {},
