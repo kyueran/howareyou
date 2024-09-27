@@ -327,7 +327,7 @@ const ResidentListPage: React.FC = () => {
         </Col>
       </Row>
 
-      <div style={{ padding: 16 }}>
+      <div style={{ marginTop: 8 }}>
       <FormattedMessage
         id="topWarningMsg"
         values={{ location: <Text type="danger">Queenstown</Text> }}
