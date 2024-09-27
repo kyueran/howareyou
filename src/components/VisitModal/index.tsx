@@ -8,7 +8,6 @@ import {
   Card,
   Carousel,
   Col,
-  Divider,
   Image,
   Modal,
   Row,
@@ -43,8 +42,8 @@ const VisitModal: React.FC<VisitModalProps> = ({
   isVisible,
   onClose,
 }) => {
-  const [visitorLoading, setVisitorLoading] = useState(false)
-  const [elderlyLoading, setElderlyLoading] = useState(false)
+  const [visitorLoading, setVisitorLoading] = useState(false);
+  const [elderlyLoading, setElderlyLoading] = useState(false);
   const [visitorName, setVisitorName] = useState<string>('Unknown Visitor');
   const [visitorRoleAndOrg, setVisitorRoleAndOrg] = useState<string>(''); // State for role and organization
   const [userRole, setUserRole] = useState<string>(''); // State for user role
@@ -61,7 +60,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
 
   useEffect(() => {
     const fetchVisitorInfo = async (id: string) => {
-      setVisitorLoading(true)
+      setVisitorLoading(true);
       try {
         const response = await fetch(`/api/vas/${id}`);
         if (!response.ok) {
@@ -75,7 +74,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
       } catch (error) {
         console.error(error);
       } finally {
-        setVisitorLoading(false)
+        setVisitorLoading(false);
       }
     };
 
@@ -87,7 +86,8 @@ const VisitModal: React.FC<VisitModalProps> = ({
   // Fetch elderly info using visit.elderly_id
   useEffect(() => {
     const fetchElderlyInfo = async (id: string) => {
-      setElderlyLoading(true)
+      if (userRole !== 'staff') return;
+      setElderlyLoading(true);
       try {
         const response = await fetch(`/api/senior/${id}`);
         if (!response.ok) {
@@ -99,14 +99,14 @@ const VisitModal: React.FC<VisitModalProps> = ({
       } catch (error) {
         console.error(error);
       } finally {
-        setElderlyLoading(false)
+        setElderlyLoading(false);
       }
     };
 
     if (visit.elderly_id) {
       fetchElderlyInfo(visit.elderly_id);
     }
-  }, [visit.elderly_id]);
+  }, [visit.elderly_id, userRole]);
 
   dayjs.extend(relativeTime);
 
@@ -125,7 +125,7 @@ const VisitModal: React.FC<VisitModalProps> = ({
           Visit Details
         </div>
       }
-      visible={isVisible}
+      open={isVisible}
       onCancel={onClose}
       footer={null}
       width="100%" // Make the modal full width
@@ -139,85 +139,89 @@ const VisitModal: React.FC<VisitModalProps> = ({
               Posted by:
             </Title>
             <Card bodyStyle={{ padding: 8 }}>
-              <Space.Compact direction='vertical'>
-              {/* Conditionally display Visitor Name and Role for staff only */}
-              {userRole === 'staff' && (
-                <Space align="center">
-                  <UserOutlined />
-                  <Text>
-                    {visitorName}{' '}
-                    <Text strong style={{ color: 'purple' }}>
-                      {visitorRoleAndOrg}
-                    </Text>
-                  </Text>
-                </Space>
-              )}
-
-              <Space align="center">
-                <EnvironmentOutlined />
-                <Text>{visit.mode_of_interaction ?? 'Unknown'}</Text>
-              </Space>
-
-              <Space align="center">
-                <ClockCircleOutlined />
-                <Text>
-                  {visit.submission_time
-                    ? dayjs(visit.submission_time).format('D MMM YYYY, h:mmA')
-                    : 'Unknown Time'}{' '}
-                  (
-                  <Text strong>
-                    {visit.submission_time
-                      ? `${dayjs().to(dayjs(visit.submission_time))}`
-                      : 'None'}
-                  </Text>
-                  )
-                </Text>
-              </Space>
-            </Space.Compact>
-            </Card>
-
-            <Title level={5} style={{ marginTop: '20px', marginBottom: 8 }}>
-              Elderly visited:
-            </Title>
-
-            <Card bodyStyle={{ padding: 8 }}>
-              {elderlyLoading ?
-              <Skeleton avatar />
-              :
-              <Space direction="horizontal">
-                <Image
-                  width={96}
-                  height={96}
-                  src={elderly?.photo_url}
-                  alt={`Photo ${elderly?.name}`}
-                />
-                <Space.Compact direction="vertical">
+              <Space.Compact direction="vertical">
+                {/* Conditionally display Visitor Name and Role for staff only */}
+                {userRole === 'staff' && (
                   <Space align="center">
                     <UserOutlined />
-                    <Text>{elderly?.name}</Text>
-                  </Space>
-
-                  <Space align="center">
-                    <EnvironmentOutlined />
                     <Text>
-                      {elderly?.block} {elderly?.floor}-{elderly?.unit_number},{' '}
-                      {elderly?.address}
+                      {visitorName}{' '}
+                      <Text strong style={{ color: 'purple' }}>
+                        {visitorRoleAndOrg}
+                      </Text>
                     </Text>
                   </Space>
+                )}
 
-                  <Space align="center">
-                    <Text strong>Elderly Code: </Text>
-                    <Text>{elderly?.elderly_code}</Text>
-                  </Space>
+                <Space align="center">
+                  <EnvironmentOutlined />
+                  <Text>{visit.mode_of_interaction ?? 'Unknown'}</Text>
+                </Space>
 
-                  <Space align="center">
-                    <Text strong>AAC Code: </Text>
-                    <Text>{elderly?.aac_code}</Text>
-                  </Space>
-                </Space.Compact>
-              </Space>
-      }
+                <Space align="center">
+                  <ClockCircleOutlined />
+                  <Text>
+                    {visit.submission_time
+                      ? dayjs(visit.submission_time).format('D MMM YYYY, h:mmA')
+                      : 'Unknown Time'}{' '}
+                    (
+                    <Text strong>
+                      {visit.submission_time
+                        ? `${dayjs().to(dayjs(visit.submission_time))}`
+                        : 'None'}
+                    </Text>
+                    )
+                  </Text>
+                </Space>
+              </Space.Compact>
             </Card>
+
+            {userRole === 'staff' && (
+              <>
+                <Title level={5} style={{ marginTop: '20px', marginBottom: 8 }}>
+                  Elderly visited:
+                </Title>
+
+                <Card bodyStyle={{ padding: 8 }}>
+                  {elderlyLoading ? (
+                    <Skeleton avatar />
+                  ) : (
+                    <Space direction="horizontal">
+                      <Image
+                        width={96}
+                        height={96}
+                        src={elderly?.photo_url}
+                        alt={`Photo ${elderly?.name}`}
+                      />
+                      <Space.Compact direction="vertical">
+                        <Space align="center">
+                          <UserOutlined />
+                          <Text>{elderly?.name}</Text>
+                        </Space>
+
+                        <Space align="center">
+                          <EnvironmentOutlined />
+                          <Text>
+                            {elderly?.block} {elderly?.floor}-
+                            {elderly?.unit_number}, {elderly?.address}
+                          </Text>
+                        </Space>
+
+                        <Space align="center">
+                          <Text strong>Elderly Code: </Text>
+                          <Text>{elderly?.elderly_code}</Text>
+                        </Space>
+
+                        <Space align="center">
+                          <Text strong>AAC Code: </Text>
+                          <Text>{elderly?.aac_code}</Text>
+                        </Space>
+                      </Space.Compact>
+                    </Space>
+                  )}
+                </Card>
+              </>
+            )}
 
             {/* Resident Status Heading */}
             <Title level={5} style={{ marginTop: '20px', marginBottom: '0px' }}>

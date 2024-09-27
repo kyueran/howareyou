@@ -16,7 +16,6 @@ import {
   Button,
   Card,
   Col,
-  Menu,
   message,
   Radio,
   Row,
@@ -54,7 +53,6 @@ const DisplayVisitsPage: React.FC = () => {
   // New state variables for filters
   const [dateFilter, setDateFilter] = useState('all'); // 'all', 'today', 'pastWeek'
   const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'good', 'notGood', 'notAround'
-  const [showStatusFilters, setShowStatusFilters] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 
   // Determine the visitor's role and ID
@@ -70,7 +68,7 @@ const DisplayVisitsPage: React.FC = () => {
     const display_role =
       parsedUser.role === 'staff'
         ? parsedUser.volunteer_service_role_and_organisation
-        : 'Volunteer';
+        : 'volunteer';
     visitorInfo = {
       id: parsedUser.id,
       name: parsedUser.full_name,
@@ -317,21 +315,6 @@ const DisplayVisitsPage: React.FC = () => {
     return submissionDate.from(now);
   };
 
-  // Define the status menu for the dropdown
-  const statusMenu = (
-    <Menu
-      onClick={(e) => {
-        setStatusFilter(e.key);
-      }}
-      selectedKeys={[statusFilter]}
-    >
-      <Menu.Item key="all">All Statuses</Menu.Item>
-      <Menu.Item key="good">Good</Menu.Item>
-      <Menu.Item key="notGood">Not Good</Menu.Item>
-      <Menu.Item key="notAround">Not Around</Menu.Item>
-    </Menu>
-  );
-
   return (
     <>
       <Row justify="center" style={{ marginTop: '24px' }}>
@@ -446,180 +429,87 @@ const DisplayVisitsPage: React.FC = () => {
                       setIsVisitModalVisible(true);
                     }}
                   >
-                    <Row gutter={16} align="middle">
-                      <Col>
-                        <div>
-                          {/* For volunteers, only display mode_of_interaction, submission_time, and status */}
-                          {isVolunteer ? (
-                            <>
-                              {/* Location */}
-                              <Text>
-                                <EnvironmentOutlined
-                                  style={{ marginRight: '8px' }}
-                                />
-                                {visit.mode_of_interaction ||
-                                  intl.formatMessage({ id: 'NA' })}
-                              </Text>
-                              <br />
+                    <Space.Compact direction="vertical">
+                      {/* Conditionally display Visitor Name and Role for staff only */}
+                      {visitorInfo.role === 'staff' && (
+                        <Space align="center">
+                          <UserOutlined />
+                          <Text>
+                            {visitor.full_name}{' '}
+                            <Text strong style={{ color: 'purple' }}>
+                              {visitor.volunteer_service_role_and_organisation}
+                            </Text>
+                          </Text>
+                        </Space>
+                      )}
 
-                              {/* Time */}
-                              <Text style={{ fontSize: '12px' }}>
-                                <ClockCircleOutlined
-                                  style={{ marginRight: '8px' }}
-                                />
-                                {dayjs(visit.submission_time)
-                                  .subtract(8, 'hour')
-                                  .format('D MMM YYYY, h:mmA')}{' '}
-                                <Text
-                                  type="secondary"
-                                  strong
-                                  style={{ fontSize: '9px' }}
-                                >
-                                  ({formatTimeDifference(visit.submission_time)}
-                                  )
-                                </Text>
-                              </Text>
-                              <br />
+                      <Space align="center">
+                        <EnvironmentOutlined />
+                        <Text>{visit.mode_of_interaction ?? 'Unknown'}</Text>
+                      </Space>
 
-                              {/* Status */}
-                              {visit.status === 'Good' && (
-                                <Text
-                                  strong
-                                  style={{ color: 'green', fontSize: '12px' }}
-                                >
-                                  <CheckCircleOutlined
-                                    style={{
-                                      color: 'green',
-                                      marginRight: '8px',
-                                    }}
-                                  />
-                                  Good
-                                </Text>
-                              )}
-                              {visit.status === 'Not Good' && (
-                                <Text
-                                  strong
-                                  style={{ color: 'red', fontSize: '12px' }}
-                                >
-                                  <ExclamationCircleOutlined
-                                    style={{ color: 'red', marginRight: '8px' }}
-                                  />
-                                  Not Good
-                                </Text>
-                              )}
-                              {visit.status === 'Not Around' && (
-                                <Text
-                                  strong
-                                  style={{ color: 'orange', fontSize: '12px' }}
-                                >
-                                  <QuestionCircleOutlined
-                                    style={{
-                                      color: 'orange',
-                                      marginRight: '8px',
-                                    }}
-                                  />
-                                  Not Around
-                                </Text>
-                              )}
-                            </>
-                          ) : (
-                            <>
-                              {/* Staff view, with full information */}
-                              <UserOutlined style={{ marginRight: '8px' }} />
-                              <Text strong style={{ fontSize: '12px' }}>
-                                {visitor.full_name}
-                              </Text>
-                              <div>
-                                <Text
-                                  style={{ color: 'purple', fontSize: '12px' }}
-                                >
-                                  {
-                                    visitor.volunteer_service_role_and_organisation
-                                  }
-                                </Text>
-                              </div>
+                      <Space align="center">
+                        <ClockCircleOutlined />
+                        <Text>
+                          {visit.submission_time
+                            ? dayjs(visit.submission_time).format(
+                                'D MMM YYYY, h:mmA',
+                              )
+                            : 'Unknown Time'}{' '}
+                          (
+                          <Text strong>
+                            {visit.submission_time
+                              ? `${dayjs().to(dayjs(visit.submission_time))}`
+                              : 'None'}
+                          </Text>
+                          )
+                        </Text>
+                      </Space>
+                      {/* Status */}
+                      {visit.status === 'Good' && (
+                        <Text
+                          strong
+                          style={{ color: 'green', fontSize: '12px' }}
+                        >
+                          <CheckCircleOutlined
+                            style={{
+                              color: 'green',
+                              marginRight: '8px',
+                            }}
+                          />
+                          Good
+                        </Text>
+                      )}
+                      {visit.status === 'Not Good' && (
+                        <Text strong style={{ color: 'red', fontSize: '12px' }}>
+                          <ExclamationCircleOutlined
+                            style={{ color: 'red', marginRight: '8px' }}
+                          />
+                          Not Good
+                        </Text>
+                      )}
+                      {visit.status === 'Not Around' && (
+                        <Text
+                          strong
+                          style={{ color: 'orange', fontSize: '12px' }}
+                        >
+                          <QuestionCircleOutlined
+                            style={{
+                              color: 'orange',
+                              marginRight: '8px',
+                            }}
+                          />
+                          Not Around
+                        </Text>
+                      )}
 
-                              {/* Location */}
-                              <Text>
-                                <EnvironmentOutlined
-                                  style={{ marginRight: '8px' }}
-                                />
-                                {visit.mode_of_interaction ||
-                                  intl.formatMessage({ id: 'NA' })}
-                              </Text>
-                              <br />
-
-                              {/* Time */}
-                              <Text style={{ fontSize: '12px' }}>
-                                <ClockCircleOutlined
-                                  style={{ marginRight: '8px' }}
-                                />
-                                {dayjs(visit.submission_time)
-                                  .subtract(8, 'hour')
-                                  .format('D MMM YYYY, h:mmA')}{' '}
-                                <Text
-                                  type="secondary"
-                                  strong
-                                  style={{ fontSize: '9px' }}
-                                >
-                                  ({formatTimeDifference(visit.submission_time)}
-                                  )
-                                </Text>
-                              </Text>
-                              <br />
-
-                              {/* Status */}
-                              {visit.status === 'Good' && (
-                                <Text
-                                  strong
-                                  style={{ color: 'green', fontSize: '12px' }}
-                                >
-                                  <CheckCircleOutlined
-                                    style={{
-                                      color: 'green',
-                                      marginRight: '8px',
-                                    }}
-                                  />
-                                  Good
-                                </Text>
-                              )}
-                              {visit.status === 'Not Good' && (
-                                <Text
-                                  strong
-                                  style={{ color: 'red', fontSize: '12px' }}
-                                >
-                                  <ExclamationCircleOutlined
-                                    style={{ color: 'red', marginRight: '8px' }}
-                                  />
-                                  Not Good
-                                </Text>
-                              )}
-                              {visit.status === 'Not Around' && (
-                                <Text
-                                  strong
-                                  style={{ color: 'orange', fontSize: '12px' }}
-                                >
-                                  <QuestionCircleOutlined
-                                    style={{
-                                      color: 'orange',
-                                      marginRight: '8px',
-                                    }}
-                                  />
-                                  Not Around
-                                </Text>
-                              )}
-                              <br />
-
-                              {/* Elderly Comments */}
-                              <Text>
-                                <BellOutlined style={{ marginRight: '8px' }} />{' '}
-                                {visit.key_concerns || '-'}
-                              </Text>
-                            </>
-                          )}
-                        </div>
-                      </Col>
-                    </Row>
+                      {visitorInfo.role === 'staff' && (
+                        <Text>
+                          <BellOutlined style={{ marginRight: '8px' }} />{' '}
+                          {visit.key_concerns || '-'}
+                        </Text>
+                      )}
+                    </Space.Compact>
                   </Card>
                 );
               })
