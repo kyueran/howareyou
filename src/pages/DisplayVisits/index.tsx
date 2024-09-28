@@ -204,6 +204,7 @@ const DisplayVisitsPage: React.FC = () => {
     // Apply date filter
     if (dateFilter !== 'all') {
       const now = dayjs().subtract(8, 'hour');
+      console.log(now);
       filtered = filtered.filter((visit) => {
         const visitDate = dayjs(visit.submission_time).add(8, 'hour');
 
