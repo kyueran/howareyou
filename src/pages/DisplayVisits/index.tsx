@@ -165,6 +165,14 @@ const DisplayVisitsPage: React.FC = () => {
     return map;
   }, [vasList]);
 
+  const senMap=  useMemo(() => {
+    const map = {}
+    seniors.forEach((sen) => {
+      map[sen.id] = sen
+    })
+    return map
+  }, [seniors])
+
   // Apply filters whenever visits or filter states change
   useEffect(() => {
     applyFilters(visits);
@@ -414,7 +422,7 @@ const DisplayVisitsPage: React.FC = () => {
                 if (!visitor) {
                   return null; // Wait until visitor info is loaded
                 }
-
+                const elderly = senMap[visit.elderly_id]
                 // Volunteers can only see mode_of_interaction, submission_time, and status
                 return (
                   <Card
@@ -459,15 +467,23 @@ const DisplayVisitsPage: React.FC = () => {
                     <Space.Compact direction="vertical">
                       {/* Conditionally display Visitor Name and Role for staff only */}
                       {visitorInfo.role === 'staff' && (
+                        <>
                         <Space align="center">
                           <UserOutlined />
-                          <Text>
-                            {visitor.full_name}{' '}
-                            <Text strong style={{ color: 'purple' }}>
-                              {visitor.volunteer_service_role_and_organisation}
-                            </Text>
+                          <Text strong>
+                            {elderly.name}{' '}
                           </Text>
                         </Space>
+                        <Space align="center">
+                        <UserOutlined />
+                        <Text>
+                          {visitor.full_name}{' '}
+                          <Text strong style={{ color: 'purple' }}>
+                            {visitor.volunteer_service_role_and_organisation}
+                          </Text>
+                        </Text>
+                      </Space>
+                      </>
                       )}
 
                       <Space align="center">
