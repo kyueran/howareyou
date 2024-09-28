@@ -191,12 +191,12 @@ const VisitModal: React.FC<VisitModalProps> = ({
                   <ClockCircleOutlined />
                   <Text>
                     {visit.submission_time
-                      ? dayjs(visit.submission_time).subtract(8, 'day').format('D MMM YYYY, h:mmA')
+                      ? dayjs(visit.submission_time).format('D MMM YYYY, h:mmA')
                       : 'Unknown Time'}{' '}
                     (
                     <Text strong>
                       {visit.submission_time
-                        ? `${dayjs().to(dayjs(visit.submission_time).subtract(8, 'day'))}`
+                        ? `${dayjs().to(dayjs(visit.submission_time))}`
                         : 'None'}
                     </Text>
                     )
