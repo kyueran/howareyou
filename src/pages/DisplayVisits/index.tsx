@@ -207,6 +207,7 @@ const DisplayVisitsPage: React.FC = () => {
       console.log("DAYJS TIME", now);
       filtered = filtered.filter((visit) => {
         const visitDate = dayjs(visit.submission_time).subtract(8, 'hour');
+        console.log("VISITDATE TIME", visitDate);
 
         if (dateFilter === 'today') {
           // Check if visitDate is the same day as today
