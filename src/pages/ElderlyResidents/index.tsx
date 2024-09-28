@@ -547,7 +547,7 @@ const ResidentListPage: React.FC = () => {
                             >
                               <Text
                                 strong={daysSinceLastVisit >= 8}
-                                style={{ fontSize: '12px', color: visitInfoColor }}
+                                style={{ fontSize: '12px', color: daysSinceLastVisit < 8 ? 'default' : 'red' }}
                               >
                                 {displayVisitInfo}
                               </Text>
