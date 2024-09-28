@@ -184,23 +184,28 @@ const ResidentListPage: React.FC = () => {
     return dayjs().diff(lastVisitDate.startOf('day'), 'days');
   };
 
+  // Insert this after the imports in ResidentListPage
+
+  const postalCodeToLatLon: { [key: string]: { lat: number; lon: number } } = {
+    "142058": { lat: 1.2931, lon: 103.8108 },
+    "229811": { lat: 1.3056, lon: 103.8381 },
+    "148812": { lat: 1.2997, lon: 103.8 },
+    "148813": { lat: 1.3005, lon: 103.7977 },
+    "140056": { lat: 1.2934, lon: 103.8099 },
+    "142057": { lat: 1.2978, lon: 103.7966 },
+    "140058": { lat: 1.2978, lon: 103.7971 },
+  };
+
+  
   // Function to calculate the distance between two coordinates using the Haversine formula
-  const calculateDistance = (
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number,
-  ) => {
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const toRad = (value: number) => (value * Math.PI) / 180;
     const R = 6371e3; // Earth radius in meters
     const dLat = toRad(lat2 - lat1);
     const dLon = toRad(lon2 - lon1);
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c; // Returns distance in meters
   };
@@ -218,18 +223,21 @@ const ResidentListPage: React.FC = () => {
           if (daysA !== daysB) {
             return daysB - daysA; // Sort by descending days since last visit
           }
-
+          
+          const {lat: Alat, lon: Alon }= postalCodeToLatLon[a.postalCode];
+          const {lat: Blat, lon: Blon} = postalCodeToLatLon[b.postalCode];
           // Then sort by distance if the location is available
+          console.log(Alat, Alon, Blat, Blon);
           if (currentPosition) {
             const distanceA = calculateDistance(
-              1.3521,
-              103.8198,
+              Alat,
+              Alon,
               currentPosition.lat,
               currentPosition.lon,
             );
             const distanceB = calculateDistance(
-              1.3521,
-              103.8198,
+              Blat,
+              Blon,
               currentPosition.lat,
               currentPosition.lon,
             );
@@ -404,11 +412,12 @@ const ResidentListPage: React.FC = () => {
                   getCardBackgroundColor(daysSinceLastVisit);
 
                 // Calculate distance (existing code)
+                const {lat: elat, lon: elon} = postalCodeToLatLon[elderly?.postalCode];
                 const distance = currentPosition
                   ? `${(
                       calculateDistance(
-                        1.3521,
-                        103.8198,
+                        elat,
+                        elon,
                         currentPosition.lat,
                         currentPosition.lon,
                       ) / 1000
