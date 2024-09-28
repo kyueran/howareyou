@@ -16,6 +16,7 @@ import {
   Button,
   Card,
   Col,
+  ConfigProvider,
   message,
   Radio,
   Row,
@@ -319,7 +320,7 @@ const DisplayVisitsPage: React.FC = () => {
   };
 
   return (
-    <>
+    <ConfigProvider theme={{ token: { fontSize: 12 }}}>
       <Row justify='center'>
         <Col xs={24} sm={20} md={16} lg={12}>
           <Row
@@ -345,7 +346,7 @@ const DisplayVisitsPage: React.FC = () => {
         </Col>
       </Row>
 
-      <Row justify="center" style={{ marginTop: 16 }}>
+      <Row justify="center" style={{ marginTop: 16, paddingBottom: '20vh' }}>
         <Col xs={22} sm={20} md={16} lg={12}>
           <Space direction="vertical" size={16} style={{ width: '100%' }}>
             {/* AutoComplete search for elderly or volunteer/staff (staff only) */}
@@ -469,14 +470,18 @@ const DisplayVisitsPage: React.FC = () => {
                       {visitorInfo.role === 'staff' && (
                         <>
                         <Space align="center">
+                          <Text strong type='secondary'>
                           <UserOutlined />
-                          <Text strong>
-                            {elderly.name}{' '}
+                            {' '}{intl.formatMessage({ id: 'elderlyName'})}:
                           </Text>
+                          {elderly.name}{' '}
                         </Space>
                         <Space align="center">
-                        <UserOutlined />
                         <Text>
+                          <Text strong type='secondary' style={{ whiteSpace: 'nowrap'}}>
+                            <UserOutlined />
+                            {' '}Posted by:{' '}
+                          </Text>
                           {visitor.full_name}{' '}
                           <Text strong style={{ color: 'purple' }}>
                             {visitor.volunteer_service_role_and_organisation}
@@ -487,12 +492,14 @@ const DisplayVisitsPage: React.FC = () => {
                       )}
 
                       <Space align="center">
-                        <EnvironmentOutlined />
-                        <Text>{visit.mode_of_interaction ?? 'Home Visit'}</Text>
+                        <Text strong type='secondary'><EnvironmentOutlined /> Mode: </Text><Text>{visit.mode_of_interaction ?? 'Home Visit'}</Text>
                       </Space>
                       
-                      <Space align="center">
+                      <Space align="center" style={{ alignItems: 'flex-start'}}>
+                        <Text strong type='secondary' style={{ whiteSpace: 'nowrap'}}>
                         <ClockCircleOutlined />
+                        {' '}Time:{' '}
+                        </Text>
                         <Text>
                           {visit.submission_time
                             ? dayjs(visit.submission_time).format(
@@ -500,7 +507,7 @@ const DisplayVisitsPage: React.FC = () => {
                               )
                             : 'Unknown Time'}{' '}
                           (
-                          <Text strong>
+                          <Text strong style={{ fontSize: 12}}>
                             {visit.submission_time
                               ? `${dayjs().to(dayjs(visit.submission_time))}`
                               : 'None'}
@@ -509,6 +516,8 @@ const DisplayVisitsPage: React.FC = () => {
                         </Text>
                       </Space>
                       {/* Status */}
+                      <Space align="center">
+                      <Text strong type='secondary'><QuestionCircleOutlined /> Status: </Text>
                       {visit.status === 'Good' && (
                         <Text
                           strong
@@ -545,12 +554,12 @@ const DisplayVisitsPage: React.FC = () => {
                           Not Around
                         </Text>
                       )}
+                      </Space>
 
                       {visitorInfo.role === 'staff' && (
-                        <Text>
-                          <BellOutlined style={{ marginRight: '8px' }} />{' '}
-                          {visit.key_concerns || '-'}
-                        </Text>
+                        <Space direction='horizontal' style={{ alignItems: 'flex-start' }}>
+                          <Text strong type='secondary' style={{ whiteSpace: 'nowrap' }}><BellOutlined /> {intl.formatMessage({ id: 'concerns' })}: </Text><Text>{visit.key_concerns || '-'}</Text>
+                        </Space>
                       )}
                     </Space.Compact>
                   </Card>
@@ -570,7 +579,7 @@ const DisplayVisitsPage: React.FC = () => {
           }}
         />
       )}
-    </>
+    </ConfigProvider>
   );
 };
 

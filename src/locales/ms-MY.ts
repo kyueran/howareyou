@@ -127,6 +127,7 @@ export default {
   durationOfContact: 'Tempoh Kontak',
   minutes: '{mins} minit',
   status: 'Status',
+  concerns: 'Kebimbangan',
   comments: 'Komen',
   visitor: 'Pelawat',
   dateOfVisit: 'Tarikh Lawatan',

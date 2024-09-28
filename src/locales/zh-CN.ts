@@ -126,6 +126,7 @@ export default {
   minutes: '{mins}分钟',
   status: '状态',
   comments: '评论',
+  concerns: "关注",
   visitor: '访客',
   dateOfVisit: '访问日期',
   photos: '照片',

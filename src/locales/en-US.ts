@@ -127,6 +127,7 @@ export default {
   durationOfContact: 'Duration of Contact',
   minutes: '{mins} minutes',
   status: 'Status',
+  concerns: 'Concerns',
   comments: 'Comments',
   visitor: 'Visitor',
   dateOfVisit: 'Date of Visit',

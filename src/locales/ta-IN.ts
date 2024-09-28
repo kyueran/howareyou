@@ -133,6 +133,7 @@ export default {
   durationOfContact: 'தொடர்பின் காலம்',
   minutes: '{mins} நிமிடங்கள்',
   status: 'நிலை',
+  concerns: 'கவலைகள்',
   comments: 'கருத்துகள்',
   visitor: 'வருகையாளர்',
   dateOfVisit: 'வருகை தேதி',
