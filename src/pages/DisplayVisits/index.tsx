@@ -509,7 +509,7 @@ const DisplayVisitsPage: React.FC = () => {
                           (
                           <Text strong style={{ fontSize: 12}}>
                             {visit.submission_time
-                              ? `${dayjs().subtract(8, 'hour').to(dayjs(visit.submission_time))}`
+                              ? `${dayjs().add(8, 'hour').to(dayjs(visit.submission_time))}`
                               : 'None'}
                           </Text>
                           )
