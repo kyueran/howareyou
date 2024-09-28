@@ -180,7 +180,7 @@ const ResidentListPage: React.FC = () => {
   // Function to calculate the number of days since last visit
   const calculateDaysSinceLastVisit = (recentVisits: VisitInfo[]) => {
     if (recentVisits.length === 0) return 'No Visits';
-    const lastVisitDate = dayjs(recentVisits[0].submission_time).add(8, 'hour');
+    const lastVisitDate = dayjs(recentVisits[0].submission_time).subtract(8, 'hour');
     return dayjs().diff(lastVisitDate.startOf('day'), 'days');
   };
 
@@ -378,10 +378,10 @@ const ResidentListPage: React.FC = () => {
                     ? elderly.recentVisits.reduce((latestVisit, currentVisit) => {
                         const currentVisitTime = dayjs(
                           currentVisit.submission_time,
-                        ).add(8, 'hour');
+                        ).subtract(8, 'hour');
                         return !latestVisit ||
                           currentVisitTime.isAfter(
-                            dayjs(latestVisit.submission_time).add(8, 'hour'),
+                            dayjs(latestVisit.submission_time).subtract(8, 'hour'),
                           )
                           ? currentVisitTime
                           : latestVisit;
