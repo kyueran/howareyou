@@ -483,21 +483,25 @@ const RecordVisit: React.FC = () => {
                                 e.currentTarget.style.transform = 'scale(1.03)'; // Slightly enlarge the card
                                 e.currentTarget.style.boxShadow =
                                   '0 6px 16px rgba(0, 0, 0, 0.15)'; // Darker shadow
+                                e.currentTarget.style.backgroundColor = '#f0f0f0'
                               }}
                               onMouseLeave={(e) => {
                                 e.currentTarget.style.transform = 'scale(1)'; // Reset scale
                                 e.currentTarget.style.boxShadow =
                                   '0 2px 8px rgba(0, 0, 0, 0.1)'; // Reset shadow
+                                e.currentTarget.style.backgroundColor = 'white'
                               }}
                               onTouchStart={(e) => {
                                 e.currentTarget.style.transform = 'scale(1.03)'; // Enlarge slightly on touch
                                 e.currentTarget.style.boxShadow =
                                   '0 6px 16px rgba(0, 0, 0, 0.15)'; // Darker shadow
+                                e.currentTarget.style.backgroundColor = '#f0f0f0'
                               }}
                               onTouchEnd={(e) => {
                                 e.currentTarget.style.transform = 'scale(1)'; // Reset scale
                                 e.currentTarget.style.boxShadow =
                                   '0 2px 8px rgba(0, 0, 0, 0.1)'; // Reset shadow
+                                e.currentTarget.style.backgroundColor = 'white'
                               }}
                             >
                               <Row gutter={0} justify="space-between">
@@ -646,7 +650,7 @@ const RecordVisit: React.FC = () => {
                     </Space>
                   </div>
                 </Access>
-                <Form form={form} layout="vertical" onFinish={onFinish}>
+                <Form style={{ padding: 16 }} form={form} layout="vertical" onFinish={onFinish}>
                   <Form.Item
                     label={
                       <Text strong>
